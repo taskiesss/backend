@@ -19,7 +19,7 @@ public class ClientBusiness {
     private Integer completedJobs;
 
     @Column(nullable = false)
-    private Integer rate; // Should be validated to [1-5] in logic
+    private float rate; // Should be validated to [1-5] in logic
 
     @Column(name = "total_spent", nullable = false)
     private Double totalSpent;

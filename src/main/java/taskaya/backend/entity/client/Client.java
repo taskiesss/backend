@@ -8,7 +8,6 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.chat.MsgBox;
 import taskaya.backend.entity.freelancer.Freelancer;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

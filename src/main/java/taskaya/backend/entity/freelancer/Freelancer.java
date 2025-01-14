@@ -6,6 +6,7 @@ import lombok.*;
 import taskaya.backend.entity.*;
 import taskaya.backend.entity.chat.MsgBox;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.work.WorkerEntity;
 
 import java.util.List;
 import java.util.Set;
@@ -28,9 +29,9 @@ public class Freelancer {
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user; // References the User entity
 
-//    @OneToOne
-//    @JoinColumn(name = "super_entity_uuid", nullable = false, referencedColumnName = "id")
-//    private SuperEntity superEntity; // FK referencing SuperEntity
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "worker_entity_id", referencedColumnName = "id")
+    private WorkerEntity workerEntity;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "freelancer_business_id", referencedColumnName = "id")
