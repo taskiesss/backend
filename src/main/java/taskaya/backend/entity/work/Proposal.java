@@ -22,9 +22,9 @@ public class Proposal {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // Primary key
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "job_id", nullable = false)
-//    private Job job; // Associated Job
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job; // Associated Job
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_entity_id", nullable = false)

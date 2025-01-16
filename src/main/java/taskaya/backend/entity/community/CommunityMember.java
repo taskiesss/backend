@@ -32,7 +32,7 @@ public class CommunityMember {
     private float positionPercent;
 
     @ManyToOne
-    @JoinColumn(name = "freelancer_id", nullable = false)
+    @JoinColumn(name = "freelancer_id")
     private Freelancer freelancer;
 
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
