@@ -13,14 +13,7 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    /**
-     * General function to send an email.
-     *
-     * @param to      Recipient's email address
-     * @param subject Email subject
-     * @param content Email content (HTML supported)
-     * @throws MessagingException if there is an error while sending the email
-     */
+
     public void sendEmail(String to, String subject, String content) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -33,8 +26,14 @@ public class MailService {
     }
 
     public void sendOtpEmail(String to, String otp) throws MessagingException {
-        String subject = "Your OTP Code";
-        String content = "<p>Your OTP code is: <strong>" + otp + "</strong></p>";
+        String subject = "Your Taskaya OTP Code";
+        String content = "Hi,<br>You've requested an OTP code to verify your email.<br>\nYour OTP code is:<br><strong>" + otp + "</strong><br>Please do not share this code with anyone.<br>\n" +
+                "\n" +
+                "If you did not request this code, please ignore this email.<br>\n" +
+                "\n" +
+                "Sincerely,<br>\n" +
+                "\n" +
+                " <strong>Taskaya Team</strong><br>";
         sendEmail(to, subject, content);
     }
 }
