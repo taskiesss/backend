@@ -15,7 +15,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Use the new lambda style for disabling CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/signup", "/api/signup/verify").permitAll() // Public endpoints
+                        .requestMatchers("/api/signup/**").permitAll() // Public endpoints
                         .anyRequest().authenticated() // Secure all other endpoints
                 );
 

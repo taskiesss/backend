@@ -2,6 +2,7 @@ package taskaya.backend.controller;
 // Import necessary packages
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import taskaya.backend.DTO.signup.SignUpRequestDTO;
 import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
 import taskaya.backend.entity.User;
+import taskaya.backend.exceptions.error_responses.GeneralErrorResponse;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.SignUpService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +30,25 @@ public class SignUpController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SignUpService signUpService;
+
     private Map<String, String> otpCache = new HashMap<>();
 
     @PostMapping
-    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request) throws MessagingException {
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
+
+        //check if mail not already used in database
+        signUpService.isEmailExist(request.getEmail());
+        //password is good
+        signUpService.isStrongPassword(request.getPassword());
+
+
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("send-otp")
+    public ResponseEntity<?> getOtp(@RequestBody SignUpRequestDTO request) throws MessagingException {
         // Generate OTP
         String otp = generateOtp();
 
@@ -40,11 +58,11 @@ public class SignUpController {
         // Send OTP to email
         mailService.sendOtpEmail(request.getEmail(), otp);
 
-        return ResponseEntity.ok("done");
+        return ResponseEntity.ok("");
     }
 
     @PostMapping("/verify")
-    public String verifyOtp(@RequestBody VerifyOtpRequestDTO request) {
+    public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpRequestDTO request) {
         String cachedOtp = otpCache.get(request.getEmail());
 
         if (cachedOtp != null && cachedOtp.equals(request.getOtp())) {
@@ -61,9 +79,9 @@ public class SignUpController {
             // Remove OTP from cache
             otpCache.remove(request.getEmail());
 
-            return "User registered successfully.";
+            return ResponseEntity.ok("");
         } else {
-            return "Invalid OTP.";
+            return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST));
         }
     }
 
