@@ -1,10 +1,17 @@
 package taskaya.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
+import taskaya.backend.entity.User;
 import taskaya.backend.exceptions.signup.EmailAlreadyUsedException;
 import taskaya.backend.exceptions.signup.WeakPasswordException;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.utility.OTP;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @Service
@@ -13,11 +20,16 @@ public class SignUpService {
     @Autowired
     UserRepository userRepository;
 
+    private Map<String, OTP> otpCache = new HashMap<>();
+
+
     public void isEmailExist(String email){
         if(userRepository.existsByEmail(email))
             throw  new EmailAlreadyUsedException("this email is already used ");
 
     }
+
+
 
     public  void isStrongPassword(String password) throws WeakPasswordException {
         boolean isStrong;
@@ -44,5 +56,37 @@ public class SignUpService {
             throw  new WeakPasswordException("your password is weak ,enter a strong password");
     }
 
+    public String createOtp(String email){
+        String otpCode = generateOtp();
+        otpCache.put(email,new OTP(otpCode));
+        return otpCode;
+    }
 
+    public boolean verifyOtp (VerifyOtpRequestDTO request){
+        String cachedOtp = otpCache.get(request.getEmail()).getOtp();
+
+        if (cachedOtp != null && cachedOtp.equals(request.getOtp())) {
+            // Encrypt password
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+            // Save user
+            User user = new User();
+            user.setEmail(request.getEmail());
+            user.setPassword(encodedPassword);
+            userRepository.save(user);
+
+            // Remove OTP from cache
+            otpCache.remove(request.getEmail());
+
+            return true;
+        } else {
+            return false;
+        }    }
+
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
+        return String.valueOf(otp);
+    }
 }

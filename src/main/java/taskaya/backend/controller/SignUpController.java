@@ -27,13 +27,9 @@ public class SignUpController {
     @Autowired
     private MailService mailService;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private SignUpService signUpService;
-
-    private Map<String, String> otpCache = new HashMap<>();
 
     @PostMapping
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
@@ -50,10 +46,7 @@ public class SignUpController {
     @PostMapping("send-otp")
     public ResponseEntity<?> getOtp(@RequestBody SignUpRequestDTO request) throws MessagingException {
         // Generate OTP
-        String otp = generateOtp();
-
-        // Cache OTP against the email
-        otpCache.put(request.getEmail(), otp);
+        String otp = signUpService.createOtp(request.getEmail());
 
         // Send OTP to email
         mailService.sendOtpEmail(request.getEmail(), otp);
@@ -63,31 +56,14 @@ public class SignUpController {
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpRequestDTO request) {
-        String cachedOtp = otpCache.get(request.getEmail());
+        boolean isOtpRight = signUpService.verifyOtp(request);
 
-        if (cachedOtp != null && cachedOtp.equals(request.getOtp())) {
-            // Encrypt password
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(request.getPassword());
-
-            // Save user
-            User user = new User();
-            user.setEmail(request.getEmail());
-            user.setPassword(encodedPassword);
-            userRepository.save(user);
-
-            // Remove OTP from cache
-            otpCache.remove(request.getEmail());
-
+        if (isOtpRight) {
             return ResponseEntity.ok("");
         } else {
             return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST));
         }
     }
 
-    private String generateOtp() {
-        Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
-        return String.valueOf(otp);
-    }
+
 }
