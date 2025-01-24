@@ -34,6 +34,8 @@ public class SignUpController {
     @PostMapping
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
 
+        //check if role is written correctly
+        signUpService.isRoleCorrect(request.getRole());
         //check if mail not already used in database
         signUpService.isEmailExist(request.getEmail());
         //password is good

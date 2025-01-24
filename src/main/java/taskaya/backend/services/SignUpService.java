@@ -4,8 +4,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.signup.EmailAlreadyUsedException;
 import taskaya.backend.exceptions.signup.WeakPasswordException;
+import taskaya.backend.exceptions.signup.WrongRoleException;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.utility.OTP;
 
@@ -21,6 +24,13 @@ public class SignUpService {
     UserRepository userRepository;
 
     private Map<String, OTP> otpCache = new HashMap<>();
+
+    public void isRoleCorrect(String role){
+        if(!role.equalsIgnoreCase("client")&&!role.equalsIgnoreCase("freelancer")){
+            throw new WrongRoleException("Please enter either client or freelancer as role.");
+        }
+    }
+
 
 
     public void isEmailExist(String email){
@@ -62,7 +72,7 @@ public class SignUpService {
         return otpCode;
     }
 
-    public boolean verifyOtp (VerifyOtpRequestDTO request){
+    public boolean verifyOtp (VerifyOtpRequestDTO request)throws WrongRoleException{
         String cachedOtp = otpCache.get(request.getEmail()).getOtp();
 
         if (cachedOtp != null && cachedOtp.equals(request.getOtp())) {
@@ -72,9 +82,26 @@ public class SignUpService {
 
             // Save user
             User user = new User();
+            user.setUsername(request.getUsername());
             user.setEmail(request.getEmail());
             user.setPassword(encodedPassword);
-            userRepository.save(user);
+
+
+            if(request.getRole().equalsIgnoreCase("client")){
+                user.setRole(User.Role.CLIENT);
+                Client client = new Client();
+                client.setId(user.getId());
+                client.setUser(user);
+                userRepository.save(user);
+            } else if (request.getRole().equalsIgnoreCase("freelancer")) {
+                user.setRole(User.Role.FREELANCER);
+                Freelancer freelancer = new Freelancer();
+                freelancer.setId(user.getId());
+                freelancer.setUser(user);
+                userRepository.save(user);
+            }else{
+                throw new WrongRoleException("Please enter either client or freelancer as role.");
+            }
 
             // Remove OTP from cache
             otpCache.remove(request.getEmail());
@@ -88,5 +115,15 @@ public class SignUpService {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
         return String.valueOf(otp);
+    }
+
+    public void cleanHashMap(){
+        long currentTime = System.currentTimeMillis();
+        for (String key : otpCache.keySet()) {
+            long time = currentTime-otpCache.get(key).getTimestamp();
+            if(time>= 300000){
+                otpCache.remove(key);
+            }
+        }
     }
 }
