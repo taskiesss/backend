@@ -36,6 +36,8 @@ public class SignUpController {
 
         //check if role is written correctly
         signUpService.isRoleCorrect(request.getRole());
+        //check if username already exists
+        signUpService.isUsernameExist(request.getUsername());
         //check if mail not already used in database
         signUpService.isEmailExist(request.getEmail());
         //password is good

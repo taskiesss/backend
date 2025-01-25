@@ -7,6 +7,7 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.signup.EmailAlreadyUsedException;
+import taskaya.backend.exceptions.signup.UsernameAlreadyUsedException;
 import taskaya.backend.exceptions.signup.WeakPasswordException;
 import taskaya.backend.exceptions.signup.WrongRoleException;
 import taskaya.backend.repository.UserRepository;
@@ -31,7 +32,10 @@ public class SignUpService {
         }
     }
 
-
+    public void isUsernameExist(String username) {
+        if(userRepository.existsByUsername(username))
+            throw new UsernameAlreadyUsedException("this username already exists ");
+    }
 
     public void isEmailExist(String email){
         if(userRepository.existsByEmail(email))
@@ -126,4 +130,6 @@ public class SignUpService {
             }
         }
     }
+
+
 }

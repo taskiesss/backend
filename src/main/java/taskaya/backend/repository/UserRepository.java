@@ -7,4 +7,5 @@ import taskaya.backend.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 }

@@ -11,15 +11,10 @@ import taskaya.backend.exceptions.error_responses.GeneralErrorResponse;
 public class SignUpExceptionHandler {
 
 
-    @ExceptionHandler({WeakPasswordException.class, EmailAlreadyUsedException.class, WrongRoleException.class})
+    @ExceptionHandler({WeakPasswordException.class, EmailAlreadyUsedException.class, WrongRoleException.class, UsernameAlreadyUsedException.class})
     public ResponseEntity<?> weakPasswordHandler(RuntimeException e){
         GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.badRequest().body(errorResponse);
     }
-    public ResponseEntity<?> wrongRoleHandler(RuntimeException e){
-        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
 
 }
