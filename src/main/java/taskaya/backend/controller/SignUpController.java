@@ -15,6 +15,7 @@ import taskaya.backend.exceptions.error_responses.GeneralErrorResponse;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.services.MailService;
 import taskaya.backend.services.SignUpService;
+import taskaya.backend.utility.OTP;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class SignUpController {
         signUpService.isStrongPassword(request.getPassword());
 
 
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("send-otp")
@@ -55,7 +56,7 @@ public class SignUpController {
         // Send OTP to email
         mailService.sendOtpEmail(request.getEmail(), otp);
 
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/verify")
@@ -63,7 +64,7 @@ public class SignUpController {
         boolean isOtpRight = signUpService.verifyOtp(request);
 
         if (isOtpRight) {
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST,"invalid_otp"));
         }
