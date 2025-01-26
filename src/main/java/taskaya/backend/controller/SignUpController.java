@@ -31,7 +31,7 @@ public class SignUpController {
     @Autowired
     private SignUpService signUpService;
 
-    @PostMapping("/create-account")
+    @PostMapping()
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
 
         //check if role is written correctly
