@@ -31,7 +31,7 @@ public class SignUpController {
     @Autowired
     private SignUpService signUpService;
 
-    @PostMapping
+    @PostMapping("/create-account")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
 
         //check if role is written correctly
@@ -65,7 +65,7 @@ public class SignUpController {
         if (isOtpRight) {
             return ResponseEntity.ok("");
         } else {
-            return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST));
+            return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST,"invalid_otp"));
         }
     }
 

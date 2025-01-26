@@ -10,10 +10,12 @@ public class GeneralErrorResponse {
     HttpStatus status;
     String message;
     Long timStamp ;
+    String Type ;
 
-    public GeneralErrorResponse(String message ,HttpStatus status ){
+    public GeneralErrorResponse(String message ,HttpStatus status, String type ){
         this.status = status;
         this.message=message;
         this.timStamp = System.currentTimeMillis();
+        this.Type=type;
     }
 }
