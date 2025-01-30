@@ -51,7 +51,7 @@ public class SignUpController {
     @PostMapping("send-otp")
     public ResponseEntity<?> getOtp(@RequestBody SignUpRequestDTO request) throws MessagingException {
         // Generate OTP
-        String otp = signUpService.createOtp(request.getEmail());
+        String otp = signUpService.createOtp(request);
 
         // Send OTP to email
         mailService.sendOtpEmail(request.getEmail(), otp);

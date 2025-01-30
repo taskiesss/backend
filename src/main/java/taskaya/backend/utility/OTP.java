@@ -4,8 +4,12 @@ import lombok.Data;
 
 @Data
 public class OTP {
-    String otp ;
-    Long timestamp;
+    private String otp ;
+    private String email;
+    private String username;
+    private String password ;
+    private String role;
+    private Long timestamp;
 
     public OTP(String otp){
         this.otp = otp;

@@ -2,15 +2,16 @@ package taskaya.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.signup.SignUpRequestDTO;
 import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
 import taskaya.backend.entity.User;
-import taskaya.backend.entity.client.Client;
-import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.signup.EmailAlreadyUsedException;
 import taskaya.backend.exceptions.signup.UsernameAlreadyUsedException;
 import taskaya.backend.exceptions.signup.WeakPasswordException;
 import taskaya.backend.exceptions.signup.WrongRoleException;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.services.client.ClientService;
+import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.utility.OTP;
 
 import java.util.HashMap;
@@ -23,6 +24,10 @@ public class SignUpService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ClientService clientService;
+    @Autowired
+    FreelancerService freelancerService;
 
     private Map<String, OTP> otpCache = new HashMap<>();
 
@@ -70,16 +75,25 @@ public class SignUpService {
             throw  new WeakPasswordException("your password is weak ,enter a strong password");
     }
 
-    public String createOtp(String email){
+    public String createOtp(SignUpRequestDTO signUpRequestDTO){
         String otpCode = generateOtp();
-        otpCache.put(email,new OTP(otpCode));
+        OTP otpObject = new OTP(otpCode);
+        otpObject.setEmail(signUpRequestDTO.getEmail());
+        otpObject.setUsername(signUpRequestDTO.getUsername());
+        otpObject.setPassword(signUpRequestDTO.getPassword());
+
+
+        otpCache.put(signUpRequestDTO.getEmail(),otpObject);
         return otpCode;
     }
 
     public boolean verifyOtp (VerifyOtpRequestDTO request)throws WrongRoleException{
-        String cachedOtp = otpCache.get(request.getEmail()).getOtp();
+        OTP cachedOtp = otpCache.get(request.getEmail());
 
-        if (cachedOtp != null && cachedOtp.equals(request.getOtp())) {
+        if (cachedOtp != null &&
+                cachedOtp.getOtp().equals(request.getOtp()) &&
+                cachedOtp.getUsername().equals(request.getUsername())&&
+                cachedOtp.getPassword().equals(request.getPassword())) {
             // Encrypt password
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -92,21 +106,12 @@ public class SignUpService {
 
 
             if(request.getRole().equalsIgnoreCase("client")){
-                user.setRole(User.Role.CLIENT);
-                Client client = new Client();
-                client.setId(user.getId());
-                client.setUser(user);
-                userRepository.save(user);
+                clientService.createClient(user);
             } else if (request.getRole().equalsIgnoreCase("freelancer")) {
-                user.setRole(User.Role.FREELANCER);
-                Freelancer freelancer = new Freelancer();
-                freelancer.setId(user.getId());
-                freelancer.setUser(user);
-                userRepository.save(user);
+                freelancerService.createFreelancer(user);
             }else{
                 throw new WrongRoleException("Please enter either client or freelancer as role.");
             }
-
             // Remove OTP from cache
             otpCache.remove(request.getEmail());
 

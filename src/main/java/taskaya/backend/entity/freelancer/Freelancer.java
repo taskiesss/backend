@@ -24,7 +24,7 @@ public class Freelancer {
     @Id
     private UUID id; // Same UUID as the User entity
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true)
     @MapsId
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user; // References the User entity

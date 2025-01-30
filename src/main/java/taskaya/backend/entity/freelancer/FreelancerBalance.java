@@ -19,14 +19,14 @@ public class FreelancerBalance {
     private Integer id;
 
     @Column(nullable = false)
-    private Double available;
+    private Double available=0.0;
 
     @Column(name = "work_in_progress", nullable = false)
-    private Double workInProgress;
+    private Double workInProgress=0.0;
 
     @Column(nullable = false)
-    private Double pending;
+    private Double pending=0.0;
 
     @Column(name = "in_review", nullable = false)
-    private Double inReview;
+    private Double inReview=0.0;
 }

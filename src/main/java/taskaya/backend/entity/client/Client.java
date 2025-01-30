@@ -24,7 +24,7 @@ public class Client {
     @Id
     private UUID id; // Same UUID as the User entity
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true)
     @MapsId
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user; // References the User entity
@@ -55,7 +55,7 @@ public class Client {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_balance_id", referencedColumnName = "id")
-    private ClientBalance clientBalance;
+    private ClientBalance balance;
 
     @ManyToMany
     @JoinTable(

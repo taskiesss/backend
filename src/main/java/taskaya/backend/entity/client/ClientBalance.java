@@ -17,8 +17,8 @@ public class ClientBalance {
     private Integer id;
 
     @Column(nullable = false)
-    private Double available;
+    private Double available=0.0;
 
     @Column(nullable = false)
-    private Double restricted;
+    private Double restricted=0.0;
 }
