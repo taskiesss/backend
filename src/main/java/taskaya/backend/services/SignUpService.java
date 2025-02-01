@@ -1,6 +1,7 @@
 package taskaya.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.signup.SignUpRequestDTO;
 import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
@@ -28,6 +29,9 @@ public class SignUpService {
     ClientService clientService;
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private Map<String, OTP> otpCache = new HashMap<>();
 
@@ -94,15 +98,15 @@ public class SignUpService {
                 cachedOtp.getOtp().equals(request.getOtp()) &&
                 cachedOtp.getUsername().equals(request.getUsername())&&
                 cachedOtp.getPassword().equals(request.getPassword())) {
-            // Encrypt password
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(request.getPassword());
+//            // Encrypt password
+//            BCryptPasswordEncoder passworddEncoder = new BCryptPasswordEncoder();
+//            String encodedPassword = passworddEncoder.encode(request.getPassword());
 
             // Save user
             User user = new User();
             user.setUsername(request.getUsername());
             user.setEmail(request.getEmail());
-            user.setPassword(encodedPassword);
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 
             if(request.getRole().equalsIgnoreCase("client")){

@@ -123,12 +123,12 @@ public class BackendApplication {
 
 
 	private void freelancerSeed(){
-		User freelancerUser1 = User.builder()
-				.email("martin619100@gmail.com")
-				.role(User.Role.FREELANCER)
-				.username("freelancer01")
-				.password(new BCryptPasswordEncoder().encode("Freelancer1@123"))
-				.build();
+//		User freelancerUser1 = User.builder()
+//				.email("martin619100@gmail.com")
+//				.role(User.Role.FREELANCER)
+//				.username("freelancer01")
+//				.password(new BCryptPasswordEncoder().encode("Freelancer1@123"))
+//				.build();
 
 		User freelancerUser2 = User.builder()
 				.email("minahany910@gmail.com")
@@ -145,7 +145,7 @@ public class BackendApplication {
 				.build();
 
 
-		freelancerService.createFreelancer(freelancerUser1);
+//		freelancerService.createFreelancer(freelancerUser1);
 		freelancerService.createFreelancer(freelancerUser2);
 		freelancerService.createFreelancer(freelancerUser3);
 

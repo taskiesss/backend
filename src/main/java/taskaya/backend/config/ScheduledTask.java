@@ -1,5 +1,6 @@
 package taskaya.backend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,4 +17,6 @@ public class ScheduledTask {
     public void executeTask() {
         signUpService.cleanHashMap();
     }
+
+
 }

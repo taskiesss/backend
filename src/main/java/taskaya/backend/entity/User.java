@@ -2,11 +2,13 @@ package taskaya.backend.entity;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -37,17 +39,17 @@ public class User implements UserDetails {
     // UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Adjust if roles/authorities are implemented
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     public String getUsername() {
         return this.username;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
