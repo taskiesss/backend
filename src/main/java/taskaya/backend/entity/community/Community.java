@@ -3,6 +3,7 @@ package taskaya.backend.entity.community;
 import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.Skill;
+import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.WorkerEntity;
 
@@ -54,6 +55,11 @@ public class Community {
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityMember> communityMembers = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExperienceLevel experienceLevel = ExperienceLevel.entry_level;
+
 
     @ManyToMany
     @JoinTable(

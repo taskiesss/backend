@@ -3,6 +3,8 @@ package taskaya.backend.entity.freelancer;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.entity.User;
+import taskaya.backend.entity.enums.ExperienceLevel;
 
 @Getter
 @Setter
@@ -38,4 +40,9 @@ public class FreelancerBusiness {
         if(!(rate.doubleValue()>5 || rate.doubleValue()<0))
             this.rate = rate;
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExperienceLevel experienceLevel=ExperienceLevel.entry_level;
+
 }

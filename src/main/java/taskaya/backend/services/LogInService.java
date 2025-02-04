@@ -11,8 +11,8 @@ import taskaya.backend.DTO.login.AuthenticationResponseDTO;
 import taskaya.backend.DTO.login.LoginDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
-import taskaya.backend.exceptions.login.EmailNotFoundException;
 import taskaya.backend.exceptions.login.WrongPasswordException;
+import taskaya.backend.exceptions.login.WrongUsernameOrEmail;
 import taskaya.backend.repository.UserRepository;
 
 @Service
@@ -32,8 +32,13 @@ public class LogInService {
 
     public AuthenticationResponseDTO login (LoginDTO requestDTO){
         //fetch el user
-        User user  = userRepository.findByEmail(requestDTO.getEmail())
-                .orElseThrow(()->new EmailNotFoundException("mail is not found"));
+        User user  = userRepository.findByEmail(requestDTO.getEmail()).get();
+        if (user == null){
+            user = userRepository.findByUsername(requestDTO.getEmail())
+                    .orElseThrow(()->new WrongUsernameOrEmail("username or email does not exist"));
+        }
+
+
 
         //validate password
         if(passwordEncoder.matches(requestDTO.getPassword(),user.getPassword())){

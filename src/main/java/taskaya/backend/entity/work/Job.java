@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.ExperienceLevel;
 
 import java.util.ArrayList;
 
@@ -53,6 +54,10 @@ public class Job {
     @OneToOne
     @JoinColumn(name = "contract_id")
     private Contract contract;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false )
+    private ExperienceLevel experienceLevel=ExperienceLevel.entry_level;
 
     @ManyToMany
     @JoinTable(

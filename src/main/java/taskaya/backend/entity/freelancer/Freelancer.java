@@ -73,6 +73,8 @@ public class Freelancer {
     @Column(name = "education", length = 500)
     private String education;
 
+
+
     @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MsgBox> msgBoxes;
     @ManyToMany
@@ -81,5 +83,6 @@ public class Freelancer {
             joinColumns = @JoinColumn(name = "freelancer_id"),
             inverseJoinColumns = @JoinColumn(name = "client_id")
     )
+
     private Set<Client> savedClients;
 }
