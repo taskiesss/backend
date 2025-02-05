@@ -16,7 +16,7 @@ public class FreelancerService {
     FreelancerRepository freelancerRepository;
 
     @Transactional
-    public void createFreelancer(User user){
+    public Freelancer createFreelancer(User user){
 
         user.setRole(User.Role.FREELANCER);
 
@@ -32,5 +32,6 @@ public class FreelancerService {
                 .freelancerBusiness(new FreelancerBusiness())
                 .build();
         freelancerRepository.save(freelancer);
+        return freelancer;
     }
 }

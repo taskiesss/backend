@@ -15,7 +15,7 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     @Transactional
-    public void createClient(User user){
+    public Client createClient(User user){
         user.setRole(User.Role.CLIENT);
         Client client = Client.builder()
                 .id(user.getId())
@@ -25,6 +25,7 @@ public class ClientService {
                 .build();
 
         clientRepository.save(client);
+        return client;
 
     }
 

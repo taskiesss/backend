@@ -11,11 +11,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.repository.SkillRepository;
+import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,9 +40,13 @@ public class BackendApplication {
 	@Autowired
 	FreelancerService freelancerService;
 	@Autowired
+	FreelancerRepository freelancerRepository;
+	@Autowired
 	ClientService clientService;
 	@Autowired
 	SkillRepository skillRepository;
+	@Autowired
+	ClientRepository clientRepository;
 
 	@Override
 	@Transactional
@@ -123,12 +133,18 @@ public class BackendApplication {
 
 
 	private void freelancerSeed(){
-//		User freelancerUser1 = User.builder()
-//				.email("martin619100@gmail.com")
-//				.role(User.Role.FREELANCER)
-//				.username("freelancer01")
-//				.password(new BCryptPasswordEncoder().encode("Freelancer1@123"))
-//				.build();
+
+		User freelancerUser1 = User.builder()
+				.email("martin619100@gmail.com")
+				.role(User.Role.FREELANCER)
+				.username("freelancer01")
+				.password(new BCryptPasswordEncoder().encode("Freelancer1@123"))
+				.build();
+
+
+		List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+		List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
 
 		User freelancerUser2 = User.builder()
 				.email("minahany910@gmail.com")
@@ -137,17 +153,32 @@ public class BackendApplication {
 				.password(new BCryptPasswordEncoder().encode("Freelancer2@123"))
 				.build();
 
+		List<String> skillNames2 = List.of("AWS", "Google Cloud", "Azure");
+		List<Skill> skills2 = skillRepository.findByNameIn(skillNames2);
+
+
 		User freelancerUser3 = User.builder()
 				.email("mauricelara02@gmail.com")
 				.role(User.Role.FREELANCER)
 				.username("freelancer03")
 				.password(new BCryptPasswordEncoder().encode("Freelancer3@123"))
 				.build();
+		List<String> skillNames3 = List.of("Machine Learning", "Deep Learning", "Natural Language Processing (NLP)");
+		List<Skill> skills3 = skillRepository.findByNameIn(skillNames3);
+
+		Freelancer freelancer1=freelancerService.createFreelancer(freelancerUser1);
+		Freelancer freelancer2=freelancerService.createFreelancer(freelancerUser2);
+		Freelancer freelancer3=freelancerService.createFreelancer(freelancerUser3);
+
+		freelancer1.setSkills(new HashSet<>(skills1));
+		freelancerRepository.save(freelancer1);
 
 
-//		freelancerService.createFreelancer(freelancerUser1);
-		freelancerService.createFreelancer(freelancerUser2);
-		freelancerService.createFreelancer(freelancerUser3);
+		freelancer2.setSkills(new HashSet<>(skills2));
+		freelancerRepository.save(freelancer2);
+
+		freelancer3.setSkills(new HashSet<>(skills3));
+		freelancerRepository.save(freelancer3);
 
 
 	}
@@ -163,12 +194,18 @@ public class BackendApplication {
 				.password(new BCryptPasswordEncoder().encode("client1@123"))
 				.build();
 
+		List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security");
+		List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
 		User clientUser2 = User.builder()
 				.email("2001480@gmail.com")
 				.role(User.Role.CLIENT)
 				.username("client02")
 				.password(new BCryptPasswordEncoder().encode("client2@123"))
 				.build();
+
+		List<String> skillNames2 = List.of("AWS", "Google Cloud");
+		List<Skill> skills2 = skillRepository.findByNameIn(skillNames2);
 
 		User clientUser3 = User.builder()
 				.email("2001024@gmail.com")
@@ -177,11 +214,24 @@ public class BackendApplication {
 				.password(new BCryptPasswordEncoder().encode("client3@123"))
 				.build();
 
+		List<String> skillNames3 = List.of("Machine Learning", "Natural Language Processing (NLP)","kjhgfd");
+		List<Skill> skills3 = skillRepository.findByNameIn(skillNames3);
 
-		clientService.createClient(clientUser1);
-		clientService.createClient(clientUser2);
-		clientService.createClient(clientUser3);
 
+
+		Client client1 = clientService.createClient(clientUser1);
+		Client client2 = clientService.createClient(clientUser2);
+		Client client3 = clientService.createClient(clientUser3);
+
+		client1.setSkills(new HashSet<>(skills1));
+		clientRepository.save(client1);
+
+
+		client2.setSkills(new HashSet<>(skills2));
+		clientRepository.save(client2);
+
+		client3.setSkills(new HashSet<>(skills3));
+		clientRepository.save(client3);
 
 	}
 

@@ -36,8 +36,8 @@ public class FreelancerBusiness {
         BUSY, AVAILABLE
     }
 
-    public void setRate(Integer rate) {
-        if(!(rate.doubleValue()>5 || rate.doubleValue()<0))
+    public void setRate(float rate) {
+        if(!(rate>5 || rate<0))
             this.rate = rate;
     }
 
