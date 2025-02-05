@@ -18,8 +18,6 @@ public class ClientBusiness {
     @Column(name = "completed_jobs", nullable = false)
     private Integer completedJobs=0;
 
-    @Column(nullable = false)
-    private float rate = 0F; // Should be validated to [1-5] in logic
 
     @Column(name = "total_spent", nullable = false)
     private Double totalSpent=0.0;

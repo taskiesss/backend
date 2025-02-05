@@ -6,6 +6,7 @@ import lombok.*;
 import taskaya.backend.entity.*;
 import taskaya.backend.entity.chat.MsgBox;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.work.WorkerEntity;
 
 import java.util.List;
@@ -24,10 +25,25 @@ public class Freelancer {
     @Id
     private UUID id; // Same UUID as the User entity
 
+    private String title;
+
     @OneToOne(cascade = CascadeType.ALL , orphanRemoval = true)
     @MapsId
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user; // References the User entity
+
+    @Column(name = "price_per_hour", nullable = false)
+    private Double pricePerHour=0.0;
+
+    @Column(nullable = false)
+    private float rate =0;
+
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExperienceLevel experienceLevel = ExperienceLevel.entry_level;
+
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "worker_entity_id", referencedColumnName = "id")
@@ -56,8 +72,6 @@ public class Freelancer {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    private String title;
-
     @Column(length = 500) // Assuming a longer description
     private String description;
 
@@ -85,4 +99,10 @@ public class Freelancer {
     )
 
     private Set<Client> savedClients;
+
+
+    public void setRate(float rate) {
+        if(!(rate>5 || rate<0))
+            this.rate = rate;
+    }
 }

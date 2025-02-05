@@ -21,8 +21,8 @@ public class FreelancerSearchResponseMapper {
                 .title(freelancer.getTitle())
                 .description(freelancer.getDescription())
                 .skills(freelancer.getSkills().stream().toList())
-                .rate(freelancer.getFreelancerBusiness().getRate())
-                .hourlySalary(freelancer.getFreelancerBusiness().getPricePerHour())
+                .rate(freelancer.getRate())
+                .hourlySalary(freelancer.getPricePerHour())
                 .build();
     }
 

@@ -32,6 +32,10 @@ public class Client {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    @Column(nullable = false)
+    private float rate = 0F; // Should be validated to [1-5] in logic
+
+
     @Column(length = 500)
     private String description;
 
