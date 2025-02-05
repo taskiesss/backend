@@ -11,10 +11,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.work.Job;
 import taskaya.backend.repository.SkillRepository;
+import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +43,12 @@ public class BackendApplication {
 	ClientService clientService;
 	@Autowired
 	SkillRepository skillRepository;
+	@Autowired
+	ClientRepository clientRepository;
+	@Autowired
+	UserRepository userRepository;
+	@Autowired
+	JobRepository jobRepository;
 
 	@Override
 	@Transactional
@@ -44,8 +56,44 @@ public class BackendApplication {
 		skillSeed();
 		freelancerSeed();
 		clientSeed();
+		jobSeed();
 
 	}
+
+	private void jobSeed() {
+		User user1 = userRepository.findByUsername("client01").get();
+		Client client1 = clientRepository.findByUser(user1).get();
+
+		Job job1 = Job.builder()
+				.title("job1")
+				.client(client1)
+				.status(Job.JobStatus.NOT_ASSIGNED)
+				.description("this is the first job")
+				.expectedCostPerHour(40)
+				.build();
+
+		List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+		List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
+		User user2 = userRepository.findByUsername("client02").get();
+		Client client2 = clientRepository.findByUser(user2).get();  // Fixed line
+
+		Job job2 = Job.builder()
+				.title("job2")
+				.client(client2)
+				.status(Job.JobStatus.NOT_ASSIGNED)
+				.description("this is the second job")
+				.expectedCostPerHour(20)
+				.build();
+
+		List<String> skillNames2 = List.of("AWS", "Google Cloud", "Azure");
+		List<Skill> skills2 = skillRepository.findByNameIn(skillNames2);
+
+		job1.setSkills(new HashSet<>(skills1));
+		job2.setSkills(new HashSet<>(skills2));
+		jobRepository.saveAll(List.of(job1, job2));
+	}
+
 
 	private void skillSeed() {
 		List<String> skills = List.of(
