@@ -29,7 +29,8 @@ public class SecurityConfig {
                         ,"/api/signup/**",
                         "/api/demo/security/**",
                         "/api/login",
-                        "freelancers/search")
+                        "freelancers/search",
+                        "/api/jobs/search")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
