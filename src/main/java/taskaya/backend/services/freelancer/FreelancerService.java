@@ -82,7 +82,7 @@ public class FreelancerService {
         Page<Freelancer> freelancerPage = freelancerRepository.findAll(specification, pageable);
 
         // Convert to DTO Page
-        return freelancerSearchResponseMapper.toDTOPage(freelancerPage);
+        return FreelancerSearchResponseMapper.toDTOPage(freelancerPage);
     }
 
     @Transactional

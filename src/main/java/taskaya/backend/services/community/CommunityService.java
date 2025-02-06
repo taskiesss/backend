@@ -9,14 +9,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.mappers.CommunitySearchResponseMapper;
-import taskaya.backend.DTO.search.CommunitySearchRequestDTO;
-import taskaya.backend.DTO.search.CommunitySearchResponseDTO;
+import taskaya.backend.DTO.search.communities.CommunitySearchRequestDTO;
+import taskaya.backend.DTO.search.communities.CommunitySearchResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.specifications.CommunitySpecification;
-
-import java.util.UUID;
 
 @Service
 public class CommunityService {
@@ -46,7 +44,8 @@ public class CommunityService {
                 requestDTO.getExperienceLevel(),
                 requestDTO.getHourlyRateMin(),
                 requestDTO.getHourlyRateMax(),
-                requestDTO.getRate()
+                requestDTO.getRate(),
+                requestDTO.getIsFull()
         );
 
         Sort sort;

@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.mappers.JobSearchResponseMapper;
 import taskaya.backend.DTO.search.jobs.JobSearchRequestDTO;
+import taskaya.backend.DTO.search.jobs.JobSearchResponseDTO;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.repository.work.JobRepository;
@@ -21,7 +23,7 @@ public class JobService {
 
     private final JobRepository jobRepository;
 
-    public Page<Job> searchJobs(JobSearchRequestDTO request) {
+    public Page<JobSearchResponseDTO> searchJobs(JobSearchRequestDTO request) {
         Specification<Job> spec = JobSpecification.filterJobs(request);
 
         // Sorting logic
@@ -34,7 +36,9 @@ public class JobService {
         // Pagination logic
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
 
-        return jobRepository.findAllByAssignedToIsNull(spec, pageable);
+        Page <Job> jobPage = jobRepository.findAllByAssignedToIsNull(spec, pageable);
+
+        return JobSearchResponseMapper.toDTOPage(jobPage);
     }
 }
 

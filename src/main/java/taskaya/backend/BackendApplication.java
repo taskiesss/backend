@@ -5,15 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.mappers.CommunitySearchResponseMapper;
-import taskaya.backend.DTO.search.CommunitySearchResponseDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.community.Community;
@@ -38,8 +35,6 @@ import taskaya.backend.services.freelancer.FreelancerService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -162,6 +157,7 @@ public class BackendApplication {
 				.client(client2)
 				.status(Job.JobStatus.NOT_ASSIGNED)
 				.description("this is the second job")
+				.projectLength(ProjectLength._1_to_3_months)
 				.expectedCostPerHour(20)
 				.build();
 

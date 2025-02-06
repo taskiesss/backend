@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.freelancer.Freelancer;
 
 import java.util.ArrayList;
@@ -14,19 +15,19 @@ import java.util.List;
 @Component
 public class FreelancerSearchResponseMapper {
 
-    public FreelancerSearchResponseDTO toDTO(Freelancer freelancer){
+    public static FreelancerSearchResponseDTO toDTO(Freelancer freelancer){
         return FreelancerSearchResponseDTO.builder()
                 .id(freelancer.getId())
                 .name(freelancer.getUser().getUsername())
                 .title(freelancer.getTitle())
                 .description(freelancer.getDescription())
-                .skills(freelancer.getSkills().stream().toList())
+                .skills(freelancer.getSkills().stream().map(Skill::getName).toList())
                 .rate(freelancer.getRate())
                 .hourlySalary(freelancer.getPricePerHour())
                 .build();
     }
 
-    public List<FreelancerSearchResponseDTO> toDTOList(List<Freelancer> freelancers){
+    public static List<FreelancerSearchResponseDTO> toDTOList(List<Freelancer> freelancers){
 
         List<FreelancerSearchResponseDTO> result = new LinkedList<>();
         for (Freelancer freelancer :freelancers){
@@ -35,7 +36,7 @@ public class FreelancerSearchResponseMapper {
         return result;
     }
 
-    public Page<FreelancerSearchResponseDTO> toDTOPage(Page<Freelancer> freelancers){
+    public static Page<FreelancerSearchResponseDTO> toDTOPage(Page<Freelancer> freelancers){
         return new PageImpl<>(toDTOList(freelancers.getContent()), freelancers.getPageable(), freelancers.getTotalElements());
     }
 

@@ -20,4 +20,9 @@ public class Skill {
     public Skill(String skillName){
         name=skillName;
     }
+
+    @Override
+    public String toString(){
+        return this.name;
+    }
 }

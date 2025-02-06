@@ -14,7 +14,7 @@ public class CommunitySpecification {
     public static Specification<Community> searchCommunities(String search, List<Skill> skills,
                                                              ExperienceLevel experienceLevel,
                                                              float hourlyRateMin, float hourlyRateMax,
-                                                             float rate) {
+                                                             float rate , Boolean isFull) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
@@ -55,6 +55,12 @@ public class CommunitySpecification {
             if (rate > 0) {
                 predicate = criteriaBuilder.and(predicate,
                         criteriaBuilder.greaterThanOrEqualTo(root.get("rate"), rate));
+            }
+
+            //search by is full
+            if (isFull != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(root.get("isFull"), isFull));
             }
 
             return predicate;

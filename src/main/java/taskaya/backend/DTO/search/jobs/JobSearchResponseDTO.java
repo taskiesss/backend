@@ -20,7 +20,7 @@ public class JobSearchResponseDTO {
     private String title;
     private String description;
     private ExperienceLevel experienceLevel;
-    private List<Skill> skills;
+    private List<String> skills;
     private double pricePerHour;
     private Date postedDate;
     private float rate;

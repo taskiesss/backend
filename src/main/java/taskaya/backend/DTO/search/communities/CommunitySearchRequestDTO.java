@@ -1,4 +1,4 @@
-package taskaya.backend.DTO.search;
+package taskaya.backend.DTO.search.communities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +20,11 @@ public class CommunitySearchRequestDTO {
     private ExperienceLevel experienceLevel;
     private float hourlyRateMin;
     private float hourlyRateMax;
+    private Boolean isFull;
     private float rate;
     private Integer page;
     private Integer size;
     private String sortBy;
     private SortDirection sortDirection;
+
 }

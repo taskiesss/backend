@@ -24,6 +24,14 @@ public class Community {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
 
+    @Column(name = "community_name", nullable = false, length = 100)
+    private String communityName;
+
+
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
+
     @OneToOne
     @JoinColumn(name = "worker_entity_id", nullable = false)
     private WorkerEntity workerEntity;
@@ -32,8 +40,7 @@ public class Community {
     @JoinColumn(name = "admin_id", nullable = false)
     private Freelancer admin;
 
-    @Column(name = "community_name", nullable = false, length = 100)
-    private String communityName;
+
 
     @Column(name = "average_hours_per_week", nullable = false)
     private float avrgHoursPerWeek;
@@ -52,7 +59,7 @@ public class Community {
     private String description;
 
     @Column(name = "is_full", nullable = false)
-    private boolean isFull;
+    private Boolean isFull;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityMember> communityMembers = new ArrayList<>();

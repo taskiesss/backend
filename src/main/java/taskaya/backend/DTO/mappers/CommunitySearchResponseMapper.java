@@ -3,12 +3,12 @@ package taskaya.backend.DTO.mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.search.CommunitySearchResponseDTO;
+import taskaya.backend.DTO.search.communities.CommunitySearchResponseDTO;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.community.Community;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CommunitySearchResponseMapper {
@@ -18,10 +18,12 @@ public class CommunitySearchResponseMapper {
                 .id(community.getUuid())
                 .name(community.getCommunityName())
                 .description(community.getDescription())
-                .skills(community.getSkills().stream().toList())
+                .skills(community.getSkills().stream().map(Skill::getName).toList())
                 .memberCount(community.getCommunityMembers().size())
                 .rate(community.getRate())
                 .pricePerHour(community.getPricePerHour())
+                .profilePicture(community.getProfilePicture())
+                .isFull(community.getIsFull())
                 .build();
     }
 

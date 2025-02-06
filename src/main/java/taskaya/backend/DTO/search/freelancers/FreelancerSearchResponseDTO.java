@@ -14,8 +14,9 @@ public class FreelancerSearchResponseDTO {
     String name;
     String title ;
     String description;
-    List<Skill>skills;
+    List<String>skills;
     float rate ;
     double hourlySalary;
+    String profilePicture;
 
 }
