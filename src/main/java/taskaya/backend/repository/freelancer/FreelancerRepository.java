@@ -5,8 +5,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import taskaya.backend.entity.freelancer.Freelancer;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> , JpaSpecificationExecutor<Freelancer> {
+
+
+    public Optional<Freelancer> findFreelancerById(UUID uuid);
 }

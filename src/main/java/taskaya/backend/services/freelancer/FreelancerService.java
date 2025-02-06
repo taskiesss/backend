@@ -21,6 +21,8 @@ import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
 
+import java.util.UUID;
+
 @Service
 public class FreelancerService {
     @Autowired
@@ -81,6 +83,16 @@ public class FreelancerService {
 
         // Convert to DTO Page
         return freelancerSearchResponseMapper.toDTOPage(freelancerPage);
+    }
+
+    @Transactional
+    public void saveFreelancer(Freelancer freelancer){
+        freelancerRepository.save(freelancer);
+    }
+
+    public Freelancer getById(UUID uuid){
+        return freelancerRepository.findFreelancerById(uuid)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found with ID: " + uuid));
     }
 }
 
