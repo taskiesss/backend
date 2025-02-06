@@ -15,12 +15,14 @@ import taskaya.backend.entity.client.Client;
 
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
+import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
 import taskaya.backend.repository.work.JobRepository;
+import taskaya.backend.repository.work.WorkerEntityRepository;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
@@ -52,11 +54,12 @@ public class BackendApplication {
 	SkillRepository skillRepository;
 	@Autowired
 	ClientRepository clientRepository;
-
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
 	JobRepository jobRepository;
+	@Autowired
+	WorkerEntityRepository workerEntityRepository;
 
 	@Override
 	@Transactional
@@ -100,6 +103,14 @@ public class BackendApplication {
 		job1.setSkills(new HashSet<>(skills1));
 		job2.setSkills(new HashSet<>(skills2));
 		jobRepository.saveAll(List.of(job1, job2));
+
+		WorkerEntity worker2 = WorkerEntity.builder()
+				.type(WorkerEntity.WorkerType.FREELANCER)
+				.build();
+
+		workerEntityRepository.save(worker2);
+
+		job2.setAssignedTo(worker2);
 	}
 
 

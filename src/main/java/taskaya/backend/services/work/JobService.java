@@ -34,7 +34,7 @@ public class JobService {
         // Pagination logic
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
 
-        return jobRepository.findAll(spec, pageable);
+        return jobRepository.findAllByAssignedToIsNull(spec, pageable);
     }
 }
 
