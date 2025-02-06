@@ -10,6 +10,8 @@ import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
+import java.util.UUID;
+
 @Service
 public class FreelancerService {
     @Autowired
@@ -32,5 +34,15 @@ public class FreelancerService {
                 .freelancerBusiness(new FreelancerBusiness())
                 .build();
         freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void saveFreelancer(Freelancer freelancer){
+        freelancerRepository.save(freelancer);
+    }
+
+    public Freelancer getById(UUID uuid){
+        return freelancerRepository.findFreelancerById(uuid)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found with ID: " + uuid));
     }
 }

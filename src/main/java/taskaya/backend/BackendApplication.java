@@ -9,12 +9,23 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import taskaya.backend.DTO.mappers.CommunitySearchResponseMapper;
+import taskaya.backend.DTO.search.CommunitySearchResponseDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.community.Community;
+import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.enums.ExperienceLevel;
+import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.services.client.ClientService;
+import taskaya.backend.services.community.CommunityMemberService;
+import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,12 +49,70 @@ public class BackendApplication {
 	@Autowired
 	SkillRepository skillRepository;
 
+	@Autowired
+	CommunityService communityService;
+
+	@Autowired
+	CommunityMemberService communityMemberService;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
 		skillSeed();
 		freelancerSeed();
 		clientSeed();
+		seedCommunityAndCommunityMember();
+	}
+
+	private void seedCommunityAndCommunityMember(){
+		User user = User.builder()
+				.username("minahany")
+				.email("minahany@gmail.com")
+				.password("minah@765")
+				.role(User.Role.FREELANCER)
+				.build();
+
+		freelancerService.createFreelancer(user);
+
+		List<String> mySkills = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+		List<Skill> skills = skillRepository.findByNameIn(mySkills);
+
+
+		Community community = Community.builder()
+				.communityName("FirstCommunity")
+				.admin(freelancerService.getById(user.getId()))
+				.workerEntity(freelancerService.getById(user.getId()).getWorkerEntity())
+				.avrgHoursPerWeek(6)
+				.pricePerHour(35)
+				.status(Community.CommunityStatus.AVAILABLE)
+				.rate(3)
+				.skills(new HashSet<>(skills))
+				.description("This is the first Comm")
+				.isFull(false)
+				.experienceLevel(ExperienceLevel.entry_level)
+				.build();
+
+		if (community.getCommunityMembers() == null) {
+			community.setCommunityMembers(new ArrayList<>());
+		}
+
+		communityService.save(community);
+		community = communityService.getCommunityByName("FirstCommunity");
+
+		CommunityMember communityMember = CommunityMember.builder()
+				.community(community)
+				.positionName("firstAdmin")
+				.positionPercent(4)
+				.freelancer(freelancerService.getById(user.getId()))
+				.build();
+
+		communityMemberService.addMember(communityMember);
+		communityMember = communityMemberService.findById(1);
+		community.getCommunityMembers().add(communityMember);
+
+		communityService.save(community);
+
+		community = communityService.getCommunityByName("FirstCommunity");
 
 	}
 

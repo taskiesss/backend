@@ -1,2 +1,6 @@
-package taskaya.backend.entity.enums;public enum SortDirection {
+package taskaya.backend.entity.enums;
+
+public enum SortDirection {
+    ASC,
+    DESC
 }

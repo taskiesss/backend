@@ -9,6 +9,7 @@ import taskaya.backend.entity.work.WorkerEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -67,7 +68,7 @@ public class Community {
             joinColumns = @JoinColumn(name = "community_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
-    private List<Skill> skills = new ArrayList<>();
+    private Set<Skill> skills;
 
     public enum CommunityStatus {
         AVAILABLE,
