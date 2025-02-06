@@ -51,8 +51,8 @@ public class Job {
     @Column(name = "ended_at")
     private Date endedAt;
 
-    @Column(name = "expected_cost_per_hour")
-    private double expectedCostPerHour;
+    @Column(name = "price_per_hour")
+    private double pricePerHour;
 
     @OneToOne
     @JoinColumn(name = "contract_id")

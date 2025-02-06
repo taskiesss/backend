@@ -22,9 +22,10 @@ public class JobSearchResponseMapper {
                 .description(job.getDescription())
                 .experienceLevel(job.getExperienceLevel())
                 .skills(job.getSkills().stream().map(Skill::getName).toList())
-                .pricePerHour(job.getExpectedCostPerHour())
+                .pricePerHour(job.getPricePerHour())
                 .postedDate(job.getPostedAt())
-                .experienceLevel(job.getExperienceLevel())
+                .projectLength(job.getProjectLength())
+                .isSaved(false)   // take care to change it if neeeeedeeeeedddddd
                 .build();
     }
 

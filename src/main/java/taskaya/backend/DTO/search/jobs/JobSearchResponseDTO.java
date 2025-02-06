@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
+import taskaya.backend.entity.enums.ProjectLength;
 
 import java.util.Date;
 import java.util.List;
@@ -25,4 +26,5 @@ public class JobSearchResponseDTO {
     private Date postedDate;
     private float rate;
     private boolean isSaved;
+    private ProjectLength projectLength;
 }

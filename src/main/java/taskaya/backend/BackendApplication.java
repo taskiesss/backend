@@ -143,7 +143,7 @@ public class BackendApplication {
 				.client(client1)
 				.status(Job.JobStatus.NOT_ASSIGNED)
 				.description("this is the first job")
-				.expectedCostPerHour(40)
+				.pricePerHour(40)
 				.build();
 
 		List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
@@ -158,7 +158,7 @@ public class BackendApplication {
 				.status(Job.JobStatus.NOT_ASSIGNED)
 				.description("this is the second job")
 				.projectLength(ProjectLength._1_to_3_months)
-				.expectedCostPerHour(20)
+				.pricePerHour(20)
 				.build();
 
 		List<String> skillNames2 = List.of("AWS", "Google Cloud", "Azure");
