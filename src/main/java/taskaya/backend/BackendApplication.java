@@ -292,13 +292,16 @@ public class BackendApplication {
 		Freelancer freelancer3=freelancerService.createFreelancer(freelancerUser3);
 
 		freelancer1.setSkills(new HashSet<>(skills1));
+		freelancer1.setPricePerHour(50D);
 		freelancerRepository.save(freelancer1);
 
 
 		freelancer2.setSkills(new HashSet<>(skills2));
+		freelancer2.setPricePerHour(60D);
 		freelancerRepository.save(freelancer2);
 
 		freelancer3.setSkills(new HashSet<>(skills3));
+		freelancer3.setPricePerHour(70D);
 		freelancerRepository.save(freelancer3);
 
 

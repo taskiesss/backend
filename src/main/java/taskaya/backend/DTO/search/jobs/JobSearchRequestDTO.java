@@ -8,6 +8,7 @@ import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.enums.SortDirection;
+import taskaya.backend.entity.enums.SortedBy;
 
 import java.util.List;
 
@@ -25,6 +26,6 @@ public class JobSearchRequestDTO {
     private ProjectLength projectLength;
     private int page;
     private int size;
-    private String sortBy;
+    private SortedBy sortBy;
     private SortDirection sortDirection;
 }

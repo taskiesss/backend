@@ -70,9 +70,9 @@ public class FreelancerService {
 
         Sort sort;
         if (SortDirection.DESC.equals(requestDTO.getSortDirection())) {
-            sort = Sort.by(Sort.Order.desc(requestDTO.getSortBy()));
+            sort = Sort.by(Sort.Order.desc(requestDTO.getSortBy().getValue()));
         } else {
-            sort = Sort.by(Sort.Order.asc(requestDTO.getSortBy()));
+            sort = Sort.by(Sort.Order.asc(requestDTO.getSortBy().getValue()));
         }
 
         // Create PageRequest for pagination

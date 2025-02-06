@@ -30,7 +30,7 @@ public class JobService {
         Sort sort = Sort.by(Sort.Direction.ASC, "postedAt"); // Default sorting by date
         if (request.getSortBy() != null) {
             Sort.Direction direction = request.getSortDirection() == SortDirection.DESC ? Sort.Direction.DESC : Sort.Direction.ASC;
-            sort = Sort.by(direction, request.getSortBy());
+            sort = Sort.by(direction, request.getSortBy().getValue());
         }
 
         // Pagination logic

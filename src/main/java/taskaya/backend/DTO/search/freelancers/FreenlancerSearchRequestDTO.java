@@ -6,6 +6,7 @@ import lombok.Data;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.SortDirection;
+import taskaya.backend.entity.enums.SortedBy;
 
 import java.util.List;
 
@@ -21,6 +22,6 @@ public class FreenlancerSearchRequestDTO {
     float rate;
     Integer page ;
     Integer size;
-    String sortBy;
+    SortedBy sortBy;
     SortDirection sortDirection;
 }

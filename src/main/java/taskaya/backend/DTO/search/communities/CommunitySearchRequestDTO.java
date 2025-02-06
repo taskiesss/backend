@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.SortDirection;
+import taskaya.backend.entity.enums.SortedBy;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class CommunitySearchRequestDTO {
     private float rate;
     private Integer page;
     private Integer size;
-    private String sortBy;
+    private SortedBy sortBy;
     private SortDirection sortDirection;
 
 }
