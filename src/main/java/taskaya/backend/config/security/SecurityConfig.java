@@ -26,11 +26,11 @@ public class SecurityConfig {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**"
-                        ,"/api/signup/**","/communities/**",
-                        "/api/demo/security/**",
-                        "/api/login",
-                        "freelancers/search",
-                        "/api/jobs/search")
+                        ,"/signup/**","/communities/**",
+                        "/demo/security/**",
+                        "/login",
+                        "/freelancers/search",
+                        "/jobs/search")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

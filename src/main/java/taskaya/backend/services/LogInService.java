@@ -73,6 +73,7 @@ public class LogInService {
 
         return AuthenticationResponseDTO.builder()
                 .token(token)
+                .role(user.getRole())
                 .build();
     }
 }

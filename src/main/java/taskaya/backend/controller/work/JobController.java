@@ -10,7 +10,7 @@ import taskaya.backend.services.work.JobService;
 
 
 @RestController
-@RequestMapping("/api/jobs")
+@RequestMapping("/jobs")
 @RequiredArgsConstructor
 public class JobController {
 

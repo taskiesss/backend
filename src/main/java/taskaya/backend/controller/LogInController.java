@@ -13,7 +13,7 @@ import taskaya.backend.DTO.login.LoginDTO;
 import taskaya.backend.services.LogInService;
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/login")
 public class LogInController {
 
     @Autowired

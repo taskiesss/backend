@@ -36,7 +36,7 @@ public class JobService {
         // Pagination logic
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
 
-        Page <Job> jobPage = jobRepository.findAllByAssignedToIsNull(spec, pageable);
+        Page <Job> jobPage = jobRepository.findAll(spec, pageable);
 
         return JobSearchResponseMapper.toDTOPage(jobPage);
     }
