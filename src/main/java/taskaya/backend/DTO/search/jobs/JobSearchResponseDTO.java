@@ -25,6 +25,5 @@ public class JobSearchResponseDTO {
     private double pricePerHour;
     private Date postedDate;
     private float rate;
-    private boolean isSaved;
     private ProjectLength projectLength;
 }

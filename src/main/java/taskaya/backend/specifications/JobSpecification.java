@@ -43,6 +43,12 @@ public class JobSpecification {
                 predicate = criteriaBuilder.and(predicate,criteriaBuilder.lessThanOrEqualTo(root.get("expectedCostPerHour"), request.getHourlyRateMax()));
             }
 
+
+            // 🔹 Filter by  rate pf the client
+            if (request.getRate() > 0) {
+                predicate = criteriaBuilder.and(predicate,criteriaBuilder.greaterThanOrEqualTo(root.get("client").get("rate"), request.getRate()));
+            }
+
             // 🔹 Filter by required skills
             if (request.getSkills() != null && !request.getSkills().isEmpty()) {
                 Join<Freelancer, Skill> skillJoin = root.join("skills");

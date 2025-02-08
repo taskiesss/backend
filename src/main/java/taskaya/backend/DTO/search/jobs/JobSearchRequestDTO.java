@@ -28,4 +28,5 @@ public class JobSearchRequestDTO {
     private int size;
     private SortedBy sortBy;
     private SortDirection sortDirection;
+    private float rate ;
 }

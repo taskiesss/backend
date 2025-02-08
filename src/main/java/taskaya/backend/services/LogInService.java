@@ -11,9 +11,13 @@ import taskaya.backend.DTO.login.AuthenticationResponseDTO;
 import taskaya.backend.DTO.login.LoginDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.login.WrongPasswordException;
 import taskaya.backend.exceptions.login.WrongUsernameOrEmail;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.freelancer.FreelancerRepository;
 
 @Service
 public class LogInService {
@@ -29,6 +33,11 @@ public class LogInService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    ClientRepository clientRepository;
+
+    @Autowired
+    FreelancerRepository freelancerRepository;
 
     public AuthenticationResponseDTO login (LoginDTO requestDTO){
         //fetch el user
@@ -70,11 +79,24 @@ public class LogInService {
                 orElseThrow(() -> new UsernameNotFoundException("username not found "));
 
         String token = jwtService.generateToken(user);
-
-        return AuthenticationResponseDTO.builder()
+        return   AuthenticationResponseDTO.builder()
                 .token(token)
                 .role(user.getRole())
+                .isFirst(isFirstTime(user))
                 .build();
+    }
+
+
+
+
+    private boolean isFirstTime (User user){
+
+        if (user.getRole().equals(User.Role.FREELANCER) ){
+            Freelancer freelancer = freelancerRepository.findByUser(user).get();
+            if (freelancer.getPricePerHour() == 0 || freelancer.getTitle() == null || freelancer.getTitle().isEmpty())
+                return true;
+        }
+        return false;
     }
 }
 

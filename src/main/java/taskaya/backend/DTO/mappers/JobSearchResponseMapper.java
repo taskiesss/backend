@@ -25,7 +25,7 @@ public class JobSearchResponseMapper {
                 .pricePerHour(job.getPricePerHour())
                 .postedDate(job.getPostedAt())
                 .projectLength(job.getProjectLength())
-                .isSaved(false)   // take care to change it if neeeeedeeeeedddddd
+                .rate(job.getClient().getRate())
                 .build();
     }
 

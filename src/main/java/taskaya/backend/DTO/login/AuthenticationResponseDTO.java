@@ -14,4 +14,5 @@ import taskaya.backend.entity.User;
 public class AuthenticationResponseDTO {
     private String token ;
     User.Role role ;
+    Boolean isFirst = false;
 }

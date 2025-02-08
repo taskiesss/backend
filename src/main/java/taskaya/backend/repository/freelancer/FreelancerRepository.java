@@ -3,6 +3,7 @@ package taskaya.backend.repository.freelancer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import taskaya.backend.entity.User;
 import taskaya.backend.entity.freelancer.Freelancer;
 
 import java.util.Optional;
@@ -13,4 +14,5 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> , 
 
 
     public Optional<Freelancer> findFreelancerById(UUID uuid);
+    public Optional<Freelancer> findByUser(User user );
 }
