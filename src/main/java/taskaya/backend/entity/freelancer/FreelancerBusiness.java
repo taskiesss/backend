@@ -26,6 +26,8 @@ public class FreelancerBusiness {
     @Column(name = "completed_jobs", nullable = false)
     private Integer completedJobs=0;
 
+    private Double avgHoursPerWeek;
+
 
     public enum State {
         BUSY, AVAILABLE

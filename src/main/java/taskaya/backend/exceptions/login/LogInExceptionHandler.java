@@ -19,4 +19,12 @@ public class LogInExceptionHandler {
         GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"password");
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    @ExceptionHandler(FirstTimeFreelancerFormException.class)
+    public ResponseEntity<?> firstTimeFreelancerhandler(RuntimeException e){
+        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"form");
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+
 }

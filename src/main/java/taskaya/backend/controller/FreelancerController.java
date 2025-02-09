@@ -1,6 +1,9 @@
 package taskaya.backend.controller;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.search.freelancers.FreenlancerSearchRequestDTO;
 import taskaya.backend.services.freelancer.FreelancerService;
@@ -18,5 +21,11 @@ public class FreelancerController {
     @PostMapping("/search")
     public Page<FreelancerSearchResponseDTO> searchFreelancers(@RequestBody FreenlancerSearchRequestDTO request) {
         return freelancerService.searchFreelancers(request);
+    }
+
+    @PostMapping("/freelancer-form")
+    public ResponseEntity<?> firstTimeFreelancerForm(@RequestBody FirstTimeFreelancerFormDTO request){
+        freelancerService.fillForm(request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

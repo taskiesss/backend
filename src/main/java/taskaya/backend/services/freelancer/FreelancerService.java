@@ -8,9 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.search.freelancers.FreenlancerSearchRequestDTO;
+import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.SortDirection;
@@ -18,15 +21,25 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.repository.SkillRepository;
+import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class FreelancerService {
     @Autowired
     FreelancerRepository freelancerRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    SkillRepository skillRepository;
 
     @Autowired
     private FreelancerSearchResponseMapper freelancerSearchResponseMapper;
@@ -93,6 +106,29 @@ public class FreelancerService {
     public Freelancer getById(UUID uuid){
         return freelancerRepository.findFreelancerById(uuid)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found with ID: " + uuid));
+    }
+
+    @Transactional
+    public void fillForm(FirstTimeFreelancerFormDTO firstTimeFreelancerFormDTO){
+        String username = JwtService.getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()->new RuntimeException("Username not found!"));
+        Freelancer freelancer = freelancerRepository.findByUser(user).get();
+
+        Set<Skill> skills = new HashSet<>(firstTimeFreelancerFormDTO.getSkills());
+        skillRepository.saveAll(skills);
+        String fullName = firstTimeFreelancerFormDTO.getFirstName() +" "+ firstTimeFreelancerFormDTO.getLastName();
+        freelancer.setName(fullName);
+        freelancer.setTitle(firstTimeFreelancerFormDTO.getProfessionalTitle());
+        freelancer.setSkills(skills);
+        freelancer.setPricePerHour(firstTimeFreelancerFormDTO.getHourlyRate());
+        freelancer.setDescription(firstTimeFreelancerFormDTO.getProfessionalSummary());
+        freelancer.getEducations().clear();  // Removes old educations (triggers orphan removal)
+        freelancer.getEducations().addAll(firstTimeFreelancerFormDTO.getEducation());  // Adds new ones
+        freelancer.setLanguages(new HashSet<>(firstTimeFreelancerFormDTO.getLanguages()));
+        freelancer.getFreelancerBusiness().setAvgHoursPerWeek(firstTimeFreelancerFormDTO.getHoursPerWeek());
+
+        freelancerRepository.save(freelancer);
     }
 }
 
