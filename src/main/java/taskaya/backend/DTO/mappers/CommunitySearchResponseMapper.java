@@ -21,6 +21,7 @@ public class CommunitySearchResponseMapper {
                 .skills(community.getSkills().stream().map(Skill::getName).toList())
                 .memberCount(community.getCommunityMembers().size())
                 .rate(community.getRate())
+                .experienceLevel(community.getExperienceLevel())
                 .pricePerHour(community.getPricePerHour())
                 .profilePicture(community.getProfilePicture())
                 .isFull(community.getIsFull())

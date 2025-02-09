@@ -18,7 +18,7 @@ import java.util.List;
 public class CommunitySearchRequestDTO {
     private String search;
     private List<Skill> skills;
-    private ExperienceLevel experienceLevel;
+    private List<ExperienceLevel> experienceLevel;
     private float hourlyRateMin;
     private float hourlyRateMax;
     private Boolean isFull;

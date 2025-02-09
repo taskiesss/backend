@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import taskaya.backend.entity.Skill;
+import taskaya.backend.entity.enums.ExperienceLevel;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class CommunitySearchResponseDTO {
     private UUID id;
     private String name;
     private String description;
+    private ExperienceLevel experienceLevel;
     private List<String> skills;
     private int memberCount;
     private double pricePerHour;

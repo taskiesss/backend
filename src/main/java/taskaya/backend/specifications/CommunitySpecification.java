@@ -12,7 +12,7 @@ import java.util.List;
 public class CommunitySpecification {
 
     public static Specification<Community> searchCommunities(String search, List<Skill> skills,
-                                                             ExperienceLevel experienceLevel,
+                                                             List<ExperienceLevel> experienceLevel,
                                                              float hourlyRateMin, float hourlyRateMax,
                                                              float rate , Boolean isFull) {
         return (root, query, criteriaBuilder) -> {
@@ -36,9 +36,8 @@ public class CommunitySpecification {
             }
 
             // Search by experience level
-            if (experienceLevel != null) {
-                predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.equal(root.get("experienceLevel"), experienceLevel));
+            if (experienceLevel != null && !experienceLevel.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("experienceLevel").in(experienceLevel));
             }
 
             // Search by hourly rate range

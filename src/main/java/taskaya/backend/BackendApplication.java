@@ -82,11 +82,20 @@ public class BackendApplication {
 		seedCommunityAndCommunityMember();
 	}
 
-	private void seedCommunityAndCommunityMember(){
+	public void seedCommunityAndCommunityMember(){
+		createCommunityAndMember("mina",ExperienceLevel.expert);
+		createCommunityAndMember("mark",ExperienceLevel.expert);
+		createCommunityAndMember("omar",ExperienceLevel.entry_level);
+		createCommunityAndMember("mohamed",ExperienceLevel.entry_level);
+		createCommunityAndMember("andrew",ExperienceLevel.intermediate);
+		createCommunityAndMember("martin",ExperienceLevel.intermediate);
+	}
+
+	public void createCommunityAndMember(String name, ExperienceLevel exp){
 		User user = User.builder()
-				.username("minahany")
-				.email("minahany@gmail.com")
-				.password("minah@765")
+				.username(name)
+				.email(name+"@gmail.com")
+				.password(name+"@765")
 				.role(User.Role.FREELANCER)
 				.build();
 
@@ -97,7 +106,7 @@ public class BackendApplication {
 
 
 		Community community = Community.builder()
-				.communityName("FirstCommunity")
+				.communityName(name+" Community")
 				.admin(freelancerService.getById(user.getId()))
 				.workerEntity(freelancerService.getById(user.getId()).getWorkerEntity())
 				.avrgHoursPerWeek(6)
@@ -105,9 +114,9 @@ public class BackendApplication {
 				.status(Community.CommunityStatus.AVAILABLE)
 				.rate(3)
 				.skills(new HashSet<>(skills))
-				.description("This is the first Comm")
+				.description("This is the "+ name +" Community")
 				.isFull(false)
-				.experienceLevel(ExperienceLevel.entry_level)
+				.experienceLevel(exp)
 				.build();
 
 		if (community.getCommunityMembers() == null) {
@@ -115,11 +124,11 @@ public class BackendApplication {
 		}
 
 		communityService.save(community);
-		community = communityService.getCommunityByName("FirstCommunity");
+		community = communityService.getCommunityByName(name+" Community");
 
 		CommunityMember communityMember = CommunityMember.builder()
 				.community(community)
-				.positionName("firstAdmin")
+				.positionName(name+"Admin")
 				.positionPercent(4)
 				.freelancer(freelancerService.getById(user.getId()))
 				.build();
@@ -129,9 +138,6 @@ public class BackendApplication {
 		community.getCommunityMembers().add(communityMember);
 
 		communityService.save(community);
-
-		community = communityService.getCommunityByName("FirstCommunity");
-
 	}
 
 	private void jobSeed() {
