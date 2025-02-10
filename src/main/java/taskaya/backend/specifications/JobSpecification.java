@@ -26,13 +26,13 @@ public class JobSpecification {
                         criteriaBuilder.or(titlePredicate, descriptionPredicate));            }
 
             // 🔹 Filter by experience level
-            if (request.getExperienceLevel() != null) {
-                predicate = criteriaBuilder.and(predicate,criteriaBuilder.equal(root.get("experienceLevel"), request.getExperienceLevel()));
+            if (request.getExperienceLevel() != null && !request.getExperienceLevel().isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("experienceLevel").in(request.getExperienceLevel()));
             }
 
             // 🔹 Filter by project length
-            if (request.getProjectLength() != null) {
-                predicate = criteriaBuilder.and(predicate,criteriaBuilder.equal(root.get("projectLength"), request.getProjectLength()));
+            if (request.getProjectLength() != null && !request.getProjectLength().isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("projectLength").in(request.getProjectLength()));
             }
 
             // 🔹 Filter by hourly rate range

@@ -13,7 +13,7 @@ import java.util.List;
 public class FreelancerSpecification {
 
     public static Specification<Freelancer> searchFreelancers(String search, List<Skill> skills,
-                                                              ExperienceLevel experienceLevel,
+                                                              List<ExperienceLevel> experienceLevel,
                                                               float hourlyRateMin, float hourlyRateMax,
                                                               float rate) {
         return (root, query, criteriaBuilder) -> {
@@ -39,9 +39,8 @@ public class FreelancerSpecification {
             }
 
             // Search by experience level
-            if (experienceLevel != null) {
-                predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.equal(root.get("experienceLevel"), experienceLevel));
+            if (experienceLevel != null && !experienceLevel.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("experienceLevel").in(experienceLevel));
             }
 
             // Search by hourly rate range

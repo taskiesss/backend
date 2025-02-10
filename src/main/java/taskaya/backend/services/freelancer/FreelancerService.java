@@ -21,6 +21,7 @@ import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -48,7 +49,7 @@ public class FreelancerService {
                 .workerEntity(workerEntity)
                 .balance(new FreelancerBalance())
                 .freelancerBusiness(new FreelancerBusiness())
-                .experienceLevel(ExperienceLevel.entry_level)
+                .experienceLevel(ExperienceLevel.values()[new Random().nextInt(ExperienceLevel.values().length)])
                 .pricePerHour(0.0)
                 .build();
         freelancerRepository.save(freelancer);

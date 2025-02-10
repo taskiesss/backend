@@ -20,10 +20,10 @@ import java.util.List;
 public class JobSearchRequestDTO {
     private String search;
     private List<Skill> skills;
-    private ExperienceLevel experienceLevel;
+    private List<ExperienceLevel> experienceLevel;
     private double hourlyRateMin;
     private double hourlyRateMax;
-    private ProjectLength projectLength;
+    private List<ProjectLength> projectLength;
     private int page;
     private int size;
     private SortedBy sortBy;

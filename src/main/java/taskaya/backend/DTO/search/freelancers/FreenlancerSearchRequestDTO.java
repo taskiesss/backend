@@ -16,7 +16,7 @@ import java.util.List;
 public class FreenlancerSearchRequestDTO {
     String search ;
     List<Skill> skills;
-    ExperienceLevel experienceLevel ;
+    List<ExperienceLevel> experienceLevel ;
     float hourlyRateMin ;
     float hourlyRateMax;
     float rate;
