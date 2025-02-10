@@ -2,9 +2,11 @@ package taskaya.backend.exceptions.login;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import taskaya.backend.exceptions.error_responses.GeneralErrorResponse;
 
+@ControllerAdvice
 public class LogInExceptionHandler {
 
 
@@ -19,4 +21,12 @@ public class LogInExceptionHandler {
         GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"password");
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    @ExceptionHandler(FirstTimeFreelancerFormException.class)
+    public ResponseEntity<?> firstTimeFreelancerhandler(RuntimeException e){
+        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"form");
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+
 }

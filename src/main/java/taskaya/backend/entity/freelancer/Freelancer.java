@@ -9,9 +9,7 @@ import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.work.WorkerEntity;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -24,6 +22,8 @@ public class Freelancer {
 
     @Id
     private UUID id; // Same UUID as the User entity
+
+    private String name;
 
     private String title;
 
@@ -57,7 +57,7 @@ public class Freelancer {
     @JoinColumn(name = "freelancer_id", referencedColumnName = "id")
     private List<FreelancerPortfolio> portfolios;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "freelancer_skills",
             joinColumns = @JoinColumn(name = "freelancer_id"),
@@ -78,19 +78,24 @@ public class Freelancer {
     @Column(name = "cv")
     private String cv; // Path or link to the CV file
 
+    // Replace the single language column with an element collection
+    @ElementCollection
+    @CollectionTable(name = "freelancer_languages", joinColumns = @JoinColumn(name = "freelancer_id"))
     @Column(name = "language")
-    private String language;
+    private Set<String> languages = new HashSet<>();
 
     @Column(name = "country")
     private String country;
 
-    @Column(name = "education", length = 500)
-    private String education;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "freelancer_id")
+    private List<Education> educations;
 
 
     @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MsgBox> msgBoxes;
+
     @ManyToMany
     @JoinTable(
             name = "freelancer_saved_clients",
