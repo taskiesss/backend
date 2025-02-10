@@ -48,15 +48,22 @@ public class CommunityService {
                 requestDTO.getIsFull()
         );
 
-        Sort sort;
-        if(SortDirection.DESC.equals(requestDTO.getSortDirection())){
-            sort = Sort.by(Sort.Order.desc(requestDTO.getSortBy().getValue()));
-        } else{
-            sort = Sort.by(Sort.Order.asc(requestDTO.getSortBy().getValue()));
-        }
+        Pageable pageable;
 
-        // Create Page Request for pagination
-        Pageable pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize(), sort);
+        if (requestDTO.getSortBy() != null) {
+
+            Sort sort;
+            if (SortDirection.DESC.equals(requestDTO.getSortDirection())) {
+                sort = Sort.by(Sort.Order.desc(requestDTO.getSortBy().getValue()));
+            } else {
+                sort = Sort.by(Sort.Order.asc(requestDTO.getSortBy().getValue()));
+            }
+
+            // Create Page Request for pagination
+            pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize(), sort);
+        }else {
+            pageable=PageRequest.of(requestDTO.getPage(), requestDTO.getSize());
+        }
 
         // Get page of communities using specification, sorting and pagination
         Page<Community> communityPage = communityRepository.findAll(specCommunity, pageable);

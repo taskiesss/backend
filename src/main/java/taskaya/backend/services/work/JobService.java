@@ -26,15 +26,23 @@ public class JobService {
     public Page<JobSearchResponseDTO> searchJobs(JobSearchRequestDTO request) {
         Specification<Job> spec = JobSpecification.filterJobs(request);
 
-        // Sorting logic
-        Sort sort = Sort.by(Sort.Direction.ASC, "postedAt"); // Default sorting by date
+        Pageable pageable;
+
         if (request.getSortBy() != null) {
-            Sort.Direction direction = request.getSortDirection() == SortDirection.DESC ? Sort.Direction.DESC : Sort.Direction.ASC;
-            sort = Sort.by(direction, request.getSortBy().getValue());
+
+            Sort sort;
+            if (SortDirection.DESC.equals(request.getSortDirection())) {
+                sort = Sort.by(Sort.Order.desc(request.getSortBy().getValue()));
+            } else {
+                sort = Sort.by(Sort.Order.asc(request.getSortBy().getValue()));
+            }
+
+            // Create Page Request for pagination
+            pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
+        }else {
+            pageable=PageRequest.of(request.getPage(), request.getSize());
         }
 
-        // Pagination logic
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
 
         Page <Job> jobPage = jobRepository.findAll(spec, pageable);
 

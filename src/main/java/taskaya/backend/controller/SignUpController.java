@@ -32,9 +32,10 @@ public class SignUpController {
     @Autowired
     private SignUpService signUpService;
 
-    @PostMapping()
+    @PostMapping("/create-account")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDTO request)  {
 
+        System.out.println("sign uppppppppppp");
         //check if role is written correctly
         signUpService.isRoleCorrect(request.getRole());
         //check if username already exists
