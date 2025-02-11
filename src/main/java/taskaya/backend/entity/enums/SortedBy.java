@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SortedBy {
-    RATE("Rate"),
+    RATE("rate"),
     PRICE_PER_HOUR("pricePerHour"),
     POSTED_AT("postedAt"),       //only for jobs
     ;

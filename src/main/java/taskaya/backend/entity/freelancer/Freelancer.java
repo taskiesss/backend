@@ -3,6 +3,7 @@ package taskaya.backend.entity.freelancer;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.*;
 import taskaya.backend.entity.chat.MsgBox;
 import taskaya.backend.entity.client.Client;
@@ -72,7 +73,7 @@ public class Freelancer {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Column(length = 500) // Assuming a longer description
+    @Column(length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;
 
     @Column(name = "cv")

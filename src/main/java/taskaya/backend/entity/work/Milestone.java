@@ -3,6 +3,7 @@ package taskaya.backend.entity.work;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class Milestone {
     @Column(name = "number", nullable = false)
     private Integer number; // Milestone number
 
-    @Column(name = "description", length = 1000)
+    @Column(name = "description", length = Constants.MAX_DESCRIPTION_SIZE)
     private String description; // Description
 
     @Column(name = "estimated_hours")

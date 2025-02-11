@@ -1,6 +1,7 @@
 package taskaya.backend.services.work;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,10 @@ import taskaya.backend.specifications.JobSpecification;
 
 
 @Service
-@RequiredArgsConstructor
 public class JobService {
 
-    private final JobRepository jobRepository;
+    @Autowired
+    private  JobRepository jobRepository;
 
     public Page<JobSearchResponseDTO> searchJobs(JobSearchRequestDTO request) {
         Specification<Job> spec = JobSpecification.filterJobs(request);
@@ -29,12 +30,16 @@ public class JobService {
         Pageable pageable;
 
         if (request.getSortBy() != null) {
+            String sortField = request.getSortBy().getValue().equals("rate")
+                    ? "client.rate"
+                    : request.getSortBy().getValue();
 
             Sort sort;
             if (SortDirection.DESC.equals(request.getSortDirection())) {
-                sort = Sort.by(Sort.Order.desc(request.getSortBy().getValue()));
+
+                sort = Sort.by(Sort.Order.desc(sortField));
             } else {
-                sort = Sort.by(Sort.Order.asc(request.getSortBy().getValue()));
+                sort = Sort.by(Sort.Order.asc(sortField));
             }
 
             // Create Page Request for pagination

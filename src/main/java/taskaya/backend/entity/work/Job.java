@@ -3,6 +3,7 @@ package taskaya.backend.entity.work;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.ExperienceLevel;
@@ -38,7 +39,7 @@ public class Job {
     @Column(nullable = false)
     private JobStatus status;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;
 
     @Column(name = "posted_at", updatable = false, nullable = false)

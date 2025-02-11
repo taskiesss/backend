@@ -12,6 +12,7 @@ import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.search.freelancers.FreenlancerSearchRequestDTO;
+import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
@@ -159,9 +160,13 @@ public class FreelancerService {
         }
 
         if(firstTimeFreelancerFormDTO.getProfessionalSummary() == null
-                || firstTimeFreelancerFormDTO.getProfessionalSummary().isEmpty()){
+                || firstTimeFreelancerFormDTO.getProfessionalSummary().isEmpty()
+              ){
             throw new FirstTimeFreelancerFormException("Professional summary is required");
-        }else{
+        }else if (firstTimeFreelancerFormDTO.getProfessionalSummary().length()> Constants.MAX_DESCRIPTION_SIZE){
+            throw new FirstTimeFreelancerFormException("description length should not exceed 1000 chars");
+        }
+        else{
             freelancer.setDescription(firstTimeFreelancerFormDTO.getProfessionalSummary());
         }
 

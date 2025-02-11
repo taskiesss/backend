@@ -114,7 +114,7 @@ public class BackendApplication {
 				.status(Community.CommunityStatus.AVAILABLE)
 				.rate(3)
 				.skills(new HashSet<>(skills))
-				.description("This is the "+ name +" Community")
+				.description("This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community"+"This is the "+ name +" Community")
 				.isFull(false)
 				.experienceLevel(exp)
 				.build();
@@ -216,17 +216,17 @@ public class BackendApplication {
 		);
 
 // Save jobs to the repository
+		// Assign skills to each job
+
+		jobs.forEach(job -> job.setSkills(new HashSet<>(skills1)));
+
 		jobRepository.saveAll(jobs);
 
 // Retrieve skills for these jobs
-		List<String> skillNames = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+		List<String> skillNames = List.of("Machine Learning", "Deep Learning", "Natural Language Processing (NLP)");
 		List<Skill> skills = skillRepository.findByNameIn(skillNames);
 
-// Assign skills to each job
-		jobs.forEach(job -> job.setSkills(new HashSet<>(skills)));
 
-// Save updated jobs with skills
-		jobRepository.saveAll(jobs);
 
 		List<Job> moreJobs = List.of(
 				Job.builder()
@@ -423,15 +423,18 @@ public class BackendApplication {
 
 		freelancer1.setSkills(new HashSet<>(skills1));
 		freelancer1.setPricePerHour(50D);
+		freelancer1.setRate(3);
 		freelancerRepository.save(freelancer1);
 
 
 		freelancer2.setSkills(new HashSet<>(skills2));
 		freelancer2.setPricePerHour(60D);
+		freelancer2.setRate(4);
 		freelancerRepository.save(freelancer2);
 
 		freelancer3.setSkills(new HashSet<>(skills3));
 		freelancer3.setPricePerHour(70D);
+		freelancer1.setRate(2);
 		freelancerRepository.save(freelancer3);
 
 

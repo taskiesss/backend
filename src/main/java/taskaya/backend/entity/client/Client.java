@@ -3,6 +3,7 @@ package taskaya.backend.entity.client;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.chat.MsgBox;
@@ -36,7 +37,7 @@ public class Client {
     private float rate = 0F; // Should be validated to [1-5] in logic
 
 
-    @Column(length = 500)
+    @Column(length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;
 
     @Column(name = "language")
