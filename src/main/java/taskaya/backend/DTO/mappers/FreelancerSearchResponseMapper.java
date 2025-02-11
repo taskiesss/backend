@@ -20,7 +20,7 @@ public class FreelancerSearchResponseMapper {
                 .id(freelancer.getId())
                 .name(freelancer.getUser().getUsername())
                 .title(freelancer.getTitle())
-                .description(freelancer.getDescription().length()>256? freelancer.getDescription().substring(0,256)+"..." : freelancer.getDescription())
+                .description((freelancer.getDescription()!= null &&freelancer.getDescription().length()>256)? freelancer.getDescription().substring(0,256)+"..." : freelancer.getDescription())
                 .skills(freelancer.getSkills().stream().map(Skill::getName).toList())
                 .rate(freelancer.getRate())
                 .experienceLevel(freelancer.getExperienceLevel())

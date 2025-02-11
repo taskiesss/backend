@@ -17,7 +17,7 @@ public class CommunitySearchResponseMapper {
         return CommunitySearchResponseDTO.builder()
                 .id(community.getUuid())
                 .name(community.getCommunityName())
-                .description(community.getDescription().length()>256? community.getDescription().substring(0,256)+"..." : community.getDescription())
+                .description((community.getDescription()!= null &&community.getDescription().length()>256)? community.getDescription().substring(0,256)+"..." : community.getDescription())
                 .skills(community.getSkills().stream().map(Skill::getName).toList())
                 .memberCount(community.getCommunityMembers().size())
                 .rate(community.getRate())

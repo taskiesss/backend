@@ -19,7 +19,7 @@ public class JobSearchResponseMapper {
         return JobSearchResponseDTO.builder()
                 .id(job.getUuid())
                 .title(job.getTitle())
-                .description(job.getDescription().length()>256?job.getDescription().substring(0,256)+"...": job.getDescription())
+                .description((job.getDescription()!= null &&job.getDescription().length()>256)?job.getDescription().substring(0,256)+"...": job.getDescription())
                 .experienceLevel(job.getExperienceLevel())
                 .skills(job.getSkills().stream().map(Skill::getName).toList())
                 .pricePerHour(job.getPricePerHour())
