@@ -10,7 +10,7 @@ import taskaya.backend.entity.community.Community;
 import taskaya.backend.services.community.CommunityService;
 
 @RestController
-@RequestMapping("/communities")
+@RequestMapping()
 public class CommunityController {
     @Autowired
     CommunityService communityService;
@@ -20,7 +20,7 @@ public class CommunityController {
         return communityService.getCommunityByName(commName);
     }
 
-    @PostMapping("/search")
+    @PostMapping("/communities/search")
     public ResponseEntity<Page<CommunitySearchResponseDTO> > searchCommunity(
             @RequestBody CommunitySearchRequestDTO requestDTO) {
         return ResponseEntity.ok(communityService.searchCommunities(requestDTO));

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/signup")
+@RequestMapping("public/signup")
 public class SignUpController {
 
     @Autowired

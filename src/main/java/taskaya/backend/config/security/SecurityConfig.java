@@ -26,13 +26,17 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**"
-                        ,"/signup/**","/communities/**",
+                .requestMatchers(
                         "/demo/security/**",
-                        "/login",
+                        "/public/**",
                         "/freelancers/search",
+                        "/communities/search",
                         "/jobs/search")
                 .permitAll()
+
+                .requestMatchers("/freelancers/**").hasRole("FREELANCER")
+                .requestMatchers("/clients/**").hasRole("CLIENT")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
