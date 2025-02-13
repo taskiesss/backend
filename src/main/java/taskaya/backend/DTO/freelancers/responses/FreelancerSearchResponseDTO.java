@@ -1,8 +1,7 @@
-package taskaya.backend.DTO.search.freelancers;
+package taskaya.backend.DTO.freelancers.responses;
 
 import lombok.Builder;
 import lombok.Data;
-import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 
 import java.util.List;

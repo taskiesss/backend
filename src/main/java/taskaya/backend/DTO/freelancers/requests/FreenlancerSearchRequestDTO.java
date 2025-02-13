@@ -1,4 +1,4 @@
-package taskaya.backend.DTO.search.freelancers;
+package taskaya.backend.DTO.freelancers.requests;
 
 
 import lombok.Builder;

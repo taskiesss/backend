@@ -3,7 +3,7 @@ package taskaya.backend.DTO.mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.search.communities.CommunitySearchResponseDTO;
+import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.community.Community;
 

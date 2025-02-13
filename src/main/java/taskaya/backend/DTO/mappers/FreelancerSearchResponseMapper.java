@@ -4,11 +4,10 @@ package taskaya.backend.DTO.mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
+import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.freelancer.Freelancer;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

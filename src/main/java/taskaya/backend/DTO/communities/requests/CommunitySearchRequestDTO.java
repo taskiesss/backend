@@ -1,4 +1,4 @@
-package taskaya.backend.DTO.search.communities;
+package taskaya.backend.DTO.communities.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

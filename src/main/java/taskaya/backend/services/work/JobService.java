@@ -1,6 +1,5 @@
 package taskaya.backend.services.work;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.mappers.JobSearchResponseMapper;
-import taskaya.backend.DTO.search.jobs.JobSearchRequestDTO;
-import taskaya.backend.DTO.search.jobs.JobSearchResponseDTO;
+import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
+import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.repository.work.JobRepository;

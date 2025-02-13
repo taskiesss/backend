@@ -1,4 +1,4 @@
-package taskaya.backend.DTO.search.jobs;
+package taskaya.backend.DTO.jobs.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

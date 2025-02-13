@@ -1,29 +1,27 @@
-package taskaya.backend.DTO.search.jobs;
+package taskaya.backend.DTO.communities.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
-import taskaya.backend.entity.enums.ProjectLength;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class JobSearchResponseDTO {
+public class CommunitySearchResponseDTO {
     private UUID id;
-    private String title;
+    private String name;
     private String description;
     private ExperienceLevel experienceLevel;
     private List<String> skills;
+    private int memberCount;
     private double pricePerHour;
-    private Date postedDate;
     private float rate;
-    private ProjectLength projectLength;
+    String profilePicture;
+    Boolean isFull;
 }

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import taskaya.backend.DTO.search.communities.CommunitySearchRequestDTO;
-import taskaya.backend.DTO.search.communities.CommunitySearchResponseDTO;
+import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
+import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.services.community.CommunityService;
 

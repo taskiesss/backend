@@ -5,7 +5,7 @@ package taskaya.backend.DTO.mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.search.jobs.JobSearchResponseDTO;
+import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.work.Job;
 

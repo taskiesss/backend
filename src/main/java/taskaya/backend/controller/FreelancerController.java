@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
-import taskaya.backend.DTO.search.freelancers.FreelancerSearchResponseDTO;
-import taskaya.backend.DTO.search.freelancers.FreenlancerSearchRequestDTO;
+import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 @RestController

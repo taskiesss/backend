@@ -1,16 +1,13 @@
 package taskaya.backend.specifications;
 
-import jdk.jshell.Snippet;
 import org.springframework.data.jpa.domain.Specification;
-import taskaya.backend.DTO.search.jobs.JobSearchRequestDTO;
+import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JobSpecification {
 

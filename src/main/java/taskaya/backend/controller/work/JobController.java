@@ -3,9 +3,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import taskaya.backend.DTO.search.jobs.JobSearchRequestDTO;
-import taskaya.backend.DTO.search.jobs.JobSearchResponseDTO;
-import taskaya.backend.entity.work.Job;
+import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
+import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.services.work.JobService;
 
 
