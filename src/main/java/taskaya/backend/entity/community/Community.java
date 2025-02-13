@@ -32,7 +32,7 @@ public class Community {
     private String profilePicture;
 
 
-    @OneToOne
+    @OneToOne( cascade = CascadeType.ALL)
     @JoinColumn(name = "worker_entity_id", nullable = false)
     private WorkerEntity workerEntity;
 

@@ -35,6 +35,7 @@ import taskaya.backend.services.freelancer.FreelancerService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -79,6 +80,7 @@ public class BackendApplication {
 		freelancerSeed();
 		clientSeed();
 		jobSeed();
+		communityWithAdmin();
 		seedCommunityAndCommunityMember();
 	}
 
@@ -133,9 +135,44 @@ public class BackendApplication {
 				.freelancer(freelancerService.getById(user.getId()))
 				.build();
 
+
 		communityMemberService.addMember(communityMember);
 		communityMember = communityMemberService.findById(1);
 		community.getCommunityMembers().add(communityMember);
+
+		communityService.save(community);
+	}
+
+
+	public void communityWithAdmin(){
+		User user = User.builder()
+				.username("Pablo")
+				.email("Pablo@gmail.com")
+				.password(new BCryptPasswordEncoder().encode("Pablo@123"))
+				.role(User.Role.FREELANCER)
+				.build();
+
+		//userRepository.save(user);
+		freelancerService.createFreelancer(user);
+		List<String> mySkills = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+		List<Skill> skills = skillRepository.findByNameIn(mySkills);
+
+		WorkerEntity workerEntity = WorkerEntity.builder()
+				.type(WorkerEntity.WorkerType.COMMUNITY)
+				.build();
+		Community community = Community.builder()
+				.communityName("Pablo"+" Community")
+				.admin(freelancerService.getById(user.getId()))
+				.workerEntity(workerEntity)
+				.avrgHoursPerWeek(6)
+				.pricePerHour(35)
+				.status(Community.CommunityStatus.AVAILABLE)
+				.rate(3)
+				.skills(new HashSet<>(skills))
+				.description("This is the sdhsbdcjksbvkjsbvdjsbdvj,sbdvj,sdvjkgsdfjhbdcjsdbcjksbdccj,sjsbcsj")
+				.isFull(false)
+				.experienceLevel(ExperienceLevel.entry_level)
+				.build();
 
 		communityService.save(community);
 	}
@@ -305,6 +342,8 @@ public class BackendApplication {
 		workerEntityRepository.save(worker2);
 
 		job2.setAssignedTo(worker2);
+		System.out.println("---------------------job-----------------------");
+		System.out.println(job2.getUuid());
 	}
 
 
@@ -434,8 +473,11 @@ public class BackendApplication {
 
 		freelancer3.setSkills(new HashSet<>(skills3));
 		freelancer3.setPricePerHour(70D);
-		freelancer1.setRate(2);
+		freelancer3.setRate(2);
 		freelancerRepository.save(freelancer3);
+
+
+
 
 
 	}

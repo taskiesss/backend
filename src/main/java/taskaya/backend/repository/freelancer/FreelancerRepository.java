@@ -13,6 +13,6 @@ import java.util.UUID;
 public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> , JpaSpecificationExecutor<Freelancer> {
 
 
-    public Optional<Freelancer> findFreelancerById(UUID uuid);
-    public Optional<Freelancer> findByUser(User user );
+    Optional<Freelancer> findFreelancerById(UUID uuid);
+    Optional<Freelancer> findByUser(User user );
 }
