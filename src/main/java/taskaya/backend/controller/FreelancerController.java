@@ -19,8 +19,8 @@ public class FreelancerController {
     }
 
     @PostMapping("/search")
-    public Page<FreelancerSearchResponseDTO> searchFreelancers(@RequestBody FreenlancerSearchRequestDTO request) {
-        return freelancerService.searchFreelancers(request);
+    public ResponseEntity<Page<FreelancerSearchResponseDTO>> searchFreelancers(@RequestBody FreenlancerSearchRequestDTO request) {
+        return ResponseEntity.ok(freelancerService.searchFreelancers(request));
     }
 
     @PostMapping("/freelancer-form")
