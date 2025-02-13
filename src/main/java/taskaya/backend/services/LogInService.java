@@ -41,10 +41,13 @@ public class LogInService {
 
     public AuthenticationResponseDTO login (LoginDTO requestDTO){
         //fetch el user
-        User user  = userRepository.findByEmail(requestDTO.getEmail()).get();
-        if (user == null){
+        User user;
+
+        if (!userRepository.existsByEmail(requestDTO.getEmail())){
             user = userRepository.findByUsername(requestDTO.getEmail())
                     .orElseThrow(()->new WrongUsernameOrEmail("username or email does not exist"));
+        }else{
+            user = userRepository.findByEmail(requestDTO.getEmail()).get();
         }
 
 

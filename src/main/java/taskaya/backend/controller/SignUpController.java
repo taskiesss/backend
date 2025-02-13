@@ -8,6 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.signup.SignUpRequestDTO;
 import taskaya.backend.DTO.signup.VerifyOtpRequestDTO;
 import taskaya.backend.entity.User;
@@ -46,7 +47,7 @@ public class SignUpController {
         signUpService.isStrongPassword(request.getPassword());
 
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
     }
 
     @PostMapping("send-otp")
@@ -57,7 +58,7 @@ public class SignUpController {
         // Send OTP to email
         mailService.sendOtpEmail(request.getEmail(), otp);
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
     }
 
     @PostMapping("/verify")
@@ -65,7 +66,7 @@ public class SignUpController {
         boolean isOtpRight = signUpService.verifyOtp(request);
 
         if (isOtpRight) {
-            return ResponseEntity.ok(true);
+            return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
         } else {
             return ResponseEntity.badRequest().body(new GeneralErrorResponse("wrong otp ", HttpStatus.BAD_REQUEST,"invalid_otp"));
         }
