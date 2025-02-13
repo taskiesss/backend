@@ -3,10 +3,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.services.freelancer.FreelancerService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/freelancers")
@@ -27,5 +30,10 @@ public class FreelancerController {
     public ResponseEntity<?> firstTimeFreelancerForm(@RequestBody FirstTimeFreelancerFormDTO request){
         freelancerService.fillForm(request);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/owned-communities")
+    public ResponseEntity<List<FreelancerOwnedCommunitiesResponseDTO>> freelancerOwnedCommunities(){
+        return ResponseEntity.ok(freelancerService.freelancerOwnedCommunities());
     }
 }
