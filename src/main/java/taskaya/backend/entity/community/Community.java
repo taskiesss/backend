@@ -41,7 +41,6 @@ public class Community {
     private Freelancer admin;
 
 
-
     @Column(name = "average_hours_per_week", nullable = false)
     private float avrgHoursPerWeek;
 

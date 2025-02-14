@@ -1,5 +1,6 @@
 package taskaya.backend;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -7,9 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
+import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.Payment;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
@@ -30,11 +34,11 @@ import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.services.work.ProposalService;
+import taskaya.backend.services.work.WorkerEntityService;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -67,10 +71,16 @@ public class BackendApplication {
 	WorkerEntityRepository workerEntityRepository;
 
 	@Autowired
+	WorkerEntityService workerEntityService;
+
+	@Autowired
 	CommunityService communityService;
 
 	@Autowired
 	CommunityMemberService communityMemberService;
+
+	@Autowired
+	ProposalService proposalService;
 
 	@Override
 	@Transactional
@@ -80,15 +90,91 @@ public class BackendApplication {
 		clientSeed();
 		jobSeed();
 		seedCommunityAndCommunityMember();
+//		proposalSeed();
+	}
+
+	private void proposalSeed() throws MessagingException {
+		User user1 = userRepository.findByUsername("client02").get();
+		Client client1 = clientRepository.findByUser(user1).get();
+
+		Job myJob = Job.builder()
+				.title("MY TEST JOBBBB FOR PROPOSAL")
+				.client(client1)
+				.experienceLevel(ExperienceLevel.expert)
+				.projectLength(ProjectLength._more_than_6_months)
+				.status(Job.JobStatus.NOT_ASSIGNED)
+				.description("Seeking a microservices expert for API development using Spring Boot and Kafka.")
+				.pricePerHour(60)
+				.build();
+
+		jobRepository.save(myJob);
+		myJob = jobRepository.findByTitle("MY TEST JOBBBB FOR PROPOSAL")
+				.orElseThrow(()->new RuntimeException("Job Not Found!"));
+
+
+		MilestoneSubmitProposalRequestDTO myMilestone1 = MilestoneSubmitProposalRequestDTO.builder()
+				.title("Milestone 1")
+				.description("This is the First Milestone")
+				.dueDate(new Date())
+				.expectedHours(20)
+				.milestoneNumber(1)
+				.build();
+
+		MilestoneSubmitProposalRequestDTO myMilestone2 = MilestoneSubmitProposalRequestDTO.builder()
+				.title("Milestone 2")
+				.description("This is the Second Milestone")
+				.dueDate(new Date())
+				.expectedHours(10)
+				.milestoneNumber(2)
+				.build();
+
+		List<MilestoneSubmitProposalRequestDTO> milestoneList = new ArrayList<>(Arrays.asList(myMilestone1,myMilestone2));
+
+		User user = User.builder()
+				.email("markosama@gmail.com")
+				.role(User.Role.FREELANCER)
+				.username("markOsama10")
+				.password(new BCryptPasswordEncoder().encode("Freelancer2@123"))
+				.build();
+		freelancerService.createFreelancer(user);
+
+		WorkerEntity workerEntity = freelancerService.getById(user.getId()).getWorkerEntity();
+
+
+		SubmitProposalRequestDTO submitProposalRequestDTO = SubmitProposalRequestDTO.builder()
+				.jobId(myJob.getUuid().toString())
+				.candidateId(workerEntity.getId().toString()) //workerEntity ID
+				.pricePerHour(14.6)
+				.freelancerPayment(Payment.PerMilestones)
+				.coverLetter("Please accept my proposal, I need money :_)")
+				.milestones(milestoneList)
+				.attachment("My ATTACHMENT")
+				.build();
+
+		proposalService.createProposal(submitProposalRequestDTO,myJob.getUuid());
+
+		WorkerEntity commWorkerEntity = communityService.getCommunityByName("mina Community").getWorkerEntity();
+
+		SubmitProposalRequestDTO commRequestDTO = SubmitProposalRequestDTO.builder()
+				.jobId(myJob.getUuid().toString())
+				.candidateId(commWorkerEntity.getId().toString()) //workerEntity ID
+				.pricePerHour(14.6)
+				.freelancerPayment(Payment.PerProject)
+				.coverLetter("Community Cover Letter")
+				.milestones(milestoneList)
+				.attachment("Community Attachment")
+				.build();
+
+		proposalService.createProposal(commRequestDTO,myJob.getUuid());
 	}
 
 	public void seedCommunityAndCommunityMember(){
 		createCommunityAndMember("mina",ExperienceLevel.expert);
-		createCommunityAndMember("mark",ExperienceLevel.expert);
-		createCommunityAndMember("omar",ExperienceLevel.entry_level);
-		createCommunityAndMember("mohamed",ExperienceLevel.entry_level);
-		createCommunityAndMember("andrew",ExperienceLevel.intermediate);
-		createCommunityAndMember("martin",ExperienceLevel.intermediate);
+//		createCommunityAndMember("mark",ExperienceLevel.expert);
+//		createCommunityAndMember("omar",ExperienceLevel.entry_level);
+//		createCommunityAndMember("mohamed",ExperienceLevel.entry_level);
+//		createCommunityAndMember("andrew",ExperienceLevel.intermediate);
+//		createCommunityAndMember("martin",ExperienceLevel.intermediate);
 	}
 
 	public void createCommunityAndMember(String name, ExperienceLevel exp){
@@ -104,11 +190,18 @@ public class BackendApplication {
 		List<String> mySkills = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
 		List<Skill> skills = skillRepository.findByNameIn(mySkills);
 
+		WorkerEntity workerEntity = WorkerEntity.builder()
+				.type(WorkerEntity.WorkerType.COMMUNITY)
+				.build();
+		workerEntityService.createWorkerEntity(workerEntity);
+
+//		System.out.println("Test Community ID: "+workerEntity.getId());
+//		System.out.println("Test Freelancer ID: "+freelancerService.getById(user.getId()).getWorkerEntity().getId());
 
 		Community community = Community.builder()
 				.communityName(name+" Community")
 				.admin(freelancerService.getById(user.getId()))
-				.workerEntity(freelancerService.getById(user.getId()).getWorkerEntity())
+				.workerEntity(workerEntity)
 				.avrgHoursPerWeek(6)
 				.pricePerHour(35)
 				.status(Community.CommunityStatus.AVAILABLE)
@@ -166,7 +259,7 @@ public class BackendApplication {
 		List<Job> jobs = List.of(
 				Job.builder()
 						.title("Backend Developer")
-						.client(client1)
+						.client(client2)
 						.experienceLevel(ExperienceLevel.entry_level)
 						.projectLength(ProjectLength._1_to_3_months)
 						.status(Job.JobStatus.NOT_ASSIGNED)
@@ -272,6 +365,10 @@ public class BackendApplication {
 
 // Save new jobs to the repository
 		jobRepository.saveAll(moreJobs);
+
+//		Job testJob = jobRepository.findByTitle("Backend Developer")
+//				.orElseThrow(()->new RuntimeException("NotFound"));
+//		System.out.println("Test Job ID: "+testJob.getUuid());
 
 // Assign the same set of skills to the new jobs
 		moreJobs.forEach(job -> job.setSkills(new HashSet<>(skills)));
@@ -455,7 +552,7 @@ public class BackendApplication {
 		List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
 
 		User clientUser2 = User.builder()
-				.email("2001480@gmail.com")
+				.email("2001480@eng.asu.edu.eg")
 				.role(User.Role.CLIENT)
 				.username("client02")
 				.password(new BCryptPasswordEncoder().encode("client2@123"))

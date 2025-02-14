@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.mappers.JobSearchResponseMapper;
 import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
 import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
+import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.specifications.JobSpecification;
 
+import java.util.UUID;
 
 
 @Service
@@ -51,6 +53,16 @@ public class JobService {
         Page <Job> jobPage = jobRepository.findAll(spec, pageable);
 
         return JobSearchResponseMapper.toDTOPage(jobPage);
+    }
+
+    public Job findById(UUID uuid){
+        return jobRepository.findById(uuid)
+                .orElseThrow(() ->new RuntimeException("Job Not Found!"));
+    }
+
+    public Client getClientByJobId(UUID jobId){
+        return jobRepository.findClientByUuid(jobId)
+                .orElseThrow(()-> new RuntimeException("Client Does Not Exist!"));
     }
 }
 

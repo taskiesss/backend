@@ -4,6 +4,7 @@ package taskaya.backend.entity.work;
 import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.Payment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "proposals")
 public class Proposal {
+    public static final int MAX_LETTER_LENGTH = 5000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,8 +36,8 @@ public class Proposal {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client; // Associated Client
 
-    @Column(name = "description", length = 1000)
-    private String description; // Proposal description
+    @Column(name = "cover_letter", length = MAX_LETTER_LENGTH)
+    private String coverLetter; // Proposal cover letter
 
     @Column(name = "cost_per_hour", nullable = false)
     private Double costPerHour; // Cost per hour
@@ -48,4 +50,11 @@ public class Proposal {
     @OneToMany
     @JoinColumn(name = "proposal_id")
     private List<Milestone> milestones = new ArrayList<>();
+
+
+    @Column(name = "payment", nullable = false)
+    private Payment payment;
+
+    @Column(name = "attachment")
+    private String attachment;
 }
