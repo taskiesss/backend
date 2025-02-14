@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.WorkerEntity;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +16,8 @@ import java.util.UUID;
 public interface CommunityRepository extends JpaRepository<Community, UUID>, JpaSpecificationExecutor<Community> {
     Optional<Community> findByCommunityName(String communityName);
 
+
     List<Community> findAllByAdmin(Freelancer admin);
+    Optional<Community> findByWorkerEntity(WorkerEntity workerEntity);
+
 }

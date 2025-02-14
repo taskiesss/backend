@@ -36,4 +36,17 @@ public class MailService {
                 " <strong>Taskaya Team</strong><br>";
         sendEmail(to, subject, content);
     }
+
+    public void sendProposalToClient(String to, String from, String jobTitle) throws MessagingException{
+        String subject = "New Proposal Received";
+        String content = "Hello,<br><br>"
+                + "You have received a new proposal for the job: <strong>" + jobTitle + "</strong>.<br><br>"
+                + "The proposal was sent by: <strong>" + from + "</strong>.<br><br>"
+                + "Please review the proposal at your earliest convenience.<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>";
+
+        sendEmail(to, subject, content);
+    }
 }
