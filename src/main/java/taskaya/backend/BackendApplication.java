@@ -181,7 +181,7 @@ public class BackendApplication {
 		User user = User.builder()
 				.username(name)
 				.email(name+"@gmail.com")
-				.password(name+"@765")
+				.password(new BCryptPasswordEncoder().encode(name+"@765"))
 				.role(User.Role.FREELANCER)
 				.build();
 
