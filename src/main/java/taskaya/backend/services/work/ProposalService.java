@@ -8,6 +8,7 @@ import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.Proposal;
@@ -19,6 +20,7 @@ import taskaya.backend.services.MailService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -51,17 +53,36 @@ public class ProposalService {
     @Transactional
     public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException {
 
-        Boolean freelancerORcommunity;
-        if(!(freelancerRepository.findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId()))).isEmpty())){
-            freelancerORcommunity = true; //if it is freelancer
-        }else if (!(communityRepository.findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId()))).isEmpty())){
-            freelancerORcommunity = false; //if it is community
-        }else{
-            throw new RuntimeException("WorkerEntity Not Found!");
+        String freelancerUsername;      //get username of Freelancer or Community Admin
+
+        Freelancer testFreelancer = freelancerRepository.findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
+                .orElse(null);   // search for freelancer with worker entity
+
+        Community testCommunity;       // to search for community if required
+
+        String workerEmailName ;        // name to be send in email
+
+
+        if(!(testFreelancer == null)){    // if freelancer found with worker entity, set username and email name
+            freelancerUsername = testFreelancer.getUser().getUsername();
+            workerEmailName = testFreelancer.getUser().getUsername();
+        }else{  //if NO freelancer found, search for community and do the same steps
+            testCommunity = communityRepository.findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
+                    .orElseThrow(()->new RuntimeException("WorkerEntity Not Found!"));
+
+            freelancerUsername = testCommunity.getAdmin().getUser().getUsername();
+            workerEmailName = testCommunity.getCommunityName();
         }
 
 
+        //check that user with token is either a freelancer or an admin of community
+        String username = JwtService.getAuthenticatedUsername();
+        if(!Objects.equals(freelancerUsername, username)){
+            throw new RuntimeException("Invalid Request, User authorized is different from stated in Request");
+        }
 
+
+        // create milestones list, copy milestones from DTO
         List<Milestone> myMilestoneList = new ArrayList<>();
         for (MilestoneSubmitProposalRequestDTO milestone : requestDTO.getMilestones()) {
             Milestone myMilestone = Milestone.builder()
@@ -76,7 +97,7 @@ public class ProposalService {
             myMilestoneList.add(myMilestone);
         }
 
-
+        // create proposal, copy data from DTO
         Proposal proposal = Proposal.builder()
                 .job(jobService.findById(jobId))
                 .workerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
@@ -96,25 +117,9 @@ public class ProposalService {
                 .orElseThrow(()->new RuntimeException("User Not Found")).getEmail();
 
 
-        String workerUsername ;
-        if(freelancerORcommunity){
-            // if it is Freelancer
-            workerUsername = freelancerRepository
-                .findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
-                .orElseThrow(()->new RuntimeException("Freelancer Not Found")).getUser().getUsername();
-        }
-        else{
-            //if it is Community
-            workerUsername = communityRepository
-                    .findByWorkerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
-                    .orElseThrow(()->new RuntimeException("Freelancer Not Found")).getCommunityName();
-
-            System.out.println(workerUsername);
-        }
-
         String jobTitle = jobService.findById(jobId).getTitle();
 
-        mailService.sendProposalToClient(clientEmail, workerUsername, jobTitle);
+        mailService.sendProposalToClient(clientEmail, workerEmailName, jobTitle);
 
     }
 
