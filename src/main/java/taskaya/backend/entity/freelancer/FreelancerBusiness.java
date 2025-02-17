@@ -19,9 +19,6 @@ public class FreelancerBusiness {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false )
-    private State state = State.AVAILABLE;
 
     @Column(name = "completed_jobs", nullable = false)
     private Integer completedJobs=0;
@@ -29,9 +26,6 @@ public class FreelancerBusiness {
     private Double avgHoursPerWeek;
 
 
-    public enum State {
-        BUSY, AVAILABLE
-    }
 
 
 }

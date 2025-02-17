@@ -19,4 +19,9 @@ public class FreelancerPortfolio {
 
     @Column(name = "portfolio_pdf", nullable = false)
     private String portfolioPdf; // Path or link to the portfolio PDF
+
+    @Column(name = "portfolio_pdf", nullable = false)
+    private String name; // Path or link to the portfolio PDF
+
+
 }
