@@ -43,7 +43,7 @@ public class Proposal {
     private Double costPerHour; // Cost per hour
 
     @OneToOne
-    @JoinColumn(name = "proposal_id")
+    @JoinColumn(name = "contract_id")
     private Contract contract;
 
 
