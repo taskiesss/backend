@@ -3,6 +3,7 @@ package taskaya.backend.entity.work;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.Payment;
 
@@ -18,7 +19,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "proposals")
 public class Proposal {
-    public static final int MAX_LETTER_LENGTH = 5000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +36,7 @@ public class Proposal {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client; // Associated Client
 
-    @Column(name = "cover_letter", length = MAX_LETTER_LENGTH)
+    @Column(name = "cover_letter", length = Constants.MAX_LETTER_LENGTH)
     private String coverLetter; // Proposal cover letter
 
     @Column(name = "cost_per_hour", nullable = false)
