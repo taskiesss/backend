@@ -17,8 +17,10 @@ import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ProposalRepository;
+import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,9 +52,12 @@ public class ProposalService {
     @Autowired
     CommunityRepository communityRepository;
 
+    @Autowired
+    CloudinaryService cloudinaryService;
+
 
     @Transactional
-    public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException {
+    public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException, IOException {
 
         //check that job id in path and DTO are identical
         if(!Objects.equals(jobId.toString(), requestDTO.getJobId()))
@@ -103,6 +108,9 @@ public class ProposalService {
             throw new RuntimeException("Invalid Request, User authorized is different from stated in Request");
         }
 
+        // Upload file to Cloudinary, return path URL
+        String fileUrl = cloudinaryService.uploadFile(requestDTO.getAttachment());
+
 
         // create milestones list, copy milestones from DTO
         List<Milestone> myMilestoneList = new ArrayList<>();
@@ -128,7 +136,7 @@ public class ProposalService {
                 .coverLetter(requestDTO.getCoverLetter())
                 .payment(requestDTO.getFreelancerPayment())
                 .milestones(myMilestoneList)
-                .attachment(requestDTO.getAttachment())
+                .attachment(fileUrl)
                 .build();
 
         proposalRepository.save(proposal);

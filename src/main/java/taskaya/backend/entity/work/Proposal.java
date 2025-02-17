@@ -56,5 +56,5 @@ public class Proposal {
     private Payment payment;
 
     @Column(name = "attachment")
-    private String attachment;
+    private String attachment;  //attachment URL
 }

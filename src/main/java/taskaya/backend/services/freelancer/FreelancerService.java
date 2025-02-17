@@ -196,7 +196,6 @@ public class FreelancerService {
         }else{
             for(Community community:communities){
                 responseDTOS.add(FreelancerOwnedCommunitiesResponseMapper.toDTO(community));
-                System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
             }
         }
         return responseDTOS;

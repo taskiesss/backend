@@ -38,6 +38,7 @@ import taskaya.backend.services.work.ProposalService;
 import taskaya.backend.services.work.WorkerEntityService;
 
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,10 @@ public class BackendApplication {
 //		proposalSeed();
 	}
 
-	private void proposalSeed() throws MessagingException {
+	private void proposalSeed() throws MessagingException, IOException {
+		/*
+		NO ATTACHMENT ASSIGNED IN THIS TEST FUNCTION
+		*/
 		User user1 = userRepository.findByUsername("client02").get();
 		Client client1 = clientRepository.findByUser(user1).get();
 
@@ -149,7 +153,6 @@ public class BackendApplication {
 				.freelancerPayment(Payment.PerMilestones)
 				.coverLetter("Please accept my proposal, I need money :_)")
 				.milestones(milestoneList)
-				.attachment("My ATTACHMENT")
 				.build();
 
 		proposalService.createProposal(submitProposalRequestDTO,myJob.getUuid());
@@ -163,7 +166,6 @@ public class BackendApplication {
 				.freelancerPayment(Payment.PerProject)
 				.coverLetter("Community Cover Letter")
 				.milestones(milestoneList)
-				.attachment("Community Attachment")
 				.build();
 
 		proposalService.createProposal(commRequestDTO,myJob.getUuid());

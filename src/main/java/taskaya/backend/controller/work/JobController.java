@@ -23,7 +23,7 @@ public class JobController {
     }
 
     @GetMapping("freelancers/jobs/{id}")
-    public ResponseEntity<JobDetailsResponseDTO> getJobDetails(@RequestParam String id){
+    public ResponseEntity<JobDetailsResponseDTO> getJobDetails(@PathVariable String id){
         JobDetailsResponseDTO jobDetailsResponseDTO = jobService.getJobDetails(id);
         return ResponseEntity.ok(jobDetailsResponseDTO);
     }
