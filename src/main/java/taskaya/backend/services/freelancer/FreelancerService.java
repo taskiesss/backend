@@ -68,6 +68,7 @@ public class FreelancerService {
                 .user(user)
                 .workerEntity(workerEntity)
                 .balance(new FreelancerBalance())
+                .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .freelancerBusiness(new FreelancerBusiness())
                 .experienceLevel(ExperienceLevel.values()[new Random().nextInt(ExperienceLevel.values().length)])
                 .pricePerHour(0.0)

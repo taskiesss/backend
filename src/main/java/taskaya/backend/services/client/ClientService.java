@@ -3,6 +3,7 @@ package taskaya.backend.services.client;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
@@ -22,6 +23,7 @@ public class ClientService {
                 .user(user)
                 .balance(new ClientBalance())
                 .clientBusiness(new ClientBusiness())
+                .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .build();
 
         clientRepository.save(client);

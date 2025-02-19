@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.services.work.ProposalService;
 
@@ -31,6 +32,6 @@ public class ProposalController {
         dto.setAttachment(attachment);
         proposalService.createProposal(dto, UUID.fromString(jobid));
 
-        return ResponseEntity.status(HttpStatus.OK).body("Proposal Created!");
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 }
