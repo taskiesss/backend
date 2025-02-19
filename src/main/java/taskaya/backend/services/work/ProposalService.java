@@ -109,7 +109,7 @@ public class ProposalService {
         }
 
         // Upload file to Cloudinary, return path URL
-        String fileUrl = cloudinaryService.uploadFile(requestDTO.getAttachment());
+        String fileUrl = cloudinaryService.uploadFile(requestDTO.getAttachment(), "proposal_attachments");
 
 
         // create milestones list, copy milestones from DTO
