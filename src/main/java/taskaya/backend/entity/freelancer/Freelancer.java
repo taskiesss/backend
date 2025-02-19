@@ -54,9 +54,16 @@ public class Freelancer {
     @JoinColumn(name = "freelancer_business_id", referencedColumnName = "id")
     private FreelancerBusiness freelancerBusiness;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "freelancer_id", referencedColumnName = "id")
-    private List<FreelancerPortfolio> portfolios;
+    @Builder.Default
+    private List<FreelancerPortfolio> portfolios= new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "freelancer_id", referencedColumnName = "id")
+    @Builder.Default
+    private List<EmployeeHistory> employeeHistories= new ArrayList<>();
+
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
@@ -93,6 +100,8 @@ public class Freelancer {
     @JoinColumn(name = "freelancer_id")
     private List<Education> educations;
 
+    @Column()
+    private String linkedIn;
 
     @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MsgBox> msgBoxes;

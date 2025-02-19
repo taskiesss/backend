@@ -9,8 +9,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
+import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
+import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
@@ -200,6 +202,24 @@ public class FreelancerService {
             }
         }
         return responseDTOS;
+    }
+
+    public FreelancerProfileDTO getProfileDetails(String id) {
+
+        Freelancer freelancer ;
+
+        if (id.equals("my_profile")){
+            String myUsername = JwtService.getAuthenticatedUsername();
+            User user = userRepository.findByUsername(myUsername).get();
+            freelancer = freelancerRepository.findByUser(user)
+                    .orElseThrow(()-> new NotFoundException("freelancer not found"));
+        }else {
+            freelancer = freelancerRepository.findById(UUID.fromString(id))
+                    .orElseThrow(()->new NotFoundException("freelancer not found"));
+        }
+
+        return FreelancerProfileMapper.toDTO(freelancer);
+
     }
 }
 

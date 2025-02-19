@@ -2,6 +2,7 @@ package taskaya.backend.entity.community;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -29,7 +30,8 @@ public class Community {
 
 
     @Column(name = "profile_picture")
-    private String profilePicture;
+    @Builder.Default
+    private String profilePicture = Constants.COMMUNITY_FIRST_PROFILE_PICTURE;
 
 
     @OneToOne( cascade = CascadeType.ALL)

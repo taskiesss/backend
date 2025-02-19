@@ -22,13 +22,14 @@ public class FreelancerSpecification {
             // Search by name
             if (search != null && !search.isEmpty())  {
                 String searchRegExp ="%" + search.toLowerCase() + "%";
-                Predicate namePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("username")), searchRegExp);
+                Predicate usernamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("user").get("username")), searchRegExp);
+                Predicate namePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), searchRegExp);
                 Predicate titlePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), searchRegExp);
                 Predicate descriptionPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), searchRegExp);
 
                 // Combine the predicates for name, title, or description
                 predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.or(namePredicate, titlePredicate, descriptionPredicate));
+                        criteriaBuilder.or(usernamePredicate,namePredicate, titlePredicate, descriptionPredicate));
             }
 
             // Search by skills

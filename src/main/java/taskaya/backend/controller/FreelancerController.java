@@ -36,4 +36,9 @@ public class FreelancerController {
     public ResponseEntity<List<FreelancerOwnedCommunitiesResponseDTO>> freelancerOwnedCommunities(){
         return ResponseEntity.ok(freelancerService.freelancerOwnedCommunities());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProfileDetails(@PathVariable String id){
+        return ResponseEntity.ok(freelancerService.getProfileDetails(id));
+    }
 }

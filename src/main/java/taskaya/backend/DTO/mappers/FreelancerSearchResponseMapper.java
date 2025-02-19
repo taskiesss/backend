@@ -15,15 +15,17 @@ import java.util.List;
 public class FreelancerSearchResponseMapper {
 
     public static FreelancerSearchResponseDTO toDTO(Freelancer freelancer){
+        String nameOrUsername = (freelancer.getName()==null || freelancer.getName().isEmpty() )? freelancer.getUser().getUsername() : freelancer.getName();
         return FreelancerSearchResponseDTO.builder()
                 .id(freelancer.getId())
-                .name(freelancer.getUser().getUsername())
+                .name(nameOrUsername)
                 .title(freelancer.getTitle())
                 .description((freelancer.getDescription()!= null &&freelancer.getDescription().length()>256)? freelancer.getDescription().substring(0,256)+"..." : freelancer.getDescription())
                 .skills(freelancer.getSkills().stream().map(Skill::getName).toList())
                 .rate(freelancer.getRate())
                 .experienceLevel(freelancer.getExperienceLevel())
                 .pricePerHour(freelancer.getPricePerHour())
+                .profilePicture(freelancer.getProfilePicture())
                 .build();
     }
 

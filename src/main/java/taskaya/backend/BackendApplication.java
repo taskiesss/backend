@@ -561,6 +561,11 @@ public class BackendApplication {
 		freelancer1.setSkills(new HashSet<>(skills1));
 		freelancer1.setPricePerHour(50D);
 		freelancer1.setRate(3);
+		freelancer1.setDescription("best freelancer you will deal with ;)");
+		freelancer1.setTitle("fullstack developer");
+		freelancer1.setCountry("egypt");
+		freelancer1.setName("martin ashraf");
+
 		freelancerRepository.save(freelancer1);
 
 
