@@ -1,5 +1,7 @@
 package taskaya.backend.controller;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +10,8 @@ import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.util.List;
@@ -37,6 +41,7 @@ public class FreelancerController {
     public ResponseEntity<List<FreelancerOwnedCommunitiesResponseDTO>> freelancerOwnedCommunities(){
         return ResponseEntity.ok(freelancerService.freelancerOwnedCommunities());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfileDetails(@PathVariable String id){
@@ -85,6 +90,44 @@ public class FreelancerController {
         return ResponseEntity.ok(SimpleResponseDTO.builder()
                 .message("true")
                 .build());
+
+    }
+
+    @PatchMapping("/country")
+    public ResponseEntity updateCountry(@RequestBody CountryUpdateRequestDTO country){
+        freelancerService.updateCountry(country);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Country updated successfully.")
+                .build(),HttpStatus.OK);
+    }
+
+    @PatchMapping("/price-per-hour")
+    public ResponseEntity updatePricePerHour(@RequestBody PricePerHourUpdateRequestDTO pricePerHour){
+        freelancerService.updatePricePerHour(pricePerHour);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Price per hour updated successfully.")
+                .build(),HttpStatus.OK);
+    }
+
+    @PatchMapping("/skills")
+    public ResponseEntity updateSkills(@RequestBody SkillsUpdateRequestDTO skills){
+        freelancerService.updateSkills(skills);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Skills updated successfully.")
+                .build(),HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/portfolios")
+    public ResponseEntity<Page<FreelancerPortfolio>> getFreelancerPortfolios( @PathVariable String id,
+                                                                              @RequestParam int page,
+                                                                              @RequestParam int size){
+        // Create pageable object
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Fetch paginated portfolios
+        Page<FreelancerPortfolio> portfolios = freelancerService.getFreelancerPortfolios(id, pageable);
+
+        return ResponseEntity.ok(portfolios);
 
     }
 }

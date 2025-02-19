@@ -2,20 +2,21 @@ package taskaya.backend.services.freelancer;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
+import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
 import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
@@ -26,9 +27,10 @@ import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.WorkerEntity;
-import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
+import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
@@ -36,6 +38,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FreelancerService {
@@ -253,6 +256,45 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
+    @Transactional
+    public void updateCountry(CountryUpdateRequestDTO country) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setCountry(country.getCountry());
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updatePricePerHour(PricePerHourUpdateRequestDTO pricePerHour) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setPricePerHour((double)pricePerHour.getPricePerHour());
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updateSkills(SkillsUpdateRequestDTO skills) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setSkills(skills.getSkills().stream().collect(Collectors.toSet()));
+        freelancerRepository.save(freelancer);
+    }
+
+    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id , org.springframework.data.domain.Pageable pageable) {
+
+        Freelancer freelancer = freelancerRepository.findFreelancerById(UUID.fromString(id))
+                .orElseThrow(()->new RuntimeException("Freelancer not found."));
+        List<FreelancerPortfolio> portfolios = freelancer.getPortfolios();
+
+        // Paginate the list manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), portfolios.size());
+
+        if (start >= portfolios.size()) {
+            return new PageImpl<>(List.of(), pageable, portfolios.size()); // Return empty page if out of bounds
+        }
+
+        List<FreelancerPortfolio> paginatedList = portfolios.subList(start, end);
+        return new PageImpl<>(paginatedList, pageable, portfolios.size());
+
+    }
 
 
 
@@ -264,9 +306,6 @@ public class FreelancerService {
                 .orElseThrow(()->new RuntimeException("Username not found!"));
         return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
     }
-
-
-
 }
 
 

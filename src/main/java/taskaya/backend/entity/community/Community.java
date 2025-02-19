@@ -70,7 +70,7 @@ public class Community {
     private ExperienceLevel experienceLevel = ExperienceLevel.entry_level;
 
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(
             name = "community_skill",
             joinColumns = @JoinColumn(name = "community_id"),

@@ -68,7 +68,7 @@ public class Job {
     private ProjectLength projectLength;
 
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(
             name = "job_skill",
             joinColumns = @JoinColumn(name = "job_id"),

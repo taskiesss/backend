@@ -65,7 +65,7 @@ public class Freelancer {
     private List<EmployeeHistory> employeeHistories= new ArrayList<>();
 
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(
             name = "freelancer_skills",
             joinColumns = @JoinColumn(name = "freelancer_id"),
