@@ -565,6 +565,7 @@ public class BackendApplication {
 		freelancer1.setTitle("fullstack developer");
 		freelancer1.setCountry("egypt");
 		freelancer1.setName("martin ashraf");
+		freelancer1.setLanguages(new HashSet<>(List.of("english")));
 
 		freelancerRepository.save(freelancer1);
 

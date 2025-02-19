@@ -98,7 +98,8 @@ public class Freelancer {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "freelancer_id")
-    private List<Education> educations;
+    @Builder.Default
+    private List<Education> educations= new ArrayList<>();
 
     @Column()
     private String linkedIn;

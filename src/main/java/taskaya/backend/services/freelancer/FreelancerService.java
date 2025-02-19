@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
@@ -15,7 +16,6 @@ import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
 import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
-import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
@@ -72,7 +72,7 @@ public class FreelancerService {
                 .balance(new FreelancerBalance())
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .freelancerBusiness(new FreelancerBusiness())
-                .experienceLevel(ExperienceLevel.values()[new Random().nextInt(ExperienceLevel.values().length)])
+                .experienceLevel(ExperienceLevel.entry_level)
                 .pricePerHour(0.0)
                 .build();
         freelancerRepository.save(freelancer);
@@ -127,10 +127,8 @@ public class FreelancerService {
 
     @Transactional
     public void fillForm(FirstTimeFreelancerFormDTO firstTimeFreelancerFormDTO){
-        String username = JwtService.getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("Username not found!"));
-        Freelancer freelancer = freelancerRepository.findByUser(user).get();
+
+        Freelancer freelancer = getFreelancerFromJWT();
 
 
         //
@@ -187,10 +185,8 @@ public class FreelancerService {
     }
 
     public List<FreelancerOwnedCommunitiesResponseDTO> freelancerOwnedCommunities(){
-        String username = JwtService.getAuthenticatedUsername();
-        Freelancer freelancer = freelancerRepository.findByUser(userRepository.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("User not found!")))
-                .orElseThrow(()->new RuntimeException("Username not found!"));
+
+        Freelancer freelancer = getFreelancerFromJWT();
         List<FreelancerOwnedCommunitiesResponseDTO> responseDTOS = new ArrayList<>();
         responseDTOS.add(FreelancerOwnedCommunitiesResponseMapper.toDTO(freelancer));
         List<Community> communities = communityRepository.findAllByAdmin(freelancer);
@@ -221,6 +217,56 @@ public class FreelancerService {
         return FreelancerProfileMapper.toDTO(freelancer);
 
     }
+
+    @Transactional
+    public void updateLanguages(LanguageDTO request) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setLanguages(new HashSet<>(request.getLanguages()));
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updateEducations(EducationsPatchRequestDTO request) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.getEducations().clear();
+        freelancer.getEducations().addAll(request.getEducations());
+        freelancerRepository.save(freelancer);
+    }
+
+
+    @Transactional
+    public void updateLinkedIn(LinkedInPatchRequestDTO request) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setLinkedIn(request.getLinkedIn());
+    }
+
+    @Transactional
+    public void updateDesc(DescriptionPatchRequestDTO request) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.setDescription(request.getDescription());
+    }
+
+    public void updateEmpHistory(EmployeeHistoryPatchDTO request) {
+        Freelancer freelancer = getFreelancerFromJWT();
+        freelancer.getEmployeeHistories().clear();
+        freelancer.getEmployeeHistories().addAll(request.getEmployeeHistory());
+        freelancerRepository.save(freelancer);
+    }
+
+
+
+
+
+
+    Freelancer getFreelancerFromJWT(){
+        String username = JwtService.getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()->new RuntimeException("Username not found!"));
+        return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
+    }
+
+
+
 }
 
 
