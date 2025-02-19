@@ -58,7 +58,7 @@ public class Freelancer {
     @JoinColumn(name = "freelancer_id", referencedColumnName = "id")
     private List<FreelancerPortfolio> portfolios;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(
             name = "freelancer_skills",
             joinColumns = @JoinColumn(name = "freelancer_id"),

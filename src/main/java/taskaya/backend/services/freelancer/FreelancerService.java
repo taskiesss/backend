@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
@@ -25,7 +28,6 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.work.WorkerEntity;
-import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
@@ -34,6 +36,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FreelancerService {
@@ -200,6 +203,36 @@ public class FreelancerService {
             }
         }
         return responseDTOS;
+    }
+
+    @Transactional
+    public void updateCountry(CountryUpdateRequestDTO country) {
+        String username = JwtService.getAuthenticatedUsername();
+        Freelancer freelancer = freelancerRepository.findByUser(userRepository.findByUsername(username)
+                        .orElseThrow(()->new RuntimeException("User not found!")))
+                .orElseThrow(()->new RuntimeException("Freelancer not found!"));
+        freelancer.setCountry(country.getCountry());
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updatePricePerHour(PricePerHourUpdateRequestDTO pricePerHour) {
+        String username = JwtService.getAuthenticatedUsername();
+        Freelancer freelancer = freelancerRepository.findByUser(userRepository.findByUsername(username)
+                        .orElseThrow(()->new RuntimeException("User not found!")))
+                .orElseThrow(()->new RuntimeException("Freelancer not found!"));
+        freelancer.setPricePerHour((double)pricePerHour.getPricePerHour());
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updateSkills(SkillsUpdateRequestDTO skills) {
+        String username = JwtService.getAuthenticatedUsername();
+        Freelancer freelancer = freelancerRepository.findByUser(userRepository.findByUsername(username)
+                        .orElseThrow(()->new RuntimeException("User not found!")))
+                .orElseThrow(()->new RuntimeException("Freelancer not found!"));
+        freelancer.setSkills(skills.getSkills().stream().collect(Collectors.toSet()));
+        freelancerRepository.save(freelancer);
     }
 }
 

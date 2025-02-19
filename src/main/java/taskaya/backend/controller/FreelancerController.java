@@ -3,6 +3,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
@@ -35,5 +39,29 @@ public class FreelancerController {
     @GetMapping("/owned-communities")
     public ResponseEntity<List<FreelancerOwnedCommunitiesResponseDTO>> freelancerOwnedCommunities(){
         return ResponseEntity.ok(freelancerService.freelancerOwnedCommunities());
+    }
+
+    @PatchMapping("/country")
+    public ResponseEntity updateCountry(@RequestBody CountryUpdateRequestDTO country){
+        freelancerService.updateCountry(country);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Country updated successfully.")
+                .build(),HttpStatus.OK);
+    }
+
+    @PatchMapping("/price-per-hour")
+    public ResponseEntity updatePricePerHour(@RequestBody PricePerHourUpdateRequestDTO pricePerHour){
+        freelancerService.updatePricePerHour(pricePerHour);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Price per hour updated successfully.")
+                .build(),HttpStatus.OK);
+    }
+
+    @PatchMapping("/skills")
+    public ResponseEntity updateSkills(@RequestBody SkillsUpdateRequestDTO skills){
+        freelancerService.updateSkills(skills);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Skills updated successfully.")
+                .build(),HttpStatus.OK);
     }
 }
