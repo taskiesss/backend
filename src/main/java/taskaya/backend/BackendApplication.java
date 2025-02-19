@@ -10,12 +10,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.Payment;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
@@ -265,7 +267,7 @@ public class BackendApplication {
 				.skills(new HashSet<>(skills))
 				.description("This is the sdhsbdcjksbvkjsbvdjsbdvj,sbdvj,sdvjkgsdfjhbdcjsdbcjksbdccj,sjsbcsj")
 				.isFull(false)
-				.experienceLevel(ExperienceLevel.entry_level)
+				.experienceLevel(ExperienceLevel.expert)
 				.build();
 
 		communityService.save(community);
@@ -558,9 +560,16 @@ public class BackendApplication {
 		Freelancer freelancer2=freelancerService.createFreelancer(freelancerUser2);
 		Freelancer freelancer3=freelancerService.createFreelancer(freelancerUser3);
 
+		List<FreelancerPortfolio> portfolios= new ArrayList<>();
+		portfolios.add(FreelancerPortfolio.builder()
+						.portfolioPdf(Constants.FIRST_PROFILE_PICTURE)
+						.name("Portfolio01")
+				.build());
+
 		freelancer1.setSkills(new HashSet<>(skills1));
 		freelancer1.setPricePerHour(50D);
 		freelancer1.setRate(3);
+		freelancer1.setPortfolios(portfolios);
 		freelancerRepository.save(freelancer1);
 
 

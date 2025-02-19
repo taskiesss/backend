@@ -1,5 +1,8 @@
 package taskaya.backend.controller;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +11,12 @@ import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
+import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
+import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.util.List;
@@ -63,5 +69,18 @@ public class FreelancerController {
         return new ResponseEntity<>(SimpleResponseDTO.builder()
                 .message("Skills updated successfully.")
                 .build(),HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/portfolios")
+    public ResponseEntity<Page<FreelancerPortfolio>> getFreelancerPortfolios( @PathVariable String id,
+                                                                              @RequestParam int page,
+                                                                              @RequestParam int size){
+        // Create pageable object
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Fetch paginated portfolios
+        Page<FreelancerPortfolio> portfolios = freelancerService.getFreelancerPortfolios(id, pageable);
+
+        return ResponseEntity.ok(portfolios);
     }
 }

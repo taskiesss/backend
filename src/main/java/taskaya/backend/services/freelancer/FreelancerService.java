@@ -2,21 +2,21 @@ package taskaya.backend.services.freelancer;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
+import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
+import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
+import taskaya.backend.DTO.mappers.JobSearchResponseMapper;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
@@ -27,6 +27,8 @@ import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
+import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
 import taskaya.backend.repository.SkillRepository;
@@ -34,6 +36,7 @@ import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.specifications.FreelancerSpecification;
+import taskaya.backend.specifications.JobSpecification;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -233,6 +236,25 @@ public class FreelancerService {
                 .orElseThrow(()->new RuntimeException("Freelancer not found!"));
         freelancer.setSkills(skills.getSkills().stream().collect(Collectors.toSet()));
         freelancerRepository.save(freelancer);
+    }
+
+    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id , org.springframework.data.domain.Pageable pageable) {
+
+        Freelancer freelancer = freelancerRepository.findFreelancerById(UUID.fromString(id))
+                .orElseThrow(()->new RuntimeException("Freelancer not found."));
+        List<FreelancerPortfolio> portfolios = freelancer.getPortfolios();
+
+        // Paginate the list manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), portfolios.size());
+
+        if (start >= portfolios.size()) {
+            return new PageImpl<>(List.of(), pageable, portfolios.size()); // Return empty page if out of bounds
+        }
+
+        List<FreelancerPortfolio> paginatedList = portfolios.subList(start, end);
+        return new PageImpl<>(paginatedList, pageable, portfolios.size());
+
     }
 }
 
