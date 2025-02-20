@@ -205,18 +205,7 @@ public class FreelancerService {
 
     public FreelancerProfileDTO getProfileDetails(String id) {
 
-        Freelancer freelancer ;
-
-        if (id.equals("my_profile")){
-            String myUsername = JwtService.getAuthenticatedUsername();
-            User user = userRepository.findByUsername(myUsername).get();
-            freelancer = freelancerRepository.findByUser(user)
-                    .orElseThrow(()-> new NotFoundException("freelancer not found"));
-        }else {
-            freelancer = freelancerRepository.findById(UUID.fromString(id))
-                    .orElseThrow(()->new NotFoundException("freelancer not found"));
-        }
-
+        Freelancer freelancer =getFreelancerById(id);
         return FreelancerProfileMapper.toDTO(freelancer);
 
     }
@@ -273,16 +262,16 @@ public class FreelancerService {
     @Transactional
     public void updateSkills(SkillsUpdateRequestDTO skills) {
         Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setSkills(skills.getSkills().stream().collect(Collectors.toSet()));
+        freelancer.setSkills(new HashSet<>(skills.getSkills()));
         freelancerRepository.save(freelancer);
     }
 
     public Page<FreelancerPortfolio> getFreelancerPortfolios(String id , org.springframework.data.domain.Pageable pageable) {
 
-        Freelancer freelancer = freelancerRepository.findFreelancerById(UUID.fromString(id))
-                .orElseThrow(()->new RuntimeException("Freelancer not found."));
+        Freelancer freelancer = getFreelancerById(id);
         List<FreelancerPortfolio> portfolios = freelancer.getPortfolios();
 
+        portfolios.sort(Comparator.comparing(FreelancerPortfolio::getId));
         // Paginate the list manually
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), portfolios.size());
@@ -305,6 +294,17 @@ public class FreelancerService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()->new RuntimeException("Username not found!"));
         return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
+    }
+
+    Freelancer getFreelancerById(String id ){
+        Freelancer freelancer;
+        if (id.equals("my_profile")){
+            freelancer = getFreelancerFromJWT();
+        }else {
+            freelancer = freelancerRepository.findById(UUID.fromString(id))
+                    .orElseThrow(()->new NotFoundException("freelancer not found"));
+        }
+        return freelancer;
     }
 }
 
