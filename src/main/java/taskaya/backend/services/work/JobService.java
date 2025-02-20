@@ -65,12 +65,7 @@ public class JobService {
                 .orElseThrow(() ->new RuntimeException("Job Not Found!"));
     }
 
-    public Client getClientByJobId(UUID jobId){
-        return jobRepository.findClientByUuid(jobId)
-                .orElseThrow(()-> new RuntimeException("Client Does Not Exist!"));
-    }
-
-
+    
     public JobDetailsResponseDTO getJobDetails (String jobId){
         Job job = jobRepository.findById(UUID.fromString(jobId))
                 .orElseThrow(()->new NotFoundException("Job not found."));

@@ -20,8 +20,6 @@ public interface JobRepository extends JpaRepository<Job, UUID>, JpaSpecificatio
     //to find all not assigned jobs with specifications
 //    @Query("SELECT j FROM Job j LEFT JOIN FETCH j.assignedTo WHERE j.assignedTo IS NULL")
 //    Page<Job> findAllByAssignedToIsNull(Specification<Job> spec, Pageable pageable);
-    @Query("SELECT j.client FROM Job j WHERE j.uuid = :jobUuid")
-    Optional<Client> findClientByUuid(@Param("jobUuid")UUID jobUuid);
     Optional<Job> findByTitle(String title);
     List<Job> findByAssignedToAndStatus(WorkerEntity assignedTo, Job.JobStatus status);
 

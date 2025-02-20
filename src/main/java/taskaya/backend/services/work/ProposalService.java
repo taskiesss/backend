@@ -10,6 +10,7 @@ import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.Proposal;
 import taskaya.backend.entity.work.WorkerEntity;
@@ -109,7 +110,10 @@ public class ProposalService {
         }
 
         // Upload file to Cloudinary, return path URL
-        String fileUrl = cloudinaryService.uploadFile(requestDTO.getAttachment(), "proposal_attachments");
+        String fileUrl = null;
+        if (requestDTO.getAttachment() != null && !requestDTO.getAttachment().isEmpty()) {
+            fileUrl = cloudinaryService.uploadFile(requestDTO.getAttachment(), "proposal_attachments");
+        }
 
 
         // create milestones list, copy milestones from DTO
@@ -127,11 +131,12 @@ public class ProposalService {
             myMilestoneList.add(myMilestone);
         }
 
+        Job job = jobService.findById(jobId);
         // create proposal, copy data from DTO
         Proposal proposal = Proposal.builder()
-                .job(jobService.findById(jobId))
+                .job(job)
                 .workerEntity(workerEntityService.findById(UUID.fromString(requestDTO.getCandidateId())))
-                .client(jobService.getClientByJobId(jobId))
+                .client(job.getClient())
                 .costPerHour(requestDTO.getPricePerHour())
                 .coverLetter(requestDTO.getCoverLetter())
                 .payment(requestDTO.getFreelancerPayment())
@@ -143,7 +148,7 @@ public class ProposalService {
 
         milestoneService.saveAll(myMilestoneList);
 
-        String clientEmail = userRepository.findById(jobService.getClientByJobId(jobId).getId())
+        String clientEmail = userRepository.findById(job.getClient().getId())
                 .orElseThrow(()->new RuntimeException("User Not Found")).getEmail();
 
 
