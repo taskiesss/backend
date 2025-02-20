@@ -8,8 +8,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
+import taskaya.backend.entity.work.WorkerEntity;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +23,7 @@ public interface JobRepository extends JpaRepository<Job, UUID>, JpaSpecificatio
     @Query("SELECT j.client FROM Job j WHERE j.uuid = :jobUuid")
     Optional<Client> findClientByUuid(@Param("jobUuid")UUID jobUuid);
     Optional<Job> findByTitle(String title);
+    List<Job> findByAssignedToAndStatus(WorkerEntity assignedTo, Job.JobStatus status);
 
 
 }
