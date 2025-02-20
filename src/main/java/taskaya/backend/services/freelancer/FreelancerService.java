@@ -392,7 +392,7 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    Freelancer getFreelancerFromJWT(){
+    public Freelancer getFreelancerFromJWT(){
         String username = JwtService.getAuthenticatedUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()->new RuntimeException("Username not found!"));

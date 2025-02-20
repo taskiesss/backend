@@ -34,4 +34,9 @@ public class ProposalController {
 
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
+
+    @GetMapping("/freelancers/my-proposals")
+    public  ResponseEntity<?>getFreelancerProposals ( @RequestParam int page, @RequestParam int size){
+        return ResponseEntity.ok(proposalService.getMyProposals(page,size));
+    }
 }

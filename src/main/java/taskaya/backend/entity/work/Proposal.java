@@ -7,18 +7,22 @@ import taskaya.backend.config.Constants;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.Payment;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "proposals")
 public class Proposal {
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,6 +46,11 @@ public class Proposal {
     @Column(name = "cost_per_hour", nullable = false)
     private Double costPerHour; // Cost per hour
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private ProposalStatus status = ProposalStatus.PENDING;
+
     @OneToOne
     @JoinColumn(name = "contract_id")
     private Contract contract;
@@ -57,4 +66,13 @@ public class Proposal {
 
     @Column(name = "attachment")
     private String attachment;  //attachment URL
+
+    @Column(name = "date")
+    @Builder.Default
+    private Date date= new Date();
+
+    public enum ProposalStatus {
+        PENDING, DECLINED, HIRED
+    }
+
 }

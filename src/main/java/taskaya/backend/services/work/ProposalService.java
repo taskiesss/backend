@@ -3,7 +3,13 @@ package taskaya.backend.services.work;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
+import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.config.security.JwtService;
@@ -20,6 +26,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +63,8 @@ public class ProposalService {
     @Autowired
     CloudinaryService cloudinaryService;
 
+    @Autowired
+    FreelancerService freelancerService;
 
     @Transactional
     public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException, IOException {
@@ -158,4 +167,14 @@ public class ProposalService {
 
     }
 
+    public Page<MyProposalsPageResponseDTO> getMyProposals(int page , int size){
+        Sort sort = sort = Sort.by(Sort.Order.desc("date"));
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+
+        Page <Proposal> proposalsPage = proposalRepository.findByWorkerEntity(freelancer.getWorkerEntity(),pageable);
+
+        return MyProposalsPageResponseMapper.toDTOPage(proposalsPage);
+    }
 }
