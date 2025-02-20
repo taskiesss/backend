@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class FreelancerWorkdoneResponseDTO {
-    UUID id;
+    String jobId;
     String jobName;
     double rate;
     double pricePerHour;
