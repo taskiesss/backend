@@ -17,21 +17,28 @@ import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.Payment;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
+
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
+
+import taskaya.backend.entity.work.Contract;
+
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.ExperienceLevel;
 
 
+import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
+import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.repository.work.WorkerEntityRepository;
+import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
@@ -85,6 +92,12 @@ public class BackendApplication {
 	@Autowired
 	ProposalService proposalService;
 
+	@Autowired
+	CloudinaryService cloudinaryService;
+
+	@Autowired
+	ContractRepository contractRepository;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
@@ -95,6 +108,100 @@ public class BackendApplication {
 		communityWithAdmin();
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
+		freelancerWorkdoneseed();
+	}
+
+	private void freelancerWorkdoneseed() {
+		Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
+		Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
+		System.out.println("freelancer01 UUID: "+freelancer.getId());
+
+		Job job = Job.builder()
+				.title("JobWorkdone1")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("this is the first job")
+				.pricePerHour(40)
+				.endedAt(new Date(2024, 1, 20, 15, 30, 0))
+				.assignedTo(freelancer.getWorkerEntity())
+				.build();
+
+
+		List<Milestone> milestones = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.number(1)
+						.estimatedHours(5)
+						.status(Milestone.MilestoneStatus.DONE)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.number(2)
+						.estimatedHours(3)
+						.status(Milestone.MilestoneStatus.DONE)
+						.build()
+		);
+
+		Contract contract = Contract.builder()
+				.job(job)
+				.client(client)
+				.status(Contract.ContractStatus.APPROVED)
+				.milestones(milestones)
+				.workerEntity(freelancer.getWorkerEntity())
+				.costPerHour(55.55)
+				.build();
+		job.setContract(contract);
+
+		freelancerRepository.save(freelancer);
+		jobRepository.save(job);
+		contractRepository.save(contract);
+
+
+		Job job2 = Job.builder()
+				.title("JobWorkdone2")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("this is the sec job")
+				.pricePerHour(40)
+				.endedAt(new Date(2025, 1, 20, 15, 30, 0))
+				.assignedTo(freelancer.getWorkerEntity())
+				.build();
+
+
+		List<Milestone> milestones2 = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.number(1)
+						.estimatedHours(5)
+						.status(Milestone.MilestoneStatus.DONE)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.number(2)
+						.estimatedHours(3)
+						.status(Milestone.MilestoneStatus.DONE)
+						.build()
+		);
+
+		Contract contract2 = Contract.builder()
+				.job(job2)
+				.client(client)
+				.status(Contract.ContractStatus.APPROVED)
+				.milestones(milestones2)
+				.workerEntity(freelancer.getWorkerEntity())
+				.costPerHour(55.55)
+				.build();
+		job2.setContract(contract2);
+
+		freelancerRepository.save(freelancer);
+		jobRepository.save(job2);
+		contractRepository.save(contract2);
 	}
 
 	private void proposalSeed() throws MessagingException, IOException {

@@ -22,7 +22,7 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // Primary key
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
     private Job job; // Associated Job
 
@@ -44,7 +44,7 @@ public class Contract {
     @Column(name = "status", nullable = false)
     private ContractStatus status; // Contract status
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "contract_id") // Foreign key in the Milestone table
     private List<Milestone> milestones = new ArrayList<>();
 

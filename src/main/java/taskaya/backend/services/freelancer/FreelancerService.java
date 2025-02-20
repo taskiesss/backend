@@ -5,18 +5,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
 import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
+
+import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.freelancers.requests.AvrHoursPerWeekUpdateRequestDTO;
+import taskaya.backend.DTO.freelancers.responses.FreelancerWorkdoneResponseDTO;
+
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
 import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
+import taskaya.backend.DTO.mappers.FreelancerWorkdoneResponseMapper;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
@@ -28,6 +35,11 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
+
+
+import taskaya.backend.entity.work.Job;
+
+
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
 import taskaya.backend.exceptions.notFound.NotFoundException;
@@ -35,10 +47,13 @@ import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
+
+import taskaya.backend.repository.work.JobRepository;
+import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.specifications.FreelancerSpecification;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class FreelancerService {
@@ -57,6 +72,11 @@ public class FreelancerService {
     @Autowired
     private FreelancerSearchResponseMapper freelancerSearchResponseMapper;
 
+    @Autowired
+    CloudinaryService cloudinaryService;
+
+    @Autowired
+    JobRepository jobRepository;
 
 
     @Transactional
@@ -203,6 +223,7 @@ public class FreelancerService {
         return responseDTOS;
     }
 
+
     public FreelancerProfileDTO getProfileDetails(String id) {
 
         Freelancer freelancer =getFreelancerById(id);
@@ -288,6 +309,88 @@ public class FreelancerService {
 
 
 
+    @Transactional
+    public void updateProfilePicture(MultipartFile updatedPicture) throws IOException {
+        //get freelancer from token
+        Freelancer freelancer = getFreelancerFromJWT();
+
+        //delete old picture
+        String currentPicture = freelancer.getProfilePicture();
+        if(!(currentPicture.equals(Constants.FIRST_PROFILE_PICTURE)))
+            cloudinaryService.deleteFile(currentPicture);
+
+        //store new picture
+        String pictureURL = cloudinaryService.uploadFile(updatedPicture, "profile_pictures");
+        freelancer.setProfilePicture(pictureURL);
+        freelancerRepository.save(freelancer);
+    }
+
+
+    public Page<FreelancerWorkdoneResponseDTO> getFreelancerWorkdone(String id, int page, int size){
+        List<FreelancerWorkdoneResponseDTO> listDTO = new ArrayList<>();
+
+        //get freelancer
+        Freelancer freelancer = getFreelancerById(id);
+
+        //get worker entity, get all jobs with status = "DONE"
+        WorkerEntity workerEntity = freelancer.getWorkerEntity();
+        List<Job> jobs = jobRepository.findByAssignedToAndStatus(workerEntity, Job.JobStatus.DONE);
+        jobs.sort(Comparator.comparing(Job::getEndedAt).reversed());
+
+        //map to DTO list
+        listDTO = FreelancerWorkdoneResponseMapper.toDTOList(jobs);
+
+        //List to Page
+        Pageable pageable = PageRequest.of(page, size);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), listDTO.size());
+
+        List<FreelancerWorkdoneResponseDTO> paginatedList = listDTO.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, listDTO.size());
+    }
+
+    @Transactional
+    public void addPortfolio(String name, MultipartFile file) throws IOException{
+        //get freelancer from token
+        Freelancer freelancer = getFreelancerFromJWT();
+
+        //upload and save changes in database
+        String portfolioURL = cloudinaryService.uploadFile(file, "freelancer_portfolios");
+        FreelancerPortfolio portfolio = FreelancerPortfolio.builder()
+                .portfolioPdf(portfolioURL)
+                .name(name)
+                .build();
+        List<FreelancerPortfolio> portfolioList = freelancer.getPortfolios();
+        portfolioList.add(portfolio);
+        freelancer.setPortfolios(portfolioList);
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void deletePortfolio(String filePath) throws IOException{
+        //get freelancer from token
+        Freelancer freelancer = getFreelancerFromJWT();
+
+        boolean deleted = cloudinaryService.deleteFile(filePath);
+        if(deleted){
+            //if found and deleted in cloud, update database
+            List<FreelancerPortfolio> portfolioList = freelancer.getPortfolios();
+            portfolioList.removeIf(portfolio -> filePath.equals(portfolio.getPortfolioPdf()));
+            freelancer.setPortfolios(portfolioList);
+            freelancerRepository.save(freelancer);
+        }
+    }
+
+    @Transactional
+    public void updateAvrgHoursPerWeek(AvrHoursPerWeekUpdateRequestDTO requestDTO){
+        //get freelancer from token
+        Freelancer freelancer = getFreelancerFromJWT();
+
+        freelancer.getFreelancerBusiness().setAvgHoursPerWeek(requestDTO.getAvrgHoursPerWeek());
+        freelancerRepository.save(freelancer);
+    }
 
     Freelancer getFreelancerFromJWT(){
         String username = JwtService.getAuthenticatedUsername();
@@ -296,7 +399,7 @@ public class FreelancerService {
         return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
     }
 
-    Freelancer getFreelancerById(String id ){
+    Freelancer getFreelancerById(String id){
         Freelancer freelancer;
         if (id.equals("my_profile")){
             freelancer = getFreelancerFromJWT();
@@ -306,6 +409,8 @@ public class FreelancerService {
         }
         return freelancer;
     }
+
+
 }
 
 
