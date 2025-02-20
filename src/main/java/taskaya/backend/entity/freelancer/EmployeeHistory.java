@@ -19,6 +19,7 @@ public class EmployeeHistory {
     private Integer id;
 
     private String position;
+    private String company;
     private LocalDate startYear;
     private LocalDate endYear;
 }
