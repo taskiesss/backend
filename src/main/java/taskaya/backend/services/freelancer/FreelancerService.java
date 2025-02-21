@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
-import taskaya.backend.DTO.freelancers.requests.CountryUpdateRequestDTO;
-import taskaya.backend.DTO.freelancers.requests.PricePerHourUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -266,17 +264,22 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    @Transactional
-    public void updateCountry(CountryUpdateRequestDTO country) {
-        Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setCountry(country.getCountry());
-        freelancerRepository.save(freelancer);
-    }
+    public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO){
 
-    @Transactional
-    public void updatePricePerHour(PricePerHourUpdateRequestDTO pricePerHour) {
+        if(requestDTO.getPricePerHour() == null
+        ||requestDTO.getPricePerHour() < 0
+        ||requestDTO.getCountry()==null
+        ||requestDTO.getJobTitle() ==null
+        || requestDTO.getLastName() ==null
+        ||requestDTO.getFirstName()==null)
+            throw new RuntimeException("All fields are required");
+
         Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setPricePerHour((double)pricePerHour.getPricePerHour());
+        freelancer.setName(requestDTO.getFirstName()+" "+requestDTO.getLastName());
+        freelancer.setPricePerHour(requestDTO.getPricePerHour());
+        freelancer.setCountry(requestDTO.getCountry());
+        freelancer.setTitle(requestDTO.getJobTitle());
+
         freelancerRepository.save(freelancer);
     }
 

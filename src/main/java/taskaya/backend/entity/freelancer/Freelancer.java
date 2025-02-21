@@ -80,6 +80,9 @@ public class Freelancer {
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    @Column(name = "cover_photo")
+    private String coverPhoto;
+
     @Column(length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;
 

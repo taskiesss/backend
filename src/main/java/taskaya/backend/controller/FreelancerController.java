@@ -96,24 +96,17 @@ public class FreelancerController {
 
     }
 
-    @PatchMapping("/freelancers/country")
-    public ResponseEntity updateCountry(@RequestBody CountryUpdateRequestDTO country){
-        freelancerService.updateCountry(country);
+    @PatchMapping("/freelancers/header-section")
+    public ResponseEntity<?> updateHeaderSection(@RequestBody HeaderSectionUpdateRequestDTO requestDTO){
+        freelancerService.updateHeaderSection(requestDTO);
         return new ResponseEntity<>(SimpleResponseDTO.builder()
-                .message("Country updated successfully.")
+                .message("header updated successfully.")
                 .build(),HttpStatus.OK);
     }
 
-    @PatchMapping("/freelancers/price-per-hour")
-    public ResponseEntity updatePricePerHour(@RequestBody PricePerHourUpdateRequestDTO pricePerHour){
-        freelancerService.updatePricePerHour(pricePerHour);
-        return new ResponseEntity<>(SimpleResponseDTO.builder()
-                .message("Price per hour updated successfully.")
-                .build(),HttpStatus.OK);
-    }
 
     @PatchMapping("/freelancers/skills")
-    public ResponseEntity updateSkills(@RequestBody SkillsUpdateRequestDTO skills){
+    public ResponseEntity<?> updateSkills(@RequestBody SkillsUpdateRequestDTO skills){
         freelancerService.updateSkills(skills);
         return new ResponseEntity<>(SimpleResponseDTO.builder()
                 .message("Skills updated successfully.")

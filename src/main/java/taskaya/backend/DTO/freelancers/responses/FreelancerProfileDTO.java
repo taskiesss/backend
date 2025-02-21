@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.freelancer.Education;
 import taskaya.backend.entity.freelancer.EmployeeHistory;
 
@@ -29,4 +30,7 @@ public class FreelancerProfileDTO {
     private String linkedIn;
     private String description;
     private List<EmployeeHistory> employeeHistory;
+    private String coverPhoto;
+    private ExperienceLevel experienceLevel;
+    private String jobTitle;
 }

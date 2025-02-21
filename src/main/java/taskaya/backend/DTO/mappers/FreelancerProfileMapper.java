@@ -23,6 +23,9 @@ public class FreelancerProfileMapper {
                 .linkedIn(freelancer.getLinkedIn())
                 .description(freelancer.getDescription())
                 .employeeHistory(freelancer.getEmployeeHistories())
+                .coverPhoto(freelancer.getCoverPhoto())
+                .experienceLevel(freelancer.getExperienceLevel())
+                .jobTitle(freelancer.getTitle())
                 .build();
     }
 }
