@@ -92,6 +92,7 @@ public class FreelancerService {
                 .workerEntity(workerEntity)
                 .balance(new FreelancerBalance())
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
+                .coverPhoto(Constants.FIRST_COVER_PICTURE)
                 .freelancerBusiness(new FreelancerBusiness())
                 .experienceLevel(ExperienceLevel.entry_level)
                 .pricePerHour(0.0)
@@ -310,12 +311,16 @@ public class FreelancerService {
     }
 
 
-
-
     @Transactional
     public void updateProfilePicture(MultipartFile updatedPicture) throws IOException {
         //get freelancer from token
         Freelancer freelancer = getFreelancerFromJWT();
+
+        List<String> allowedMimeTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
+        // Validate file type
+        if (updatedPicture.isEmpty() || !allowedMimeTypes.contains(updatedPicture.getContentType())) {
+            throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, GIF, and WEBP images are allowed.");
+        }
 
         //delete old picture
         String currentPicture = freelancer.getProfilePicture();
@@ -323,8 +328,30 @@ public class FreelancerService {
             cloudinaryService.deleteFile(currentPicture);
 
         //store new picture
-        String pictureURL = cloudinaryService.uploadFile(updatedPicture, "profile_pictures");
+        String pictureURL = cloudinaryService.uploadFile(updatedPicture, "freelancers_profile_pictures");
         freelancer.setProfilePicture(pictureURL);
+        freelancerRepository.save(freelancer);
+    }
+
+    @Transactional
+    public void updateCoverPicture(MultipartFile updatedPicture) throws IOException {
+        //get freelancer from token
+        Freelancer freelancer = getFreelancerFromJWT();
+
+        List<String> allowedMimeTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
+        // Validate file type
+        if (updatedPicture.isEmpty() || !allowedMimeTypes.contains(updatedPicture.getContentType())) {
+            throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, GIF, and WEBP images are allowed.");
+        }
+
+        //delete old picture
+        String currentPicture = freelancer.getCoverPhoto();
+        if(!(currentPicture.equals(Constants.FIRST_COVER_PICTURE)))
+            cloudinaryService.deleteFile(currentPicture);
+
+        //store new picture
+        String pictureURL = cloudinaryService.uploadFile(updatedPicture, "cover_photos");
+        freelancer.setCoverPhoto(pictureURL);
         freelancerRepository.save(freelancer);
     }
 

@@ -133,6 +133,13 @@ public class FreelancerController {
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Profile Picture Updated!").build());
     }
 
+    @PatchMapping(value = "/freelancers/cover-picture", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateCoverPicture(
+            @RequestPart(value = "coverPicture") MultipartFile coverPicture) throws IOException {
+        freelancerService.updateCoverPicture(coverPicture);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Profile Picture Updated!").build());
+    }
+
     @GetMapping("api/freelancers/{id}/workdone")
     public ResponseEntity<Page<FreelancerWorkdoneResponseDTO>> freelancerWorkdone(
             @PathVariable String id, @RequestParam int page, @RequestParam int size

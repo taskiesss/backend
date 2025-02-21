@@ -5,7 +5,9 @@ public class Constants {
 
     public static final int MAX_LETTER_LENGTH = 5000;
 
-    public static final String FIRST_PROFILE_PICTURE = "https://res.cloudinary.com/dsjqqyoxy/image/upload/v1739963437/profile_pictures/lhpdidojlnqmdqzmqjbm.jpg";
+    public static final String FIRST_PROFILE_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740134702/freelancers_profile_pictures/lmuxoh1j7q46qpnayany.jpg";
 
-    public static final String COMMUNITY_FIRST_PROFILE_PICTURE ="https://res.cloudinary.com/dsjqqyoxy/image/upload/v1739963223/communities_profile_pictures/zwb4cehgq7vztlhytpae.jpg";
+    public static final String COMMUNITY_FIRST_PROFILE_PICTURE ="https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740134677/communitites_profile_pictures/geapapq1g3geahihhtsp.jpg";
+
+    public static final String FIRST_COVER_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740135754/cover_photos/gqio5iltb9wq7p6plnmo.webp";
 }
