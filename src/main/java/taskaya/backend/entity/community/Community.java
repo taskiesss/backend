@@ -33,6 +33,10 @@ public class Community {
     @Builder.Default
     private String profilePicture = Constants.COMMUNITY_FIRST_PROFILE_PICTURE;
 
+    @Column(name = "cover_photo")
+    @Builder.Default
+    private String coverPhoto=Constants.FIRST_COVER_PICTURE;
+
 
     @OneToOne( cascade = CascadeType.ALL)
     @JoinColumn(name = "worker_entity_id", nullable = false)

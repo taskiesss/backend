@@ -680,6 +680,7 @@ public class BackendApplication {
 		freelancer1.setTitle("fullstack developer");
 		freelancer1.setCountry("egypt");
 		freelancer1.setName("martin ashraf");
+		freelancer1.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740135952/freelancers_profile_pictures/q9oe51olxf4ohwm8mlis.jpg");
 		freelancer1.setLanguages(new HashSet<>(List.of("english")));
 		freelancer1.setPortfolios(portfolios);
 

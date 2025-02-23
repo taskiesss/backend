@@ -81,7 +81,8 @@ public class Freelancer {
     private String profilePicture;
 
     @Column(name = "cover_photo")
-    private String coverPhoto;
+    @Builder.Default
+    private String coverPhoto=Constants.FIRST_COVER_PICTURE;
 
     @Column(length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;

@@ -9,5 +9,7 @@ public class Constants {
 
     public static final String COMMUNITY_FIRST_PROFILE_PICTURE ="https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740134677/communitites_profile_pictures/geapapq1g3geahihhtsp.jpg";
 
-    public static final String FIRST_COVER_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740135754/cover_photos/gqio5iltb9wq7p6plnmo.webp";
+    public static final String FIRST_COVER_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740310761/cover_photos/ymqmqgosk4rxmcxd2tvw.jpg";
+
+
 }
