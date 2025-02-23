@@ -72,7 +72,7 @@ public class Proposal {
     private Date date= new Date();
 
     public enum ProposalStatus {
-        PENDING, DECLINED, HIRED
+        PENDING, DECLINED,ACCEPTED, HIRED
     }
 
 }

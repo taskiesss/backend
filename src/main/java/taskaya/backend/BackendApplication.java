@@ -348,15 +348,8 @@ public class BackendApplication {
 
 
 	public void communityWithAdmin(){
-		User user = User.builder()
-				.username("Pablo")
-				.email("Pablo@gmail.com")
-				.password(new BCryptPasswordEncoder().encode("Pablo@123"))
-				.role(User.Role.FREELANCER)
-				.build();
-
+		User user = userRepository.findByUsername("freelancer01").get();
 		//userRepository.save(user);
-		freelancerService.createFreelancer(user);
 		List<String> mySkills = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
 		List<Skill> skills = skillRepository.findByNameIn(mySkills);
 
@@ -365,7 +358,7 @@ public class BackendApplication {
 				.build();
 		Community community = Community.builder()
 				.communityName("Pablo"+" Community")
-				.admin(freelancerService.getById(user.getId()))
+				.admin(freelancerRepository.findByUser(user).get())
 				.workerEntity(workerEntity)
 				.avrgHoursPerWeek(6)
 				.pricePerHour(35)

@@ -23,6 +23,7 @@ public class JobDetailsResponseDTO {
     private ExperienceLevel experienceLevel;
     private Double pricePerHour;
     private List<String> skills;
+    private boolean canApply;
     private SimpleJobClientResponseDTO client;
 }
 
