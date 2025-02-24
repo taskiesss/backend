@@ -3,6 +3,7 @@ package taskaya.backend.controller.demo;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,8 +14,10 @@ import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.repository.UserRepository;
 
+import java.util.UUID;
+
 @RestController
-    @RequestMapping("/api/demo/security")
+    @RequestMapping("/demo/security")
 public class SecurityDemoController {
 
     @Autowired
@@ -52,6 +55,11 @@ public class SecurityDemoController {
 
     }
 
+    @PatchMapping("/{communityId}/update")
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public String updateCommunity(@PathVariable UUID communityId) {
+        return "Community Updated Successfully!";
+    }
 
 
     @GetMapping("print-hello")

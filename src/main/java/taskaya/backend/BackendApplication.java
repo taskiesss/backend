@@ -343,6 +343,7 @@ public class BackendApplication {
 //		System.out.println("Test Community ID: "+workerEntity.getId());
 //		System.out.println("Test Freelancer ID: "+freelancerService.getById(user.getId()).getWorkerEntity().getId());
 
+		System.out.println("mina comm leader :"+ freelancerService.getById(user.getId()).getId());
 		Community community = Community.builder()
 				.communityName(name+" Community")
 				.admin(freelancerService.getById(user.getId()))

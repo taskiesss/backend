@@ -2,10 +2,14 @@ package taskaya.backend.exceptions.login;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import taskaya.backend.exceptions.error_responses.GeneralErrorResponse;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @ControllerAdvice
 public class LogInExceptionHandler {
@@ -38,10 +42,21 @@ public class LogInExceptionHandler {
 
 
     //doesnt work ???!!!
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> security (RuntimeException e){
-        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"security");
-        System.out.println(errorResponse);
-        return ResponseEntity.status(401).body(errorResponse);
+//    @ExceptionHandler(AuthenticationException.class)
+//    public ResponseEntity<?> security (RuntimeException e){
+//        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"security");
+//        System.out.println(errorResponse);
+//        return ResponseEntity.status(401).body(errorResponse);
+//    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> response = Map.of(
+                "timestamp",  System.currentTimeMillis(),
+                "status", 403,
+                "error", "Forbidden",
+                "message", "You do not have permission to access this resource."
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

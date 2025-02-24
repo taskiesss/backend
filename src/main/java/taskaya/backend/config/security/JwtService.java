@@ -6,20 +6,30 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import taskaya.backend.entity.User;
+import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.community.CommunityRepository;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
     private static final String SECRET_KEY = "a7b3c9e1d5f2803b4a65791208ef567b8c901234defa5b67c8d90123456789ab";
 
+    @Autowired
+    CommunityRepository communityRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public String extractUsername(String token) {
         return extractClaim(token , Claims-> Claims.getSubject()) ;
@@ -87,4 +97,18 @@ public class JwtService {
             return principal.toString();
         }
     }
+
+    public boolean isCommunityAdmin(String communityId) {
+        // Get the authenticated user's ID from JWT
+        String username = getAuthenticatedUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(()->new AccessDeniedException("security failed"));
+
+        return communityRepository.isAdmin(UUID.fromString(communityId) , user.getId());
+    }
+
+//    public static boolean isCommunityMember(String communityId){
+//
+//    }
+
+
 }
