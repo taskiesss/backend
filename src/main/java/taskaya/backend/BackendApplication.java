@@ -20,16 +20,13 @@ import taskaya.backend.entity.freelancer.Freelancer;
 
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 
-import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.*;
 
-import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.ExperienceLevel;
 
 
-import taskaya.backend.entity.work.Milestone;
-import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
@@ -37,6 +34,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
+import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.repository.work.WorkerEntityRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.client.ClientService;
@@ -91,6 +89,9 @@ public class BackendApplication {
 
 	@Autowired
 	ProposalService proposalService;
+
+	@Autowired
+	ProposalRepository proposalRepository;
 
 	@Autowired
 	CloudinaryService cloudinaryService;
@@ -148,15 +149,29 @@ public class BackendApplication {
 		Contract contract = Contract.builder()
 				.job(job)
 				.client(client)
-				.status(Contract.ContractStatus.APPROVED)
+				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones)
 				.workerEntity(freelancer.getWorkerEntity())
 				.costPerHour(55.55)
 				.build();
 		job.setContract(contract);
 
-		freelancerRepository.save(freelancer);
+		Proposal proposal1= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job)
+				.payment(Payment.PerProject)
+				.workerEntity(freelancer.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
 		jobRepository.save(job);
+		proposalRepository.save(proposal1);
+		freelancerRepository.save(freelancer);
 		contractRepository.save(contract);
 
 
@@ -192,7 +207,7 @@ public class BackendApplication {
 		Contract contract2 = Contract.builder()
 				.job(job2)
 				.client(client)
-				.status(Contract.ContractStatus.APPROVED)
+				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones2)
 				.workerEntity(freelancer.getWorkerEntity())
 				.costPerHour(55.55)

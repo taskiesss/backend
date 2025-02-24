@@ -49,10 +49,14 @@ public class Contract {
     private List<Milestone> milestones = new ArrayList<>();
 
     public enum ContractStatus {
+        //before activation
+        PENDING ,
         ACCEPTED,
         REJECTED,
-        PENDING,
-        FINISHED,
-        APPROVED
+
+        //after activation
+        ACTIVE,
+        PENDING_REVIEW,
+        ENDED
     }
 }
