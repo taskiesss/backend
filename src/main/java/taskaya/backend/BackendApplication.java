@@ -125,7 +125,7 @@ public class BackendApplication {
 				.status(Job.JobStatus.DONE)
 				.description("this is the first job")
 				.pricePerHour(40)
-				.endedAt(new Date(2024, 1, 20, 15, 30, 0))
+				.endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 				.assignedTo(freelancer.getWorkerEntity())
 				.build();
 
@@ -135,14 +135,16 @@ public class BackendApplication {
 						.name("mile1")
 						.number(1)
 						.estimatedHours(5)
-						.status(Milestone.MilestoneStatus.DONE)
+						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
 						.build(),
 
 				Milestone.builder()
 						.name("mile2")
 						.number(2)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.DONE)
+						.status(Milestone.MilestoneStatus.APPROVED)
 						.build()
 		);
 
@@ -183,7 +185,7 @@ public class BackendApplication {
 				.status(Job.JobStatus.DONE)
 				.description("this is the sec job")
 				.pricePerHour(40)
-				.endedAt(new Date(2025, 1, 20, 15, 30, 0))
+				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
 				.assignedTo(freelancer.getWorkerEntity())
 				.build();
 
@@ -193,14 +195,16 @@ public class BackendApplication {
 						.name("mile1")
 						.number(1)
 						.estimatedHours(5)
-						.status(Milestone.MilestoneStatus.DONE)
+						.dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
 						.build(),
 
 				Milestone.builder()
 						.name("mile2")
 						.number(2)
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.DONE)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
 						.build()
 		);
 
@@ -214,8 +218,22 @@ public class BackendApplication {
 				.build();
 		job2.setContract(contract2);
 
+		Proposal proposal2= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract2)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job2)
+				.payment(Payment.PerProject)
+				.workerEntity(freelancer.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
 		freelancerRepository.save(freelancer);
 		jobRepository.save(job2);
+		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
 	}
 

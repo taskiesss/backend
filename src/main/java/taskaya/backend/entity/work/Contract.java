@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.client.Client;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,15 +50,38 @@ public class Contract {
     @JoinColumn(name = "contract_id") // Foreign key in the Milestone table
     private List<Milestone> milestones = new ArrayList<>();
 
+    @Column(name = "due_date")
+//    @Builder.Default
+    Date dueDate;
+
+    @Column(name = "start_date")
+    Date startDate;
+
     public enum ContractStatus {
         //before activation
         PENDING ,
-        ACCEPTED,
-        REJECTED,
+        REJECTED ,
 
         //after activation
         ACTIVE,
-        PENDING_REVIEW,
         ENDED
+    }
+
+    @PrePersist
+    private void getDueDateFromMilestones (){
+        if (milestones.isEmpty())
+            throw new RuntimeException("needs at least 1 milestone");
+        Date result =milestones.get(0).getDueDate();
+        for (Milestone milestone :milestones){
+            if (milestone.getDueDate().after(result))
+                result=milestone.getDueDate();
+        }
+        dueDate = result;
+    }
+
+    public void setStatus(ContractStatus status){
+        this.status = status;
+        if(this.status == ContractStatus.ACTIVE)
+            startDate = new Date();
     }
 }

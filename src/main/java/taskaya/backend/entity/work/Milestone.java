@@ -62,7 +62,7 @@ public class Milestone {
     public enum MilestoneStatus {
         IN_PROGRESS,
         NOT_STARTED,
-        DONE,
-        approved
+        PENDING_REVIEW,
+        APPROVED
     }
 }
