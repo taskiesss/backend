@@ -30,6 +30,7 @@ import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
 import taskaya.backend.repository.work.ContractRepository;
@@ -99,6 +100,9 @@ public class BackendApplication {
 	@Autowired
 	ContractRepository contractRepository;
 
+	@Autowired
+	CommunityRepository communityRepository;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
@@ -109,7 +113,133 @@ public class BackendApplication {
 		communityWithAdmin();
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
-		freelancerWorkdoneseed();
+//		freelancerWorkdoneseed();
+		communityWorkdoneSeed();
+	}
+
+	private void communityWorkdoneSeed() {
+		Community community = communityRepository.findByCommunityName("mina community").orElseThrow();
+		Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
+		System.out.println("Community UUID: "+community.getUuid());
+
+		Job job = Job.builder()
+				.title("JobWorkdone1")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("this is the first job")
+				.pricePerHour(40)
+				.endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+				.assignedTo(community.getWorkerEntity())
+				.build();
+
+
+		List<Milestone> milestones = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.number(1)
+						.estimatedHours(5)
+						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.number(2)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.estimatedHours(3)
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build()
+		);
+
+		Contract contract = Contract.builder()
+				.job(job)
+				.client(client)
+				.status(Contract.ContractStatus.ENDED)
+				.milestones(milestones)
+				.workerEntity(community.getWorkerEntity())
+				.costPerHour(55.55)
+				.build();
+		job.setContract(contract);
+
+		Proposal proposal1= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job)
+				.payment(Payment.PerProject)
+				.workerEntity(community.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
+		jobRepository.save(job);
+		proposalRepository.save(proposal1);
+		communityRepository.save(community);
+		contractRepository.save(contract);
+
+
+		Job job2 = Job.builder()
+				.title("JobWorkdone2")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("this is the sec job")
+				.pricePerHour(40)
+				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
+				.assignedTo(community.getWorkerEntity())
+				.build();
+
+
+		List<Milestone> milestones2 = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.number(1)
+						.estimatedHours(5)
+						.dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.number(2)
+						.estimatedHours(3)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build()
+		);
+
+		Contract contract2 = Contract.builder()
+				.job(job2)
+				.client(client)
+				.status(Contract.ContractStatus.ENDED)
+				.milestones(milestones2)
+				.workerEntity(community.getWorkerEntity())
+				.costPerHour(55.55)
+				.build();
+		job2.setContract(contract2);
+
+		Proposal proposal2= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract2)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job2)
+				.payment(Payment.PerProject)
+				.workerEntity(community.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
+		communityRepository.save(community);
+		jobRepository.save(job2);
+		proposalRepository.save(proposal2);
+		contractRepository.save(contract2);
 	}
 
 	private void freelancerWorkdoneseed() {
@@ -346,6 +476,9 @@ public class BackendApplication {
 		System.out.println("mina comm leader :"+ freelancerService.getById(user.getId()).getId());
 		Community community = Community.builder()
 				.communityName(name+" Community")
+				.title("This is mina community title!")
+				.description("This is mina's description!")
+				.country("Benseuf")
 				.admin(freelancerService.getById(user.getId()))
 				.workerEntity(workerEntity)
 				.avrgHoursPerWeek(6)
@@ -365,9 +498,11 @@ public class BackendApplication {
 		communityService.save(community);
 		community = communityService.getCommunityByName(name+" Community");
 
+		System.out.println("Mina Community ID: " + community.getUuid());
+
 		CommunityMember communityMember = CommunityMember.builder()
 				.community(community)
-				.positionName(name+"Admin")
+				.positionName("Admin")
 				.positionPercent(4)
 				.freelancer(freelancerService.getById(user.getId()))
 				.build();

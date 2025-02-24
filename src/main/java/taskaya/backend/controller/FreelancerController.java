@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.*;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
-import taskaya.backend.DTO.freelancers.responses.FreelancerWorkdoneResponseDTO;
+import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
@@ -141,7 +141,7 @@ public class FreelancerController {
     }
 
     @GetMapping("api/freelancers/{id}/workdone")
-    public ResponseEntity<Page<FreelancerWorkdoneResponseDTO>> freelancerWorkdone(
+    public ResponseEntity<Page<WorkerEntityWorkdoneResponseDTO>> freelancerWorkdone(
             @PathVariable String id, @RequestParam int page, @RequestParam int size
     ){
         return ResponseEntity.ok(freelancerService.getFreelancerWorkdone(id, page, size));

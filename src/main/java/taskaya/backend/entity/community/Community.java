@@ -25,6 +25,10 @@ public class Community {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
 
+    private String title;
+
+    private String country;
+
     @Column(name = "community_name", nullable = false, length = 100)
     private String communityName;
 

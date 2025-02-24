@@ -1,17 +1,15 @@
-package taskaya.backend.DTO.freelancers.responses;
+package taskaya.backend.DTO.workerEntity.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FreelancerWorkdoneResponseDTO {
+public class WorkerEntityWorkdoneResponseDTO {
     String jobId;
     String jobName;
     double rate;
