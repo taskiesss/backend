@@ -16,7 +16,7 @@ public class CloudinaryTestController {
     @PostMapping("/cloudinary/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String url = fileUploadService.uploadFile(file,null);
+            String url = fileUploadService.uploadFile(file,"cover_photos");
             return ResponseEntity.ok("File upload status: " + url);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Upload failed: " + e.getMessage());

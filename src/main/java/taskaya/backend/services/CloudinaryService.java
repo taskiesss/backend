@@ -84,17 +84,23 @@ public class CloudinaryService {
 
 
     private String extractPublicId(String fileUrl) {
-        if (fileUrl == null || fileUrl.isEmpty()) {
-            return null; // Invalid input
-        }
+        try {
+            String toFind = "/upload/";
+            int index = fileUrl.indexOf(toFind);
+            if (index == -1) {
+                return null;
+            }
 
-        // Find the last "/" to get the filename
-        int lastSlashIndex = fileUrl.lastIndexOf('/');
-        if (lastSlashIndex == -1 || lastSlashIndex == fileUrl.length() - 1) {
-            return null; // No filename found
-        }
+            // Extract the part after "/upload/"
+            String relativePath = fileUrl.substring(index + toFind.length());
 
-        return fileUrl.substring(lastSlashIndex + 1);
+            // Remove the versioning (v1234567890/)
+            relativePath = relativePath.replaceFirst("^v\\d+/", "");
+
+            return relativePath;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

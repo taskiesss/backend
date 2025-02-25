@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/demo/security/**",
+                        "/cloudinary/**",
                         "/public/**",
                         "/freelancers/search",
                         "/communities/search",
