@@ -163,7 +163,7 @@ public class CommunityService {
 
         //delete old picture
         String currentPicture = community.getProfilePicture();
-        if(!(currentPicture.equals(Constants.FIRST_PROFILE_PICTURE)))
+        if(!(currentPicture.equals(Constants.COMMUNITY_FIRST_PROFILE_PICTURE)))
             cloudinaryService.deleteFile(currentPicture);
 
         //store new picture
