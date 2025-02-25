@@ -57,6 +57,15 @@ public class Contract {
     @Column(name = "start_date")
     Date startDate;
 
+    @Column(name = "end_date")
+    Date endDate;
+
+    @Column(name = "client_rating_for_freelancer")
+    Float clientRatingForFreelancer;
+
+    @Column(name = "freelancer_rating_for_client")
+    Float freelancerRatingForClient;
+
     public enum ContractStatus {
         //before activation
         PENDING ,

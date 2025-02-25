@@ -22,7 +22,7 @@ public class FreelancerWorkdoneResponseMapper {
         return FreelancerWorkdoneResponseDTO.builder()
                 .jobId(job.getUuid().toString())
                 .jobName(job.getTitle())
-                .rate(job.getRate())
+                .rate(job.getContract().getClientRatingForFreelancer())
                 .pricePerHour(job.getContract().getCostPerHour())
                 .totalHours(totalHours)
                 .build();

@@ -30,6 +30,9 @@ public class Client {
     @JoinColumn(name = "id", referencedColumnName = "id")
     private User user; // References the User entity
 
+    //not used yet
+    private String name ;
+
     @Column(name = "profile_picture")
     private String profilePicture;
 

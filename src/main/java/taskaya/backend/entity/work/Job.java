@@ -76,7 +76,6 @@ public class Job {
     )
     private Set<Skill> skills;
 
-    private float rate ;
     public enum JobStatus {
         IN_PROGRESS,
         NOT_ASSIGNED,
@@ -85,10 +84,6 @@ public class Job {
 
 
 
-    public void setRate (float rate ){
-        if(rate>=0 && rate<= 5)
-            this.rate=rate;
-    }
     @PrePersist
     protected void onCreate() {
         this.postedAt = new Date();

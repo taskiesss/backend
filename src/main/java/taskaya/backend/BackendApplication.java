@@ -151,8 +151,10 @@ public class BackendApplication {
 		Contract contract = Contract.builder()
 				.job(job)
 				.client(client)
+				.startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones)
+				.endDate(new Date())
 				.workerEntity(freelancer.getWorkerEntity())
 				.costPerHour(55.55)
 				.build();
@@ -212,8 +214,10 @@ public class BackendApplication {
 				.job(job2)
 				.client(client)
 				.status(Contract.ContractStatus.ENDED)
+				.startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 				.milestones(milestones2)
 				.workerEntity(freelancer.getWorkerEntity())
+				.endDate(new Date())
 				.costPerHour(55.55)
 				.build();
 		job2.setContract(contract2);
