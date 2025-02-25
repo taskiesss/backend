@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class FreelancerWorkdoneResponseMapper {
+public class WorkerEntityWorkdoneResponseMapper {
     public static WorkerEntityWorkdoneResponseDTO toDTO(Job job){
         List<Milestone> milestones = job.getContract().getMilestones();
 
@@ -22,7 +22,7 @@ public class FreelancerWorkdoneResponseMapper {
         return WorkerEntityWorkdoneResponseDTO.builder()
                 .jobId(job.getUuid().toString())
                 .jobName(job.getTitle())
-                .rate(job.getRate())
+                .rate(job.getContract().getClientRatingForFreelancer())
                 .pricePerHour(job.getContract().getCostPerHour())
                 .totalHours(totalHours)
                 .build();

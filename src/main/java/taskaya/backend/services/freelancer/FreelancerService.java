@@ -13,6 +13,7 @@ import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.freelancers.requests.AvrHoursPerWeekUpdateRequestDTO;
+import taskaya.backend.DTO.mappers.WorkerEntityWorkdoneResponseMapper;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
@@ -21,7 +22,6 @@ import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
-import taskaya.backend.DTO.mappers.FreelancerWorkdoneResponseMapper;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
@@ -370,7 +370,7 @@ public class FreelancerService {
         jobs.sort(Comparator.comparing(Job::getEndedAt).reversed());
 
         //map to DTO list
-        listDTO = FreelancerWorkdoneResponseMapper.toDTOList(jobs);
+        listDTO = WorkerEntityWorkdoneResponseMapper.toDTOList(jobs);
 
         //List to Page
         Pageable pageable = PageRequest.of(page, size);

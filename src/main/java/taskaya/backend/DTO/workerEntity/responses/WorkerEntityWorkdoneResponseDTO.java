@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class WorkerEntityWorkdoneResponseDTO {
     String jobId;
     String jobName;
-    double rate;
+    Float rate;
     double pricePerHour;
     double totalHours;
 }

@@ -1,9 +1,11 @@
 package taskaya.backend.repository.work;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Milestone;
@@ -13,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ContractRepository extends JpaRepository<Contract, UUID> {
+public interface ContractRepository extends JpaRepository<Contract, UUID> , JpaSpecificationExecutor<Contract> {
     public Optional<Contract> findByJob(Job job);
 
 }

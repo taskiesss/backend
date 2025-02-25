@@ -11,12 +11,12 @@ import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
+import taskaya.backend.DTO.mappers.WorkerEntityWorkdoneResponseMapper;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityProfileResponseMapper;
 import taskaya.backend.DTO.mappers.CommunitySearchResponseMapper;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
-import taskaya.backend.DTO.mappers.FreelancerWorkdoneResponseMapper;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
@@ -135,7 +135,7 @@ public class CommunityService {
         jobs.sort(Comparator.comparing(Job::getEndedAt).reversed());
 
         //map to DTO list
-        listDTO = FreelancerWorkdoneResponseMapper.toDTOList(jobs);
+        listDTO = WorkerEntityWorkdoneResponseMapper.toDTOList(jobs);
 
         //List to Page
         Pageable pageable = PageRequest.of(page, size);
