@@ -114,7 +114,7 @@ public class BackendApplication {
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
 //		freelancerWorkdoneseed();
-		communityWorkdoneSeed();
+//		communityWorkdoneSeed();
 	}
 
 	private void communityWorkdoneSeed() {

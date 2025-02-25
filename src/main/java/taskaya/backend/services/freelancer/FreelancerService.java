@@ -258,6 +258,7 @@ public class FreelancerService {
         freelancer.setDescription(request.getDescription());
     }
 
+    @Transactional
     public void updateEmpHistory(EmployeeHistoryPatchDTO request) {
         Freelancer freelancer = getFreelancerFromJWT();
         freelancer.getEmployeeHistories().clear();
@@ -265,6 +266,7 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
+    @Transactional
     public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO){
 
         if(requestDTO.getPricePerHour() == null
