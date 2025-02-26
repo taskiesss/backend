@@ -28,7 +28,7 @@ public class CloudinaryService {
         String uniqueFilename = UUID.randomUUID().toString();
 
         // Determine the correct resource type
-        String resourceType = isImage(fileExtension) ? "image" : "raw";
+        String resourceType = isImageOrPdf(fileExtension) ? "image" : "raw";
 
         // Upload file while ensuring extension is preserved only once
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
@@ -41,8 +41,8 @@ public class CloudinaryService {
         return uploadResult.get("secure_url").toString();
     }
 
-    private boolean isImage(String extension) {
-        return extension.matches("\\.(png|jpg|jpeg|gif|bmp|webp|tiff|svg)$");
+    private boolean isImageOrPdf(String extension) {
+        return extension.matches("\\.(png|jpg|jpeg|gif|bmp|webp|tiff|svg|pdf)$");
     }
 
     public boolean deleteFile(String fileUrl) throws IOException {
@@ -55,7 +55,7 @@ public class CloudinaryService {
 
         // Determine the resource type (image or raw)
         String resourceType;
-        if(isImageExtension(publicId)){
+        if(isImageOrPdfExtension(publicId)){
             resourceType = "image";
             int dotIndex = publicId.indexOf('.');
             publicId = publicId.substring(0, dotIndex);
@@ -72,14 +72,14 @@ public class CloudinaryService {
         return "ok".equals(result.get("result"));
     }
 
-    private boolean isImageExtension(String filename) {
+    private boolean isImageOrPdfExtension(String filename) {
         int lastDotIndex = filename.lastIndexOf('.');
         if (lastDotIndex == -1 || lastDotIndex == filename.length() - 1) {
             return false; // No extension or ends with a dot
         }
 
         String extension = filename.substring(lastDotIndex + 1).toLowerCase(); // Extract extension
-        return extension.matches("png|jpg|jpeg|gif|bmp|webp|tiff|svg"); // Match extension
+        return extension.matches("png|jpg|jpeg|gif|bmp|webp|tiff|svg|pdf"); // Match extension
     }
 
 
