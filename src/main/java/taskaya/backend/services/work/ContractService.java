@@ -13,6 +13,7 @@ import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
 import taskaya.backend.entity.enums.SortDirection;
+import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Milestone;
@@ -48,9 +49,9 @@ public class ContractService {
 
             Sort sort;
             if (SortDirection.DESC.equals(requestDTO.getSortDirection())) {
-                sort = Sort.by(Sort.Order.desc(requestDTO.getSortedBy().getValue()));
+                sort = Sort.by(Sort.Order.desc(requestDTO.getSortedBy().getValue().equals(SortedByForContracts.TITLE.getValue())?"job.title":requestDTO.getSortedBy().getValue()));
             } else {
-                sort = Sort.by(Sort.Order.asc(requestDTO.getSortedBy().getValue()));
+                sort = Sort.by(Sort.Order.asc(requestDTO.getSortedBy().getValue().equals(SortedByForContracts.TITLE.getValue())?"job.title":requestDTO.getSortedBy().getValue()));
             }
             pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize(), sort);
         }else {

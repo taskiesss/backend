@@ -22,7 +22,7 @@ public class ContractSpecification {
             if (search != null && !search.isEmpty())  {
                 String searchRegExp ="%" + search.toLowerCase() + "%";
                 Predicate usernamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("client").get("user").get("username")), searchRegExp);
-                Predicate namePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), searchRegExp);
+                Predicate namePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("client").get("name")), searchRegExp);
                 Predicate titlePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("job").get("title")), searchRegExp);
 
                 predicate = criteriaBuilder.and(predicate,
