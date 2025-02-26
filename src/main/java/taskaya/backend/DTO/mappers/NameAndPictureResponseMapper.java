@@ -13,12 +13,14 @@ public class NameAndPictureResponseMapper {
         return NameAndPictureResponseDTO.builder()
                 .profilePicture(freelancer.getProfilePicture())
                 .name(freelancer.getUser().getUsername())
+                .role(User.Role.FREELANCER)
                 .build();
     }
     public static NameAndPictureResponseDTO toDTO(Client client){
         return NameAndPictureResponseDTO.builder()
                 .profilePicture(client.getProfilePicture())
                 .name(client.getUser().getUsername())
+                .role(User.Role.CLIENT)
                 .build();
     }
 }
