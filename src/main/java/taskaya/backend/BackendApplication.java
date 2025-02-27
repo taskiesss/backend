@@ -835,16 +835,16 @@ public class BackendApplication {
 
 		List<FreelancerPortfolio> portfolios= new ArrayList<>();
 		portfolios.add(FreelancerPortfolio.builder()
-						.portfolioPdf(Constants.FIRST_PROFILE_PICTURE)
+						.portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/raw/upload/v1740527119/freelancer_portfolios/538180e5-9e56-4742-9138-1544796ed43e.pdf")
 						.name("Portfolio01")
 				.build());
 
 		freelancer1.setSkills(new HashSet<>(skills1));
 		freelancer1.setPricePerHour(50D);
-		freelancer1.setRate(3);
+		freelancer1.setRate(5);
 		freelancer1.setDescription("best freelancer you will deal with ;)");
 		freelancer1.setTitle("fullstack developer");
-		freelancer1.setCountry("egypt");
+		freelancer1.setCountry("cairo,Egypt");
 		freelancer1.setName("martin ashraf");
 		freelancer1.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740135952/freelancers_profile_pictures/q9oe51olxf4ohwm8mlis.jpg");
 		freelancer1.setLanguages(new HashSet<>(List.of("english")));
@@ -856,11 +856,25 @@ public class BackendApplication {
 		freelancer2.setSkills(new HashSet<>(skills2));
 		freelancer2.setPricePerHour(60D);
 		freelancer2.setRate(4);
+		freelancer2.setDescription("best freelancer you will deal with ;)");
+		freelancer2.setTitle("fullstack developer");
+		freelancer2.setCountry("cairo,Egypt");
+		freelancer2.setName("mina hany");
+		freelancer2.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/nf173ownjkrkm24qioi7.jpg");
+		freelancer2.setLanguages(new HashSet<>(List.of("english")));
+		freelancer2.setPortfolios(portfolios);
 		freelancerRepository.save(freelancer2);
 
 		freelancer3.setSkills(new HashSet<>(skills3));
 		freelancer3.setPricePerHour(70D);
 		freelancer3.setRate(2);
+		freelancer3.setDescription("best freelancer you will deal with ;)");
+		freelancer3.setTitle("fullstack developer");
+		freelancer3.setCountry("cairo,Egypt");
+		freelancer3.setName("lara jreige");
+		freelancer3.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/ugwy7jflz41djmpmn1co.jpg");
+		freelancer3.setLanguages(new HashSet<>(List.of("english")));
+		freelancer3.setPortfolios(portfolios);
 		freelancerRepository.save(freelancer3);
 
 
