@@ -13,13 +13,16 @@ import java.util.List;
 
 @Component
 public class ContractDetailsMapper {
-    public static ContractDetailsResponseDTO toDTO(Contract contract, String freelancerName, String freelancerPicture){
+    public static ContractDetailsResponseDTO toDTO(Contract contract, String freelancerName,
+                                                   String freelancerPicture, String freelancerId){
         return ContractDetailsResponseDTO.builder()
                 .jobId(contract.getJob().getUuid().toString())
                 .pricePerHour(contract.getCostPerHour())
                 .contractStatus(contract.getStatus())
+                .clientId(contract.getClient().getId().toString())
                 .clientName(contract.getClient().getName())
                 .clientProfilePic(contract.getClient().getProfilePicture())
+                .freelancerId(freelancerId)
                 .freelancerName(freelancerName)
                 .freelancerProfilePic(freelancerPicture)
                 .jobTitle(contract.getJob().getTitle())

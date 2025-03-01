@@ -101,18 +101,20 @@ public class ContractService {
             throw new RuntimeException("Invalid Request, Not Authorized!");
         }
 
-        String freelancerName, freelancerPicture;
+        String freelancerName, freelancerPicture, freelancerId;
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
             freelancerName = freelancer.getName();
             freelancerPicture = freelancer.getProfilePicture();
+            freelancerId = freelancer.getId().toString();
         }else {
             Community community = communityRepository.findByWorkerEntity(contract.getWorkerEntity())
                     .orElseThrow(()-> new NotFoundException("Community Not Found!"));
             freelancerName = community.getCommunityName();
             freelancerPicture = community.getProfilePicture();
+            freelancerId = community.getUuid().toString();
         }
 
-        return ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture);
+        return ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId);
     }
 
     public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){

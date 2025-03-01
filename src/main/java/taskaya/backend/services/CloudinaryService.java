@@ -25,7 +25,7 @@ public class CloudinaryService {
         }
 
         // Generate a unique filename **without adding the extension twice**
-        String uniqueFilename = UUID.randomUUID().toString();
+        String uniqueFilename = UUID.randomUUID().toString() + originalFilename.substring(0, originalFilename.lastIndexOf("."));
 
         // Determine the correct resource type
         String resourceType = isImageOrPdf(fileExtension) ? "image" : "raw";

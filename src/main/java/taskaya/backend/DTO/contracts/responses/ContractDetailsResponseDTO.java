@@ -20,8 +20,10 @@ public class ContractDetailsResponseDTO {
     Contract.ContractStatus contractStatus;
     String jobId;
     String jobTitle;
+    String clientId;
     String clientName;
     String clientProfilePic;
+    String freelancerId;
     String freelancerName;
     String freelancerProfilePic;
     Double pricePerHour;
