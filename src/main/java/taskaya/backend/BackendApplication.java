@@ -114,7 +114,7 @@ public class BackendApplication {
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
 		freelancerWorkdoneseed();
-		communityWorkdoneSeed();
+//		communityWorkdoneSeed();
 	}
 
 	private void communityWorkdoneSeed() {
@@ -262,16 +262,18 @@ public class BackendApplication {
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
-						.name("mile1")
+						.name("Contract1 - mile1")
 						.number(1)
+						.description("Mile1Desc")
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
 						.status(Milestone.MilestoneStatus.APPROVED)
 						.build(),
 
 				Milestone.builder()
-						.name("mile2")
+						.name("Contract1 - mile2")
 						.number(2)
+						.description("Mile2Desc")
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
 						.status(Milestone.MilestoneStatus.APPROVED)
@@ -285,8 +287,10 @@ public class BackendApplication {
 				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones)
 				.endDate(new Date())
+				.hoursWorked(10)
 				.workerEntity(freelancer.getWorkerEntity())
 				.costPerHour(55.55)
+				.payment(Payment.PerMilestones)
 				.build();
 		job.setContract(contract);
 
@@ -298,7 +302,7 @@ public class BackendApplication {
 				.client(client)
 				.status(Proposal.ProposalStatus.HIRED)
 				.job(job)
-				.payment(Payment.PerProject)
+				.payment(Payment.PerMilestones)
 				.workerEntity(freelancer.getWorkerEntity())
 				.coverLetter("please accept me")
 				.build();
@@ -307,6 +311,8 @@ public class BackendApplication {
 		proposalRepository.save(proposal1);
 		freelancerRepository.save(freelancer);
 		contractRepository.save(contract);
+
+		System.out.println("Contract 1 ID: "+contract.getId());
 
 
 		Job job2 = Job.builder()
@@ -324,16 +330,18 @@ public class BackendApplication {
 
 		List<Milestone> milestones2 = List.of(
 				Milestone.builder()
-						.name("mile1")
+						.name("Contract2 - mile1")
 						.number(1)
+						.description("Mile1Desc")
 						.estimatedHours(5)
 						.dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.status(Milestone.MilestoneStatus.APPROVED)
 						.build(),
 
 				Milestone.builder()
-						.name("mile2")
+						.name("Contract2 - mile2")
 						.number(2)
+						.description("Mile2Desc")
 						.estimatedHours(3)
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.status(Milestone.MilestoneStatus.APPROVED)
@@ -348,6 +356,8 @@ public class BackendApplication {
 				.milestones(milestones2)
 				.workerEntity(freelancer.getWorkerEntity())
 				.endDate(new Date())
+				.hoursWorked(10)
+				.payment(Payment.PerProject)
 				.costPerHour(55.55)
 				.build();
 		job2.setContract(contract2);
@@ -369,6 +379,8 @@ public class BackendApplication {
 		jobRepository.save(job2);
 		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
+
+		System.out.println("Contract 2 ID: "+contract2.getId());
 	}
 
 	private void proposalSeed() throws MessagingException, IOException {

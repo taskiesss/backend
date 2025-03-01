@@ -21,6 +21,7 @@ public class ClientService {
         Client client = Client.builder()
                 .id(user.getId())
                 .user(user)
+                .name(user.getUsername())
                 .balance(new ClientBalance())
                 .clientBusiness(new ClientBusiness())
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)

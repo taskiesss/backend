@@ -4,6 +4,7 @@ package taskaya.backend.entity.work;
 import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -65,6 +66,12 @@ public class Contract {
 
     @Column(name = "freelancer_rating_for_client")
     Float freelancerRatingForClient;
+
+    @Column(name = "payment", nullable = false)
+    private Payment payment;
+
+    @Column(name = "hoursWorked")
+    private Integer hoursWorked = 0;
 
     public enum ContractStatus {
         //before activation

@@ -1,27 +1,31 @@
 package taskaya.backend.services.work;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
+import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
-import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
-import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
+import taskaya.backend.DTO.mappers.ContractDetailsMapper;
+import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
+import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Milestone;
+import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.exceptions.notFound.NotFoundException;
+import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.work.ContractRepository;
+import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
-import taskaya.backend.specifications.FreelancerSpecification;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,7 +34,11 @@ public class ContractService {
     @Autowired
     ContractRepository contractRepository;
 
+    @Autowired
+    FreelancerService freelancerService;
 
+    @Autowired
+    CommunityRepository communityRepository;
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
                                                               UUID workerEntityId ,UUID clientId) {
@@ -82,4 +90,49 @@ public class ContractService {
         }
         return null;
     }
+
+    public ContractDetailsResponseDTO getContractDetails(String id) {
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+        Contract contract = contractRepository.findById(UUID.fromString(id))
+                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+
+        //check authorization
+        if(!(freelancer.getWorkerEntity().getId().equals(contract.getWorkerEntity().getId()))){
+            throw new RuntimeException("Invalid Request, Not Authorized!");
+        }
+
+        String freelancerName, freelancerPicture;
+        if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
+            freelancerName = freelancer.getName();
+            freelancerPicture = freelancer.getProfilePicture();
+        }else {
+            Community community = communityRepository.findByWorkerEntity(contract.getWorkerEntity())
+                    .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+            freelancerName = community.getCommunityName();
+            freelancerPicture = community.getProfilePicture();
+        }
+
+        return ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture);
+    }
+
+    public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+        Contract contract = contractRepository.findById(UUID.fromString(id))
+                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+
+        //check authorization
+        if(!(freelancer.getWorkerEntity().getId().equals(contract.getWorkerEntity().getId()))){
+            throw new RuntimeException("Invalid Request, Not Authorized!");
+        }
+
+        List<Milestone> milestones = contract.getMilestones();
+        milestones.sort(Comparator.comparing(Milestone::getDueDate));
+
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), milestones.size());
+        List<Milestone> pagedList = milestones.subList(start, end);
+        return MilestonesContractDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
+    }
+
 }

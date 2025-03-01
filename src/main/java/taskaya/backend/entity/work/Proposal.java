@@ -22,8 +22,6 @@ import java.util.UUID;
 @Table(name = "proposals")
 public class Proposal {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // Primary key

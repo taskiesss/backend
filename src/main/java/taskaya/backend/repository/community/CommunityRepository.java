@@ -16,8 +16,6 @@ import java.util.UUID;
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, UUID>, JpaSpecificationExecutor<Community> {
     Optional<Community> findByCommunityName(String communityName);
-
-
     List<Community> findAllByAdmin(Freelancer admin);
     Optional<Community> findByWorkerEntity(WorkerEntity workerEntity);
 
