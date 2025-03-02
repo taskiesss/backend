@@ -30,13 +30,13 @@ public class ContractController {
     return  ResponseEntity.ok(result);
     }
 
-    @GetMapping("/freelancers/my-contracts/{id}")
+    @GetMapping("/api/contracts/{id}")
     public ResponseEntity<?> getContractDetails (@PathVariable String id){
         ContractDetailsResponseDTO contractDetailsResponseDTO = contractService.getContractDetails(id);
         return  ResponseEntity.ok(contractDetailsResponseDTO);
     }
 
-    @GetMapping("/freelancers/my-contracts/{id}/milestones")
+    @GetMapping("/api/contracts/{id}/milestones")
     public ResponseEntity<?> getContractMilestones (@PathVariable String id, @RequestParam int page, @RequestParam int size){
         Page<MilestonesContractDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
         return  ResponseEntity.ok(responseDTOPage);

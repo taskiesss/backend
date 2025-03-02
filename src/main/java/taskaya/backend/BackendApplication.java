@@ -114,7 +114,7 @@ public class BackendApplication {
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
 		freelancerWorkdoneseed();
-//		communityWorkdoneSeed();
+		communityWorkdoneSeed();
 	}
 
 	private void communityWorkdoneSeed() {
@@ -158,7 +158,9 @@ public class BackendApplication {
 				.client(client)
 				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones)
+				.payment(Payment.PerMilestones)
 				.workerEntity(community.getWorkerEntity())
+				.hoursWorked(100)
 				.costPerHour(55.55)
 				.build();
 		job.setContract(contract);
@@ -181,6 +183,7 @@ public class BackendApplication {
 		communityRepository.save(community);
 		contractRepository.save(contract);
 
+		System.out.println("Community Contract 1 ID: "+contract.getId());
 
 		Job job2 = Job.builder()
 				.title("JobWorkdone2")
@@ -219,6 +222,8 @@ public class BackendApplication {
 				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones2)
 				.workerEntity(community.getWorkerEntity())
+				.payment(Payment.PerProject)
+				.hoursWorked(500)
 				.costPerHour(55.55)
 				.build();
 		job2.setContract(contract2);
@@ -523,10 +528,19 @@ public class BackendApplication {
 				.freelancer(freelancerService.getById(user.getId()))
 				.build();
 
+		CommunityMember communityMember2 = CommunityMember.builder()
+				.community(community)
+				.positionName("member1")
+				.positionPercent(5)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").orElseThrow()).orElseThrow())
+				.build();
 
 		communityMemberService.addMember(communityMember);
-		communityMember = communityMemberService.findById(1);
+		communityMemberService.addMember(communityMember2);
+//		communityMember = communityMemberService.findById(1);
+//		communityMember2 = communityMemberService.findById(2);
 		community.getCommunityMembers().add(communityMember);
+		community.getCommunityMembers().add(communityMember2);
 
 		communityService.save(community);
 	}

@@ -12,8 +12,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.community.Community;
+import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.freelancer.FreelancerRepository;
+import taskaya.backend.repository.work.ContractRepository;
+import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.security.Key;
 import java.util.Date;
@@ -30,6 +40,18 @@ public class JwtService {
     CommunityRepository communityRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ClientRepository clientRepository;
+
+    @Autowired
+    FreelancerRepository freelancerRepository;
+
+    @Autowired
+    CommunityMemberRepository communityMemberRepository;
+
+    @Autowired
+    ContractRepository contractRepository;
 
     public String extractUsername(String token) {
         return extractClaim(token , Claims-> Claims.getSubject()) ;
@@ -106,9 +128,43 @@ public class JwtService {
         return communityRepository.isAdmin(UUID.fromString(communityId) , user.getId());
     }
 
-//    public static boolean isCommunityMember(String communityId){
-//
-//    }
+    private User getUserFromToken(){
+        return userRepository.findByUsername(getAuthenticatedUsername())
+                .orElseThrow(()->new AccessDeniedException("security failed"));
+    }
 
+    public boolean isCommunityMember(String communityId){
+        return communityMemberRepository.isMember(UUID.fromString(communityId) , getUserFromToken().getId());
+    }
+
+    public boolean isClient(){
+        return clientRepository.existsById(getUserFromToken().getId());
+    }
+
+    public boolean isFreelancer(){
+        return freelancerRepository.existsById(getUserFromToken().getId());
+    }
+
+    public boolean contractDetailsAuth(String contractId){
+        User user = getUserFromToken();
+        Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
+        if(isClient()){
+            UUID clientId = clientRepository.findByUser(user)
+                    .orElseThrow(()->new AccessDeniedException("security failed")).getId();
+            return clientId.equals(contract.getClient().getId());
+        }else{
+            WorkerEntity contractWorkerEntity = contract.getWorkerEntity();
+            if(contractWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
+                Freelancer freelancer = freelancerRepository.findByUser(user)
+                        .orElseThrow(()->new AccessDeniedException("security failed"));
+                return contractWorkerEntity.getId().equals(freelancer.getWorkerEntity().getId());
+            }
+            else{
+                Community community = communityRepository.findByWorkerEntity(contractWorkerEntity)
+                        .orElseThrow(()->new AccessDeniedException("security failed"));
+                return isCommunityMember(community.getUuid().toString());
+            }
+        }
+    }
 
 }

@@ -16,6 +16,8 @@ public class CommunityMemberCommunityProfileResponseMapper {
         return CommunityMemberCommunityProfileDTO.builder()
                 .name(communityMember.getFreelancer().getName())
                 .position(communityMember.getPositionName())
+                .freelancerId(communityMember.getFreelancer().getId().toString())
+                .freelancerProfilePicture(communityMember.getFreelancer().getProfilePicture())
                 .build();
     }
 

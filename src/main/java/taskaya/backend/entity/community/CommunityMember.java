@@ -31,7 +31,7 @@ public class CommunityMember {
     @Column(name = "position_percent", nullable = false)
     private float positionPercent;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "freelancer_id")
     private Freelancer freelancer;
 

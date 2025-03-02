@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CommunityMemberCommunityProfileDTO {
+    String freelancerId;
+    String freelancerProfilePicture;
     String name;
     String position;
 }

@@ -3,6 +3,7 @@ package taskaya.backend.services.work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
@@ -20,6 +21,7 @@ import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
@@ -36,6 +38,9 @@ public class ContractService {
 
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    FreelancerRepository freelancerRepository;
 
     @Autowired
     CommunityRepository communityRepository;
@@ -91,18 +96,15 @@ public class ContractService {
         return null;
     }
 
+    @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public ContractDetailsResponseDTO getContractDetails(String id) {
-        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
         Contract contract = contractRepository.findById(UUID.fromString(id))
                 .orElseThrow(()-> new NotFoundException("No Contract Found!"));
 
-        //check authorization
-        if(!(freelancer.getWorkerEntity().getId().equals(contract.getWorkerEntity().getId()))){
-            throw new RuntimeException("Invalid Request, Not Authorized!");
-        }
-
         String freelancerName, freelancerPicture, freelancerId;
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
+            Freelancer freelancer = freelancerRepository.findByWorkerEntity(contract.getWorkerEntity())
+                    .orElseThrow(()-> new NotFoundException("Freelancer Not Found!"));
             freelancerName = freelancer.getName();
             freelancerPicture = freelancer.getProfilePicture();
             freelancerId = freelancer.getId().toString();
@@ -117,6 +119,7 @@ public class ContractService {
         return ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId);
     }
 
+    @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){
         Freelancer freelancer = freelancerService.getFreelancerFromJWT();
         Contract contract = contractRepository.findById(UUID.fromString(id))
