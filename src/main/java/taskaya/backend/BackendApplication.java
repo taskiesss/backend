@@ -60,7 +60,7 @@ public class BackendApplication {
 }
 
 @Component
- class MyCommandLineRunner implements CommandLineRunner {
+class MyCommandLineRunner implements CommandLineRunner {
 
 	@Autowired
 	FreelancerService freelancerService;
@@ -536,11 +536,11 @@ public class BackendApplication {
 				.build();
 
 		communityMemberService.addMember(communityMember);
-		communityMemberService.addMember(communityMember2);
+//		communityMemberService.addMember(communityMember2);
 //		communityMember = communityMemberService.findById(1);
 //		communityMember2 = communityMemberService.findById(2);
 		community.getCommunityMembers().add(communityMember);
-		community.getCommunityMembers().add(communityMember2);
+//		community.getCommunityMembers().add(communityMember2);
 
 		communityService.save(community);
 	}
@@ -548,6 +548,7 @@ public class BackendApplication {
 
 	public void communityWithAdmin(){
 		User user = userRepository.findByUsername("freelancer01").get();
+		Freelancer freelancer =freelancerRepository.findByUser(user).get();
 		//userRepository.save(user);
 		List<String> mySkills = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
 		List<Skill> skills = skillRepository.findByNameIn(mySkills);
@@ -556,20 +557,54 @@ public class BackendApplication {
 				.type(WorkerEntity.WorkerType.COMMUNITY)
 				.build();
 		Community community = Community.builder()
-				.communityName("Pablo"+" Community")
-				.admin(freelancerRepository.findByUser(user).get())
+				.communityName("Pablo Community")
+				.admin(freelancer)
 				.workerEntity(workerEntity)
 				.avrgHoursPerWeek(6)
 				.pricePerHour(35)
 				.status(Community.CommunityStatus.AVAILABLE)
 				.rate(3)
 				.skills(new HashSet<>(skills))
-				.description("This is the sdhsbdcjksbvkjsbvdjsbdvj,sbdvj,sdvjkgsdfjhbdcjsdbcjksbdccj,sjsbcsj")
+				.description("Welcome to PABLO community , where innovation meets excellence.\n" +
+						"\n" +
+						"We are a passionate team of software developers dedicated to delivering cutting-edge solutions tailored to your business needs. With expertise in web, mobile, and cloud technologies, we transform ideas into fully functional, user-friendly products.\n" +
+						"\n" +
+						"Our services include:\n" +
+						"✅ Custom Web Development\n" +
+						"✅ Mobile App Development (iOS & Android)\n" +
+						"✅ Cloud Integration & Hosting Solutions\n" +
+						"✅ Database Design & Optimization\n" +
+						"✅ API Development & Third-party Integrations\n" +
+						"✅ E-commerce Platforms & Payment Systems\n" +
+						"✅ Tailor-made Software Solutions")
 				.isFull(false)
 				.experienceLevel(ExperienceLevel.expert)
 				.build();
 
+//		communityService.save(community);
+//		community.getCommunityMembers().add(CommunityMember.builder().community(community).freelancer(freelancerRepository.findByUser(user).get()).positionName("fullstack").build());
+		CommunityMember communityMember = CommunityMember.builder()
+				.community(community)
+				.freelancer(freelancer)
+				.positionName("backend01")
+				.build();
+		community.getCommunityMembers().add(communityMember);
+
+		CommunityMember communityMember2 = CommunityMember.builder()
+				.community(community)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
+				.positionName("backend02")
+				.build();
+
+		CommunityMember communityMember3 = CommunityMember.builder()
+				.community(community)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").get()).get())
+				.positionName("backend03")
+				.build();
+		community.getCommunityMembers().addAll(List.of(communityMember,communityMember2,communityMember3));
 		communityService.save(community);
+//		communityMemberService.addMember(communityMember);
+
 	}
 
 	private void jobSeed() {
@@ -759,11 +794,11 @@ public class BackendApplication {
 				"Verilog", "Embedded Systems", "Arduino", "Raspberry Pi", "Quantum Computing", "Web3.js",
 				"Blockchain", "Ethereum", "Smart Contracts", "Solidity", "Rust for Blockchain", "Substrate", "Bitcoin",
 
-				// 🗄️ Databases
+				// 🗄 Databases
 				"SQL", "PostgreSQL", "MySQL", "MariaDB", "SQLite", "Oracle DB", "Microsoft SQL Server", "MongoDB",
 				"Firebase", "Cassandra", "Neo4j", "DynamoDB", "Redis", "Elasticsearch", "InfluxDB", "Supabase",
 
-				// ☁️ Cloud & DevOps
+				// ☁ Cloud & DevOps
 				"AWS", "Google Cloud", "Azure", "DigitalOcean", "Cloudflare", "Terraform", "Ansible", "Kubernetes",
 				"Docker", "Helm", "Jenkins", "GitHub Actions", "GitLab CI/CD", "Travis CI", "CircleCI", "ArgoCD",
 				"Pulumi", "Vagrant", "Serverless Framework", "Cloud Functions", "Lambda", "Kafka", "RabbitMQ",
@@ -779,7 +814,7 @@ public class BackendApplication {
 				"Adobe Illustrator", "CorelDRAW", "Inkscape", "Canva", "Motion Graphics", "Video Editing",
 				"Adobe Premiere Pro", "After Effects", "Final Cut Pro", "Cinema 4D", "Blender", "Maya",
 
-				// ✍️ Content Creation & Writing
+				// ✍ Content Creation & Writing
 				"Content Writing", "Copywriting", "Technical Writing", "Ghostwriting", "SEO Writing", "Creative Writing",
 				"Proofreading", "Translation", "Transcription", "Blogging", "Academic Writing",
 
@@ -800,7 +835,7 @@ public class BackendApplication {
 				"Music Production", "Sound Engineering", "Audio Editing", "Podcast Editing", "Mixing & Mastering",
 				"FL Studio", "Ableton Live", "Logic Pro", "GarageBand", "Cubase", "Pro Tools",
 
-				// 🛠️ Miscellaneous
+				// 🛠 Miscellaneous
 				"3D Printing", "Game Development", "Unreal Engine", "Unity", "Godot", "Penetration Testing", "Cybersecurity",
 				"Ethical Hacking", "OSINT", "Reverse Engineering", "Metasploit", "Bug Bounty Hunting", "Linux Administration"
 		);
@@ -861,8 +896,8 @@ public class BackendApplication {
 
 		List<FreelancerPortfolio> portfolios= new ArrayList<>();
 		portfolios.add(FreelancerPortfolio.builder()
-						.portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/raw/upload/v1740527119/freelancer_portfolios/538180e5-9e56-4742-9138-1544796ed43e.pdf")
-						.name("Portfolio01")
+				.portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/raw/upload/v1740527119/freelancer_portfolios/538180e5-9e56-4742-9138-1544796ed43e.pdf")
+				.name("Portfolio01")
 				.build());
 
 		freelancer1.setSkills(new HashSet<>(skills1));
@@ -966,6 +1001,3 @@ public class BackendApplication {
 
 
 }
-
-
-

@@ -71,6 +71,7 @@ public class Community {
     private Boolean isFull;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<CommunityMember> communityMembers = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
