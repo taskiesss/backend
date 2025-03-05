@@ -91,4 +91,18 @@ public class Community {
         AVAILABLE,
         BUSY
     }
+
+    @PreUpdate
+    @PrePersist
+    public void preUpdate() {
+
+        for(CommunityMember communityMember :communityMembers){
+            if (communityMember.getFreelancer()== null) {
+                isFull = false;
+                return;
+            }
+
+        }
+        isFull=true;
+    }
 }

@@ -588,11 +588,11 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.freelancer(freelancer)
 				.positionName("backend01")
 				.build();
-		community.getCommunityMembers().add(communityMember);
+
 
 		CommunityMember communityMember2 = CommunityMember.builder()
 				.community(community)
-				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
+//				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
 				.positionName("backend02")
 				.build();
 
@@ -603,7 +603,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.build();
 		community.getCommunityMembers().addAll(List.of(communityMember,communityMember2,communityMember3));
 		communityService.save(community);
-//		communityMemberService.addMember(communityMember);
 
 	}
 
@@ -896,8 +895,8 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		List<FreelancerPortfolio> portfolios= new ArrayList<>();
 		portfolios.add(FreelancerPortfolio.builder()
-				.portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/raw/upload/v1740527119/freelancer_portfolios/538180e5-9e56-4742-9138-1544796ed43e.pdf")
-				.name("Portfolio01")
+				.portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1741044338/freelancer_portfolios/22bd3c8b-a0d6-4a2b-9d1c-8814832c312cmartinCV.pdf")
+				.name("mycv")
 				.build());
 
 		freelancer1.setSkills(new HashSet<>(skills1));
@@ -923,7 +922,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		freelancer2.setName("mina hany");
 		freelancer2.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/nf173ownjkrkm24qioi7.jpg");
 		freelancer2.setLanguages(new HashSet<>(List.of("english")));
-		freelancer2.setPortfolios(portfolios);
+//		freelancer2.setPortfolios(portfolios);
 		freelancerRepository.save(freelancer2);
 
 		freelancer3.setSkills(new HashSet<>(skills3));
@@ -935,7 +934,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		freelancer3.setName("lara jreige");
 		freelancer3.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/ugwy7jflz41djmpmn1co.jpg");
 		freelancer3.setLanguages(new HashSet<>(List.of("english")));
-		freelancer3.setPortfolios(portfolios);
+//		freelancer3.setPortfolios(portfolios);
 		freelancerRepository.save(freelancer3);
 
 

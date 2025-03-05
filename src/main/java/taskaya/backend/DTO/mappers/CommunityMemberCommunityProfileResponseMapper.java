@@ -3,6 +3,7 @@ package taskaya.backend.DTO.mappers;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberCommunityProfileDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 
@@ -14,10 +15,10 @@ public class CommunityMemberCommunityProfileResponseMapper {
 
     public static CommunityMemberCommunityProfileDTO toDTO(CommunityMember communityMember){
         return CommunityMemberCommunityProfileDTO.builder()
-                .name(communityMember.getFreelancer().getName())
+                .name(communityMember.getFreelancer()==null?"open position":communityMember.getFreelancer().getName())
                 .position(communityMember.getPositionName())
-                .freelancerId(communityMember.getFreelancer().getId().toString())
-                .freelancerProfilePicture(communityMember.getFreelancer().getProfilePicture())
+                .freelancerId(communityMember.getFreelancer()==null?"not assigned":communityMember.getFreelancer().getId().toString())
+                .freelancerProfilePicture(communityMember.getFreelancer()==null? Constants.FIRST_PROFILE_PICTURE :communityMember.getFreelancer().getProfilePicture())
                 .build();
     }
 
