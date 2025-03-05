@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class MilestoneSubmissionResponseDTO {
-    String description;
     List<DeliverableLinkSubmissionResponseDTO> links;
     List<DeliverableFileSubmissionResponseDTO> files;
 }

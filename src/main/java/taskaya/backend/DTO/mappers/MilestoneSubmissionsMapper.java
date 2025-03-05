@@ -8,7 +8,6 @@ import taskaya.backend.entity.work.Milestone;
 public class MilestoneSubmissionsMapper {
     public static MilestoneSubmissionResponseDTO toDTO(Milestone milestone){
         return MilestoneSubmissionResponseDTO.builder()
-                .description(milestone.getDescription())
                 .files(DeliverableFileSubmissionResponseMapper.toDTOList(milestone.getDeliverableFiles()))
                 .links(DeliverableLinkSubmissionResponseMapper.toDTOList(milestone.getDeliverableLinks()))
                 .build();
