@@ -134,35 +134,35 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(community.getWorkerEntity())
 				.build();
 
-		List<DeliverableFile> filesList = List.of(
-				DeliverableFile.builder()
-						.fileName("file One Name")
-						.filePath("file one Path")
-						.build(),
-
-				DeliverableFile.builder()
-						.fileName("file two Name")
-						.filePath("file two Path")
-						.build()
-		);
-
-		List<DeliverableLink> linksList = List.of(
-				DeliverableLink.builder()
-						.fileName("link 1 name")
-						.linkUrl("link 1 url")
-						.build(),
-				DeliverableLink.builder()
-						.fileName("link 2 name")
-						.linkUrl("link 2 url")
-						.build()
-		);
+//		List<DeliverableFile> filesList = List.of(
+//				DeliverableFile.builder()
+//						.fileName("file One Name")
+//						.filePath("file one Path")
+//						.build(),
+//
+//				DeliverableFile.builder()
+//						.fileName("file two Name")
+//						.filePath("file two Path")
+//						.build()
+//		);
+//
+//		List<DeliverableLink> linksList = List.of(
+//				DeliverableLink.builder()
+//						.fileName("link 1 name")
+//						.linkUrl("link 1 url")
+//						.build(),
+//				DeliverableLink.builder()
+//						.fileName("link 2 name")
+//						.linkUrl("link 2 url")
+//						.build()
+//		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("mile1")
 						.description("first desc")
-						.deliverableLinks(linksList)
-						.deliverableFiles(filesList)
+//						.deliverableLinks(linksList)
+//						.deliverableFiles(filesList)
 						.number(1)
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))

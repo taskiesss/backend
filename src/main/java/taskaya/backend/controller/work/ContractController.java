@@ -1,12 +1,18 @@
 package taskaya.backend.controller.work;
 
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
+import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
@@ -14,6 +20,13 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.services.work.ContractService;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -47,5 +60,20 @@ public class ContractController {
     public ResponseEntity<?> getMilestonesSubmission (@PathVariable String contractId, @PathVariable String milestoneIndex){
         MilestoneSubmissionResponseDTO responseDTO = contractService.getMilestoneSubmission(contractId, milestoneIndex);
         return  ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping(value = "/api/contracts/{contractId}/milestones/{milestoneIndex}/add", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> addMilestoneSubmission (@PathVariable String contractId, @PathVariable String milestoneIndex,
+                                                     @RequestPart("files") List<MultipartFile> files,
+                                                     @RequestPart(value="links", required = false) String links) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<DeliverableLinkSubmitRequestDTO> myLinks = Collections.emptyList();
+        if (links != null && !links.isEmpty()) {
+            myLinks = objectMapper.readValue(links, new TypeReference<List<DeliverableLinkSubmitRequestDTO>>() {});
+        }
+
+        contractService.addMilestoneSubmission(contractId, milestoneIndex, files, myLinks);
+        return  ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 }

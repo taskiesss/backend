@@ -53,10 +53,12 @@ public class Milestone {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "milestone_id")
+    @Builder.Default
     private List<DeliverableFile> deliverableFiles=new ArrayList<>();;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "milestone_id")
+    @Builder.Default
     private List<DeliverableLink> deliverableLinks = new ArrayList<>();
 
     public enum MilestoneStatus {
