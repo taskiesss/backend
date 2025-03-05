@@ -76,4 +76,12 @@ public class ContractController {
         contractService.addMilestoneSubmission(contractId, milestoneIndex, files, myLinks);
         return  ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
+
+    @DeleteMapping("/api/contracts/{contractId}/milestones/{milestoneIndex}/{type}/{id}")
+    public ResponseEntity<?> deleteSubmission(@PathVariable String contractId, @PathVariable String milestoneIndex,
+                                              @PathVariable String type, @PathVariable String id) throws IOException {
+
+        contractService.deleteSubmission(contractId, milestoneIndex, type, id);
+        return  ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
+    }
 }

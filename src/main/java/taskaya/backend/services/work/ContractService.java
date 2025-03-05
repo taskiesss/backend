@@ -21,6 +21,7 @@ import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
@@ -191,5 +192,43 @@ public class ContractService {
     private Contract getContractById(String contractId){
         return contractRepository.findById(UUID.fromString(contractId))
                 .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    public void deleteSubmission(String contractId, String milestoneIndex, String type, String id) throws IOException {
+        Contract contract = getContractById(contractId);
+        Milestone milestone = contract.getMilestones().stream()
+                .filter(myMilestone -> myMilestone.getNumber().toString().equals(milestoneIndex) )
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+
+
+        if(type.equals("file")){
+            List<DeliverableFile> filesList = milestone.getDeliverableFiles();
+            DeliverableFile file =  filesList.stream()
+                    .filter(myFile -> myFile.getId().toString().equals(id))
+                    .findFirst()
+                    .orElseThrow(()-> new RuntimeException("File Not Found!"));
+
+            boolean deleted = cloudinaryService.deleteFile(file.getFilePath());
+            if(deleted){
+                filesList.removeIf(myFile -> myFile.getId().equals(file.getId()));
+                milestone.setDeliverableFiles(filesList);
+                milestoneRepository.save(milestone);
+            }
+        }else if(type.equals("link")){
+            List<DeliverableLink> linkList = milestone.getDeliverableLinks();
+            DeliverableLink link = linkList.stream()
+                    .filter(myLink -> myLink.getId().toString().equals(id))
+                    .findFirst()
+                    .orElseThrow(()-> new RuntimeException("Link Not Found!"));
+
+                linkList.removeIf(myLink -> myLink.getId().equals(link.getId()));
+                milestone.setDeliverableLinks(linkList);
+                milestoneRepository.save(milestone);
+        }else{
+            throw new RuntimeException("File Type Missing!");
+        }
     }
 }
