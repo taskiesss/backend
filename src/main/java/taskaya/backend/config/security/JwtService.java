@@ -121,11 +121,7 @@ public class JwtService {
     }
 
     public boolean isCommunityAdmin(String communityId) {
-        // Get the authenticated user's ID from JWT
-        String username = getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(()->new AccessDeniedException("security failed"));
-
-        return communityRepository.isAdmin(UUID.fromString(communityId) , user.getId());
+        return communityRepository.isAdmin(UUID.fromString(communityId) , getUserFromToken().getId());
     }
 
     private User getUserFromToken(){
@@ -164,6 +160,23 @@ public class JwtService {
                         .orElseThrow(()->new AccessDeniedException("security failed"));
                 return isCommunityMember(community.getUuid().toString());
             }
+        }
+    }
+
+    public boolean fileSubmissionAuth(String contractId){
+        User user = getUserFromToken();
+        Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
+
+        WorkerEntity contractWorkerEntity = contract.getWorkerEntity();
+        if(contractWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
+            Freelancer freelancer = freelancerRepository.findByUser(user)
+                    .orElseThrow(()->new AccessDeniedException("security failed"));
+            return contractWorkerEntity.getId().equals(freelancer.getWorkerEntity().getId());
+        }
+        else{
+            Community community = communityRepository.findByWorkerEntity(contractWorkerEntity)
+                    .orElseThrow(()->new AccessDeniedException("security failed"));
+            return isCommunityMember(community.getUuid().toString());
         }
     }
 

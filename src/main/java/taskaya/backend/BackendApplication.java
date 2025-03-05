@@ -134,10 +134,35 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(community.getWorkerEntity())
 				.build();
 
+		List<DeliverableFile> filesList = List.of(
+				DeliverableFile.builder()
+						.fileName("file One Name")
+						.filePath("file one Path")
+						.build(),
+
+				DeliverableFile.builder()
+						.fileName("file two Name")
+						.filePath("file two Path")
+						.build()
+		);
+
+		List<DeliverableLink> linksList = List.of(
+				DeliverableLink.builder()
+						.fileName("link 1 name")
+						.linkUrl("link 1 url")
+						.build(),
+				DeliverableLink.builder()
+						.fileName("link 2 name")
+						.linkUrl("link 2 url")
+						.build()
+		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("mile1")
+						.description("first desc")
+						.deliverableLinks(linksList)
+						.deliverableFiles(filesList)
 						.number(1)
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
@@ -146,6 +171,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 				Milestone.builder()
 						.name("mile2")
+						.description("sec desc")
 						.number(2)
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
@@ -512,9 +538,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(exp)
 				.build();
 
-		if (community.getCommunityMembers() == null) {
-			community.setCommunityMembers(new ArrayList<>());
-		}
 
 		communityService.save(community);
 		community = communityService.getCommunityByName(name+" Community");
@@ -532,15 +555,15 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.community(community)
 				.positionName("member1")
 				.positionPercent(5)
-				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").orElseThrow()).orElseThrow())
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").orElseThrow()).orElseThrow())
 				.build();
 
-		communityMemberService.addMember(communityMember);
+//		communityMemberService.addMember(communityMember);
 //		communityMemberService.addMember(communityMember2);
 //		communityMember = communityMemberService.findById(1);
 //		communityMember2 = communityMemberService.findById(2);
 		community.getCommunityMembers().add(communityMember);
-//		community.getCommunityMembers().add(communityMember2);
+		community.getCommunityMembers().add(communityMember2);
 
 		communityService.save(community);
 	}

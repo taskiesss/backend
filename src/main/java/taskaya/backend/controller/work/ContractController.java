@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
+import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -40,5 +41,11 @@ public class ContractController {
     public ResponseEntity<?> getContractMilestones (@PathVariable String id, @RequestParam int page, @RequestParam int size){
         Page<MilestonesContractDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
         return  ResponseEntity.ok(responseDTOPage);
+    }
+
+    @GetMapping("/api/contracts/{contractId}/milestones/{milestoneIndex}/submission")
+    public ResponseEntity<?> getMilestonesSubmission (@PathVariable String contractId, @PathVariable String milestoneIndex){
+        MilestoneSubmissionResponseDTO responseDTO = contractService.getMilestoneSubmission(contractId, milestoneIndex);
+        return  ResponseEntity.ok(responseDTO);
     }
 }

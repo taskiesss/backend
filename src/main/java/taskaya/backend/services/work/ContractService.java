@@ -9,8 +9,10 @@ import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
 import taskaya.backend.DTO.mappers.ContractDetailsMapper;
+import taskaya.backend.DTO.mappers.MilestoneSubmissionsMapper;
 import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
+import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
@@ -121,14 +123,8 @@ public class ContractService {
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){
-        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
         Contract contract = contractRepository.findById(UUID.fromString(id))
                 .orElseThrow(()-> new NotFoundException("No Contract Found!"));
-
-        //check authorization
-        if(!(freelancer.getWorkerEntity().getId().equals(contract.getWorkerEntity().getId()))){
-            throw new RuntimeException("Invalid Request, Not Authorized!");
-        }
 
         List<Milestone> milestones = contract.getMilestones();
         milestones.sort(Comparator.comparing(Milestone::getDueDate));
@@ -139,5 +135,19 @@ public class ContractService {
         List<Milestone> pagedList = milestones.subList(start, end);
         return MilestonesContractDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
     }
+
+    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    public MilestoneSubmissionResponseDTO getMilestoneSubmission(String contractId, String milestoneIndex) {
+        Contract contract = contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+
+        Milestone milestone = contract.getMilestones().stream()
+                .filter(myMilestone -> myMilestone.getNumber().toString().equals(milestoneIndex) )
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+
+        return MilestoneSubmissionsMapper.toDTO(milestone);
+    }
+
 
 }
