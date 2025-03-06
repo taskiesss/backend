@@ -14,6 +14,7 @@ import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.community.JoinRequest;
 import taskaya.backend.entity.enums.Payment;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -30,6 +31,8 @@ import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
+import taskaya.backend.repository.community.CommunityJoinRequestRepository;
+import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
@@ -103,6 +106,12 @@ class MyCommandLineRunner implements CommandLineRunner {
 	@Autowired
 	CommunityRepository communityRepository;
 
+	@Autowired
+	CommunityJoinRequestRepository communityJoinRequestRepository;
+
+	@Autowired
+	CommunityMemberRepository communityMemberRepository;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
@@ -117,177 +126,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityWorkdoneSeed();
 	}
 
-	private void communityWorkdoneSeed() {
-		Community community = communityRepository.findByCommunityName("mina community").orElseThrow();
-		Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
-		System.out.println("Community UUID: "+community.getUuid());
-
-		Job job = Job.builder()
-				.title("JobWorkdone1")
-				.client(client)
-				.experienceLevel(ExperienceLevel.intermediate)
-				.projectLength(ProjectLength._3_to_6_months)
-				.status(Job.JobStatus.DONE)
-				.description("this is the first job")
-				.pricePerHour(40)
-				.endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-				.assignedTo(community.getWorkerEntity())
-				.build();
-
-//		List<DeliverableFile> filesList = List.of(
-//				DeliverableFile.builder()
-//						.fileName("file One Name")
-//						.filePath("file one Path")
-//						.build(),
-//
-//				DeliverableFile.builder()
-//						.fileName("file two Name")
-//						.filePath("file two Path")
-//						.build()
-//		);
-//
-//		List<DeliverableLink> linksList = List.of(
-//				DeliverableLink.builder()
-//						.fileName("link 1 name")
-//						.linkUrl("link 1 url")
-//						.build(),
-//				DeliverableLink.builder()
-//						.fileName("link 2 name")
-//						.linkUrl("link 2 url")
-//						.build()
-//		);
-
-		List<Milestone> milestones = List.of(
-				Milestone.builder()
-						.name("mile1")
-						.description("first desc")
-//						.deliverableLinks(linksList)
-//						.deliverableFiles(filesList)
-						.number(1)
-						.estimatedHours(5)
-						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
-						.status(Milestone.MilestoneStatus.APPROVED)
-						.build(),
-
-				Milestone.builder()
-						.name("mile2")
-						.description("sec desc")
-						.number(2)
-						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.IN_PROGRESS)
-						.build()
-		);
-
-		Contract contract = Contract.builder()
-				.job(job)
-				.client(client)
-				.status(Contract.ContractStatus.ACTIVE)
-				.milestones(milestones)
-				.payment(Payment.PerMilestones)
-				.workerEntity(community.getWorkerEntity())
-				.hoursWorked(100)
-				.costPerHour(55.55)
-				.build();
-		job.setContract(contract);
-
-		Proposal proposal1= Proposal.builder()
-				.costPerHour(30D)
-				.date(new Date())
-				.milestones(milestones)
-				.contract(contract)
-				.client(client)
-				.status(Proposal.ProposalStatus.HIRED)
-				.job(job)
-				.payment(Payment.PerProject)
-				.workerEntity(community.getWorkerEntity())
-				.coverLetter("please accept me")
-				.build();
-
-		jobRepository.save(job);
-		proposalRepository.save(proposal1);
-		communityRepository.save(community);
-		contractRepository.save(contract);
-
-//		System.out.println("Community Contract 1 ID: "+contract.getId());
-//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
-//		System.out.println("Community Contract 1, milestone 2 ID: "+contract.getMilestones().get(1).getId());
-
-		Job job2 = Job.builder()
-				.title("JobWorkdone2")
-				.client(client)
-				.experienceLevel(ExperienceLevel.intermediate)
-				.projectLength(ProjectLength._3_to_6_months)
-				.status(Job.JobStatus.DONE)
-				.description("Job Description:\n" +
-						"\n" +
-						"We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
-						"\n" +
-						"Responsibilities:\n" +
-						"Design, develop, and maintain both front-end and back-end systems for the healthcare platform.\n" +
-						"Build intuitive, user-friendly, and responsive user interfaces using modern web technologies.\n" +
-						"Develop and manage RESTful APIs to support the platform’s functionality.\n" +
-						"Integrate third-party services, such as payment gateways, email systems, and healthcare data APIs.\n" +
-						"Work closely with UI/UX designers to ensure the platform is both functional and aesthetically appealing.\n" +
-						"Implement security and privacy measures to ensure the platform complies with data protection regulations (e.g., HIPAA, GDPR).\n" +
-						"Conduct code reviews, write tests, and troubleshoot performance bottlenecks.\n"
-						)
-				.pricePerHour(40)
-				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
-				.assignedTo(community.getWorkerEntity())
-				.build();
 
 
-		List<Milestone> milestones2 = List.of(
-				Milestone.builder()
-						.name("mile1")
-						.number(1)
-						.estimatedHours(5)
-						.dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-						.status(Milestone.MilestoneStatus.APPROVED)
-						.build(),
 
-				Milestone.builder()
-						.name("mile2")
-						.number(2)
-						.estimatedHours(3)
-						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-						.status(Milestone.MilestoneStatus.APPROVED)
-						.build()
-		);
-
-		Contract contract2 = Contract.builder()
-				.job(job2)
-				.client(client)
-				.status(Contract.ContractStatus.ENDED)
-				.milestones(milestones2)
-				.workerEntity(community.getWorkerEntity())
-				.payment(Payment.PerProject)
-				.hoursWorked(500)
-				.costPerHour(55.55)
-				.build();
-		job2.setContract(contract2);
-
-		Proposal proposal2= Proposal.builder()
-				.costPerHour(30D)
-				.date(new Date())
-				.milestones(milestones)
-				.contract(contract2)
-				.client(client)
-				.status(Proposal.ProposalStatus.HIRED)
-				.job(job2)
-				.payment(Payment.PerProject)
-				.workerEntity(community.getWorkerEntity())
-				.coverLetter("please accept me")
-				.build();
-
-		communityRepository.save(community);
-		jobRepository.save(job2);
-		proposalRepository.save(proposal2);
-		contractRepository.save(contract2);
-
-//		System.out.println("Community Contract 2 ID: "+contract2.getId());
-	}
 
 	private void freelancerWorkdoneseed() {
 		Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
@@ -583,6 +424,14 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(exp)
 				.build();
 
+		CommunityMember communityMember1 = CommunityMember.builder()
+				.positionPercent(40.1F)
+				.positionName("adminN")
+				.community(community)
+				.freelancer(freelancerService.getById(user.getId()))
+				.build();
+
+		community.getCommunityMembers().add(communityMember1);
 
 		communityService.save(community);
 		community = communityService.getCommunityByName(name+" Community");
@@ -1065,5 +914,205 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 	}
 
+	private void communityWorkdoneSeed() {
+		Community community = communityRepository.findByCommunityName("mina community").orElseThrow();
+		Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
+		System.out.println("Community UUID: "+community.getUuid());
 
+
+		Job job = Job.builder()
+				.title("JobWorkdone1")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("this is the first job")
+				.pricePerHour(40)
+				.endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+				.assignedTo(community.getWorkerEntity())
+				.build();
+
+//		List<DeliverableFile> filesList = List.of(
+//				DeliverableFile.builder()
+//						.fileName("file One Name")
+//						.filePath("file one Path")
+//						.build(),
+//
+//				DeliverableFile.builder()
+//						.fileName("file two Name")
+//						.filePath("file two Path")
+//						.build()
+//		);
+//
+//		List<DeliverableLink> linksList = List.of(
+//				DeliverableLink.builder()
+//						.fileName("link 1 name")
+//						.linkUrl("link 1 url")
+//						.build(),
+//				DeliverableLink.builder()
+//						.fileName("link 2 name")
+//						.linkUrl("link 2 url")
+//						.build()
+//		);
+
+		List<Milestone> milestones = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.description("first desc")
+//						.deliverableLinks(linksList)
+//						.deliverableFiles(filesList)
+						.number(1)
+						.estimatedHours(5)
+						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.description("sec desc")
+						.number(2)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.estimatedHours(3)
+						.status(Milestone.MilestoneStatus.IN_PROGRESS)
+						.build()
+		);
+
+		Contract contract = Contract.builder()
+				.job(job)
+				.client(client)
+				.status(Contract.ContractStatus.ACTIVE)
+				.milestones(milestones)
+				.payment(Payment.PerMilestones)
+				.workerEntity(community.getWorkerEntity())
+				.hoursWorked(100)
+				.costPerHour(55.55)
+				.build();
+		job.setContract(contract);
+
+		Proposal proposal1= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job)
+				.payment(Payment.PerProject)
+				.workerEntity(community.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
+		jobRepository.save(job);
+		proposalRepository.save(proposal1);
+		communityRepository.save(community);
+		contractRepository.save(contract);
+
+//		System.out.println("Community Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
+//		System.out.println("Community Contract 1, milestone 2 ID: "+contract.getMilestones().get(1).getId());
+
+		Job job2 = Job.builder()
+				.title("JobWorkdone2")
+				.client(client)
+				.experienceLevel(ExperienceLevel.intermediate)
+				.projectLength(ProjectLength._3_to_6_months)
+				.status(Job.JobStatus.DONE)
+				.description("Job Description:\n" +
+						"\n" +
+						"We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
+						"\n" +
+						"Responsibilities:\n" +
+						"Design, develop, and maintain both front-end and back-end systems for the healthcare platform.\n" +
+						"Build intuitive, user-friendly, and responsive user interfaces using modern web technologies.\n" +
+						"Develop and manage RESTful APIs to support the platform’s functionality.\n" +
+						"Integrate third-party services, such as payment gateways, email systems, and healthcare data APIs.\n" +
+						"Work closely with UI/UX designers to ensure the platform is both functional and aesthetically appealing.\n" +
+						"Implement security and privacy measures to ensure the platform complies with data protection regulations (e.g., HIPAA, GDPR).\n" +
+						"Conduct code reviews, write tests, and troubleshoot performance bottlenecks.\n"
+				)
+				.pricePerHour(40)
+				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
+				.assignedTo(community.getWorkerEntity())
+				.build();
+
+
+		List<Milestone> milestones2 = List.of(
+				Milestone.builder()
+						.name("mile1")
+						.number(1)
+						.estimatedHours(5)
+						.dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build(),
+
+				Milestone.builder()
+						.name("mile2")
+						.number(2)
+						.estimatedHours(3)
+						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+						.status(Milestone.MilestoneStatus.APPROVED)
+						.build()
+		);
+
+		Contract contract2 = Contract.builder()
+				.job(job2)
+				.client(client)
+				.status(Contract.ContractStatus.ENDED)
+				.milestones(milestones2)
+				.workerEntity(community.getWorkerEntity())
+				.payment(Payment.PerProject)
+				.hoursWorked(500)
+				.costPerHour(55.55)
+				.build();
+		job2.setContract(contract2);
+
+		Proposal proposal2= Proposal.builder()
+				.costPerHour(30D)
+				.date(new Date())
+				.milestones(milestones)
+				.contract(contract2)
+				.client(client)
+				.status(Proposal.ProposalStatus.HIRED)
+				.job(job2)
+				.payment(Payment.PerProject)
+				.workerEntity(community.getWorkerEntity())
+				.coverLetter("please accept me")
+				.build();
+
+		communityRepository.save(community);
+		jobRepository.save(job2);
+		proposalRepository.save(proposal2);
+		contractRepository.save(contract2);
+
+		CommunityMember communityMember = CommunityMember.builder()
+				.community(community)
+				.positionName("Office boy")
+				.positionPercent(455)
+				.build();
+
+		CommunityMember communityMember2 = CommunityMember.builder()
+				.community(community)
+				.positionName("Office boy")
+				.positionPercent(455)
+				.build();
+
+		communityMemberRepository.save(communityMember);
+
+
+//		System.out.println("Community Contract 2 ID: "+contract2.getId());
+		JoinRequest joinRequest1 = JoinRequest.builder()
+				.community(community)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").get()).get())
+				.position(communityMember)
+				.build();
+
+		JoinRequest joinRequest2 = JoinRequest.builder()
+				.community(community)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
+				.position(communityMember)
+				.build();
+
+		communityJoinRequestRepository.save(joinRequest1);
+		communityJoinRequestRepository.save(joinRequest2);
+	}
 }

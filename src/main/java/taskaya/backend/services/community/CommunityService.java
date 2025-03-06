@@ -7,10 +7,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
+import taskaya.backend.DTO.mappers.CommunityJoinReqResponseMapper;
 import taskaya.backend.DTO.mappers.WorkerEntityWorkdoneResponseMapper;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityProfileResponseMapper;
@@ -21,12 +23,15 @@ import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
+import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.community.JoinRequest;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.community.CommunityJoinRequestRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.work.JobRepository;
@@ -52,6 +57,9 @@ public class CommunityService {
 
     @Autowired
     CloudinaryService cloudinaryService;
+
+    @Autowired
+    CommunityJoinRequestRepository communityJoinRequestRepository;
 
     public Community getCommunityByName(String communityName){
         return communityRepository.findByCommunityName(communityName)
@@ -121,7 +129,7 @@ public class CommunityService {
         }
         return responseDTO;
     }
-
+//........................................
     public Page<WorkerEntityWorkdoneResponseDTO> getCommunityWorkdone(String id, int page, int size){
         List<WorkerEntityWorkdoneResponseDTO> listDTO = new ArrayList<>();
 
@@ -243,5 +251,29 @@ public class CommunityService {
         String username = JwtService.getAuthenticatedUsername();
         return userRepository.findByUsername(username)
                 .orElseThrow(()->new NotFoundException("Username not found!"));
+    }
+
+    public Page<CommunityJoinReqResponseDTO> getJoinRequests(String communityId, int page, int size) {
+
+        //get community
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+
+        //get join req
+        List<JoinRequest> joinRequests = communityJoinRequestRepository.findAllByCommunity(community);
+
+        // map to dto list
+        List<CommunityJoinReqResponseDTO> listDTO = CommunityJoinReqResponseMapper.toDTOList(joinRequests);
+
+        //List to Page
+        Pageable pageable = PageRequest.of(page, size);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), listDTO.size());
+
+        List<CommunityJoinReqResponseDTO> paginatedList = listDTO.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, listDTO.size());
+
     }
 }

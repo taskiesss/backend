@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
+import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
@@ -86,5 +88,15 @@ public class CommunityController {
             @RequestBody HeaderSectionUpdateRequestDTO requestDTO){
         communityService.updateHeaderSection(id, requestDTO);
         return new ResponseEntity<>(SimpleResponseDTO.builder().message("header updated successfully.").build(),HttpStatus.OK);
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/joinrequests")
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public ResponseEntity<Page<CommunityJoinReqResponseDTO>> joinRequests (
+            @PathVariable String communityId,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size){
+        return ResponseEntity.ok(communityService.getJoinRequests(communityId, page, size));
+
     }
 }

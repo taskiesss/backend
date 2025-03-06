@@ -25,4 +25,9 @@ public class JoinRequest {
     @JoinColumn(name = "position_id", nullable = false)
     @JsonIgnore // Avoid exposing this field in the JSON response
     private CommunityMember position;
+
+    @ManyToOne
+    @JoinColumn(name = "community_id", nullable = false)
+    @JsonIgnore // Avoid exposing this field in the JSON response
+    private Community community;
 }
