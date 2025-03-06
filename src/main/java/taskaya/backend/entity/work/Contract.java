@@ -55,6 +55,10 @@ public class Contract {
 //    @Builder.Default
     Date dueDate;
 
+    @Column(name = "sent_date")
+    @Builder.Default
+    Date sentDate= new Date();
+
     @Column(name = "start_date")
     Date startDate;
 
