@@ -24,7 +24,7 @@ public class CommunityMember {
     @ManyToOne
     @JoinColumn(name = "community_id", nullable = false)
     private Community community;
-
+    //unique within a community
     @Column(name = "position_name", nullable = false, length = 100)
     private String positionName;
 
@@ -38,4 +38,14 @@ public class CommunityMember {
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // Avoid circular references in JSON serialization
     private List<JoinRequest> joinRequests = new ArrayList<>();
+
+    //unique within a community
+    //make sure that you set the community before the position name for the Community member
+    public void setPositionName(String positionName) {
+        for (CommunityMember communityMember : community.getCommunityMembers()) {
+            if (communityMember.getPositionName().equals(positionName)) {
+                throw new IllegalArgumentException("Position name must be unique within a community");
+            }
+        }
+    }
 }

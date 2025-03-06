@@ -2,6 +2,7 @@ package taskaya.backend.entity.community;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Proposal;
 
 @Entity
@@ -21,8 +22,8 @@ public class Vote {
     private CommunityMember communityMember;
 
     @ManyToOne
-    @JoinColumn(name = "proposal_id", nullable = false)
-    private Proposal proposal;
+    @JoinColumn(name = "contract_id", nullable = false)
+    private Contract contract;
 
     @Column(nullable = false)
     private Boolean agreed;

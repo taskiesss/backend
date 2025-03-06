@@ -59,4 +59,15 @@ public class LogInExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, Object> response = Map.of(
+                "timestamp",  System.currentTimeMillis(),
+                "status", 400,
+                "error", "Forbidden",
+                "message", "You do not have permission to access this resource."
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

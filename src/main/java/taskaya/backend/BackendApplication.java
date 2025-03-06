@@ -191,7 +191,19 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(ExperienceLevel.intermediate)
 				.projectLength(ProjectLength._3_to_6_months)
 				.status(Job.JobStatus.DONE)
-				.description("this is the sec job")
+				.description("Job Description:\n" +
+						"\n" +
+						"We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
+						"\n" +
+						"Responsibilities:\n" +
+						"Design, develop, and maintain both front-end and back-end systems for the healthcare platform.\n" +
+						"Build intuitive, user-friendly, and responsive user interfaces using modern web technologies.\n" +
+						"Develop and manage RESTful APIs to support the platform’s functionality.\n" +
+						"Integrate third-party services, such as payment gateways, email systems, and healthcare data APIs.\n" +
+						"Work closely with UI/UX designers to ensure the platform is both functional and aesthetically appealing.\n" +
+						"Implement security and privacy measures to ensure the platform complies with data protection regulations (e.g., HIPAA, GDPR).\n" +
+						"Conduct code reviews, write tests, and troubleshoot performance bottlenecks.\n"
+						)
 				.pricePerHour(40)
 				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
 				.assignedTo(community.getWorkerEntity())
@@ -326,7 +338,20 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(ExperienceLevel.intermediate)
 				.projectLength(ProjectLength._3_to_6_months)
 				.status(Job.JobStatus.DONE)
-				.description("this is the sec job")
+				.description("Job Description:\n" +
+						"\n" +
+						"We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
+						"\n" +
+						"Responsibilities:\n" +
+						"Design, develop, and maintain both front-end and back-end systems for the healthcare platform.\n" +
+						"Build intuitive, user-friendly, and responsive user interfaces using modern web technologies.\n" +
+						"Develop and manage RESTful APIs to support the platform’s functionality.\n" +
+						"Integrate third-party services, such as payment gateways, email systems, and healthcare data APIs.\n" +
+						"Work closely with UI/UX designers to ensure the platform is both functional and aesthetically appealing.\n" +
+						"Implement security and privacy measures to ensure the platform complies with data protection regulations (e.g., HIPAA, GDPR).\n" +
+						"Conduct code reviews, write tests, and troubleshoot performance bottlenecks.\n" +
+						"Required Skills & Qualifications:\n" +
+						"Proven experience in full-stack development (3+ years).\n" )
 				.pricePerHour(40)
 				.endedAt(new Date(2025-1900, 1, 20, 15, 30, 0))
 				.assignedTo(freelancer.getWorkerEntity())
@@ -577,7 +602,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 						"✅ API Development & Third-party Integrations\n" +
 						"✅ E-commerce Platforms & Payment Systems\n" +
 						"✅ Tailor-made Software Solutions")
-				.isFull(false)
 				.experienceLevel(ExperienceLevel.expert)
 				.build();
 
