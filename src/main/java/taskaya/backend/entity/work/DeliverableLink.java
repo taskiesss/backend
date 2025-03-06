@@ -19,6 +19,9 @@ public class DeliverableLink {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // Primary key
 
+    @Column(name = "file_name", nullable = false, length = 255)
+    private String fileName; // Name of the file
+
     @Column(name = "link_url", nullable = false, length = 500)
     private String linkUrl; // URL of the deliverable link
 

@@ -1,31 +1,38 @@
 package taskaya.backend.services.work;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
+import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
 import taskaya.backend.DTO.mappers.ContractDetailsMapper;
+import taskaya.backend.DTO.mappers.MilestoneSubmissionsMapper;
 import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
+import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
-import taskaya.backend.entity.work.Contract;
-import taskaya.backend.entity.work.Milestone;
-import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.entity.freelancer.FreelancerPortfolio;
+import taskaya.backend.entity.work.*;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
+import taskaya.backend.repository.work.MilestoneRepository;
+import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -37,13 +44,16 @@ public class ContractService {
     ContractRepository contractRepository;
 
     @Autowired
-    FreelancerService freelancerService;
+    CloudinaryService cloudinaryService;
 
     @Autowired
     FreelancerRepository freelancerRepository;
 
     @Autowired
     CommunityRepository communityRepository;
+
+    @Autowired
+    MilestoneRepository milestoneRepository;
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
                                                               UUID workerEntityId ,UUID clientId) {
@@ -98,8 +108,7 @@ public class ContractService {
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public ContractDetailsResponseDTO getContractDetails(String id) {
-        Contract contract = contractRepository.findById(UUID.fromString(id))
-                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+        Contract contract = getContractById(id);
 
         String freelancerName, freelancerPicture, freelancerId;
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
@@ -121,14 +130,7 @@ public class ContractService {
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){
-        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
-        Contract contract = contractRepository.findById(UUID.fromString(id))
-                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
-
-        //check authorization
-        if(!(freelancer.getWorkerEntity().getId().equals(contract.getWorkerEntity().getId()))){
-            throw new RuntimeException("Invalid Request, Not Authorized!");
-        }
+        Contract contract = getContractById(id);
 
         List<Milestone> milestones = contract.getMilestones();
         milestones.sort(Comparator.comparing(Milestone::getDueDate));
@@ -140,4 +142,108 @@ public class ContractService {
         return MilestonesContractDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
     }
 
+    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    public MilestoneSubmissionResponseDTO getMilestoneSubmission(String contractId, String milestoneIndex) {
+        Contract contract = getContractById(contractId);
+
+        Milestone milestone = contract.getMilestones().stream()
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+
+        return MilestoneSubmissionsMapper.toDTO(milestone);
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    public void addMilestoneSubmission(String contractId, String milestoneIndex,
+                                       List<MultipartFile> files, List<DeliverableLinkSubmitRequestDTO> links) throws IOException {
+
+        Contract contract = getContractById(contractId);
+        if(!(contract.getStatus().equals(Contract.ContractStatus.ACTIVE))){
+            throw new RuntimeException("Invalid Request, Contract no longer Active!");
+        }
+
+        Milestone milestone = contract.getMilestones().stream()
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+        if(milestone.getStatus().equals(Milestone.MilestoneStatus.APPROVED)){
+            throw new RuntimeException("Cannot edit as Milestone is already Approved!");
+        }
+
+        List<DeliverableFile> filesList = milestone.getDeliverableFiles();
+        String fileUrl = null;
+        if(files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    fileUrl = cloudinaryService.uploadFile(file, "jobs_deliverables");
+                    filesList.add(DeliverableFile.builder()
+                            .fileName(file.getOriginalFilename())
+                            .filePath(fileUrl)
+                            .build());
+                }
+            }
+        }
+
+        List<DeliverableLink> linksList = milestone.getDeliverableLinks();
+        for(DeliverableLinkSubmitRequestDTO link : links){
+            if(link != null){
+                linksList.add(DeliverableLink.builder()
+                                .linkUrl(link.getUrl())
+                                .fileName(link.getName())
+                                .build());
+            }
+        }
+        milestoneRepository.save(milestone);
+    }
+
+    private Contract getContractById(String contractId){
+        return contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(()-> new NotFoundException("No Contract Found!"));
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    public void deleteSubmission(String contractId, String milestoneIndex, String type, String id) throws IOException {
+        Contract contract = getContractById(contractId);
+        if(!(contract.getStatus().equals(Contract.ContractStatus.ACTIVE))){
+            throw new RuntimeException("Invalid Request, Contract no longer Active!");
+        }
+
+        Milestone milestone = contract.getMilestones().stream()
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+        if(milestone.getStatus().equals(Milestone.MilestoneStatus.APPROVED)){
+            throw new RuntimeException("Cannot edit as Milestone is already Approved!");
+        }
+
+        if(type.equals("file")){
+            List<DeliverableFile> filesList = milestone.getDeliverableFiles();
+            DeliverableFile file =  filesList.stream()
+                    .filter(myFile -> myFile.getId().toString().equals(id))
+                    .findFirst()
+                    .orElseThrow(()-> new RuntimeException("File Not Found!"));
+
+            boolean deleted = cloudinaryService.deleteFile(file.getFilePath());
+            if(deleted){
+                filesList.removeIf(myFile -> myFile.getId().equals(file.getId()));
+                milestone.setDeliverableFiles(filesList);
+                milestoneRepository.save(milestone);
+            }
+        }else if(type.equals("link")){
+            List<DeliverableLink> linkList = milestone.getDeliverableLinks();
+            DeliverableLink link = linkList.stream()
+                    .filter(myLink -> myLink.getId().toString().equals(id))
+                    .findFirst()
+                    .orElseThrow(()-> new RuntimeException("Link Not Found!"));
+
+                linkList.removeIf(myLink -> myLink.getId().equals(link.getId()));
+                milestone.setDeliverableLinks(linkList);
+                milestoneRepository.save(milestone);
+        }else{
+            throw new RuntimeException("File Type Missing!");
+        }
+    }
 }

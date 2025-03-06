@@ -134,10 +134,35 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(community.getWorkerEntity())
 				.build();
 
+//		List<DeliverableFile> filesList = List.of(
+//				DeliverableFile.builder()
+//						.fileName("file One Name")
+//						.filePath("file one Path")
+//						.build(),
+//
+//				DeliverableFile.builder()
+//						.fileName("file two Name")
+//						.filePath("file two Path")
+//						.build()
+//		);
+//
+//		List<DeliverableLink> linksList = List.of(
+//				DeliverableLink.builder()
+//						.fileName("link 1 name")
+//						.linkUrl("link 1 url")
+//						.build(),
+//				DeliverableLink.builder()
+//						.fileName("link 2 name")
+//						.linkUrl("link 2 url")
+//						.build()
+//		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("mile1")
+						.description("first desc")
+//						.deliverableLinks(linksList)
+//						.deliverableFiles(filesList)
 						.number(1)
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
@@ -146,17 +171,18 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 				Milestone.builder()
 						.name("mile2")
+						.description("sec desc")
 						.number(2)
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.IN_PROGRESS)
 						.build()
 		);
 
 		Contract contract = Contract.builder()
 				.job(job)
 				.client(client)
-				.status(Contract.ContractStatus.ENDED)
+				.status(Contract.ContractStatus.ACTIVE)
 				.milestones(milestones)
 				.payment(Payment.PerMilestones)
 				.workerEntity(community.getWorkerEntity())
@@ -183,7 +209,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityRepository.save(community);
 		contractRepository.save(contract);
 
-		System.out.println("Community Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
+//		System.out.println("Community Contract 1, milestone 2 ID: "+contract.getMilestones().get(1).getId());
 
 		Job job2 = Job.builder()
 				.title("JobWorkdone2")
@@ -257,6 +285,8 @@ class MyCommandLineRunner implements CommandLineRunner {
 		jobRepository.save(job2);
 		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
+
+//		System.out.println("Community Contract 2 ID: "+contract2.getId());
 	}
 
 	private void freelancerWorkdoneseed() {
@@ -265,7 +295,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		System.out.println("freelancer01 UUID: "+freelancer.getId());
 
 		Job job = Job.builder()
-				.title("JobWorkdone1")
+				.title("Freelancer Job 1")
 				.client(client)
 				.experienceLevel(ExperienceLevel.intermediate)
 				.projectLength(ProjectLength._3_to_6_months)
@@ -276,15 +306,30 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(freelancer.getWorkerEntity())
 				.build();
 
+//		List<DeliverableFile> filesList = List.of(
+//				DeliverableFile.builder()
+//						.fileName("My Calendar")
+//						.filePath()
+//						.build()
+//		);
+//
+//		List<DeliverableLink> linksList = List.of(
+//				DeliverableLink.builder()
+//						.fileName("Google")
+//						.linkUrl("https://www.google.com/")
+//						.build()
+//		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("Contract1 - mile1")
 						.number(1)
+//						.deliverableFiles(filesList)
+//						.deliverableLinks(linksList)
 						.description("Mile1Desc")
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.IN_PROGRESS)
 						.build(),
 
 				Milestone.builder()
@@ -293,7 +338,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 						.description("Mile2Desc")
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.NOT_STARTED)
 						.build()
 		);
 
@@ -301,7 +346,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.job(job)
 				.client(client)
 				.startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-				.status(Contract.ContractStatus.ENDED)
+				.status(Contract.ContractStatus.ACTIVE)
 				.milestones(milestones)
 				.endDate(new Date())
 				.hoursWorked(10)
@@ -329,7 +374,8 @@ class MyCommandLineRunner implements CommandLineRunner {
 		freelancerRepository.save(freelancer);
 		contractRepository.save(contract);
 
-		System.out.println("Contract 1 ID: "+contract.getId());
+//		System.out.println("Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
 
 
 		Job job2 = Job.builder()
@@ -410,7 +456,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
 
-		System.out.println("Contract 2 ID: "+contract2.getId());
+//		System.out.println("Contract 2 ID: "+contract2.getId());
 	}
 
 	private void proposalSeed() throws MessagingException, IOException {
@@ -537,9 +583,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(exp)
 				.build();
 
-		if (community.getCommunityMembers() == null) {
-			community.setCommunityMembers(new ArrayList<>());
-		}
 
 		communityService.save(community);
 		community = communityService.getCommunityByName(name+" Community");
@@ -557,15 +600,15 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.community(community)
 				.positionName("member1")
 				.positionPercent(5)
-				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").orElseThrow()).orElseThrow())
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").orElseThrow()).orElseThrow())
 				.build();
 
-		communityMemberService.addMember(communityMember);
+//		communityMemberService.addMember(communityMember);
 //		communityMemberService.addMember(communityMember2);
 //		communityMember = communityMemberService.findById(1);
 //		communityMember2 = communityMemberService.findById(2);
 		community.getCommunityMembers().add(communityMember);
-//		community.getCommunityMembers().add(communityMember2);
+		community.getCommunityMembers().add(communityMember2);
 
 		communityService.save(community);
 	}
