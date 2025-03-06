@@ -147,7 +147,7 @@ public class ContractService {
         Contract contract = getContractById(contractId);
 
         Milestone milestone = contract.getMilestones().stream()
-                .filter(myMilestone -> myMilestone.getNumber().toString().equals(milestoneIndex) )
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
                 .findFirst()
                 .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
 
@@ -160,10 +160,17 @@ public class ContractService {
                                        List<MultipartFile> files, List<DeliverableLinkSubmitRequestDTO> links) throws IOException {
 
         Contract contract = getContractById(contractId);
+        if(!(contract.getStatus().equals(Contract.ContractStatus.ACTIVE))){
+            throw new RuntimeException("Invalid Request, Contract no longer Active!");
+        }
+
         Milestone milestone = contract.getMilestones().stream()
-                .filter(myMilestone -> myMilestone.getNumber().toString().equals(milestoneIndex) )
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
                 .findFirst()
                 .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
+        if(milestone.getStatus().equals(Milestone.MilestoneStatus.APPROVED)){
+            throw new RuntimeException("Cannot edit as Milestone is already Approved!");
+        }
 
         List<DeliverableFile> filesList = milestone.getDeliverableFiles();
         String fileUrl = null;
@@ -198,11 +205,17 @@ public class ContractService {
     @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
     public void deleteSubmission(String contractId, String milestoneIndex, String type, String id) throws IOException {
         Contract contract = getContractById(contractId);
+        if(!(contract.getStatus().equals(Contract.ContractStatus.ACTIVE))){
+            throw new RuntimeException("Invalid Request, Contract no longer Active!");
+        }
+
         Milestone milestone = contract.getMilestones().stream()
-                .filter(myMilestone -> myMilestone.getNumber().toString().equals(milestoneIndex) )
+                .filter(myMilestone -> myMilestone.getId().toString().equals(milestoneIndex) )
                 .findFirst()
                 .orElseThrow(()-> new RuntimeException("Milestone Not Found!"));
-
+        if(milestone.getStatus().equals(Milestone.MilestoneStatus.APPROVED)){
+            throw new RuntimeException("Cannot edit as Milestone is already Approved!");
+        }
 
         if(type.equals("file")){
             List<DeliverableFile> filesList = milestone.getDeliverableFiles();

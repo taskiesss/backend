@@ -175,14 +175,14 @@ class MyCommandLineRunner implements CommandLineRunner {
 						.number(2)
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.IN_PROGRESS)
 						.build()
 		);
 
 		Contract contract = Contract.builder()
 				.job(job)
 				.client(client)
-				.status(Contract.ContractStatus.ENDED)
+				.status(Contract.ContractStatus.ACTIVE)
 				.milestones(milestones)
 				.payment(Payment.PerMilestones)
 				.workerEntity(community.getWorkerEntity())
@@ -209,7 +209,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityRepository.save(community);
 		contractRepository.save(contract);
 
-		System.out.println("Community Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
+//		System.out.println("Community Contract 1, milestone 2 ID: "+contract.getMilestones().get(1).getId());
 
 		Job job2 = Job.builder()
 				.title("JobWorkdone2")
@@ -271,6 +273,8 @@ class MyCommandLineRunner implements CommandLineRunner {
 		jobRepository.save(job2);
 		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
+
+//		System.out.println("Community Contract 2 ID: "+contract2.getId());
 	}
 
 	private void freelancerWorkdoneseed() {
@@ -279,7 +283,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		System.out.println("freelancer01 UUID: "+freelancer.getId());
 
 		Job job = Job.builder()
-				.title("JobWorkdone1")
+				.title("Freelancer Job 1")
 				.client(client)
 				.experienceLevel(ExperienceLevel.intermediate)
 				.projectLength(ProjectLength._3_to_6_months)
@@ -290,15 +294,30 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(freelancer.getWorkerEntity())
 				.build();
 
+		List<DeliverableFile> filesList = List.of(
+				DeliverableFile.builder()
+						.fileName("My Calendar")
+						.filePath("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1741255945/jobs_deliverables/k7kcwjfljuuqfa5mlt7y.pdf")
+						.build()
+		);
+
+		List<DeliverableLink> linksList = List.of(
+				DeliverableLink.builder()
+						.fileName("Google")
+						.linkUrl("https://www.google.com/")
+						.build()
+		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("Contract1 - mile1")
 						.number(1)
+						.deliverableFiles(filesList)
+						.deliverableLinks(linksList)
 						.description("Mile1Desc")
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.IN_PROGRESS)
 						.build(),
 
 				Milestone.builder()
@@ -307,7 +326,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 						.description("Mile2Desc")
 						.dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
 						.estimatedHours(3)
-						.status(Milestone.MilestoneStatus.APPROVED)
+						.status(Milestone.MilestoneStatus.NOT_STARTED)
 						.build()
 		);
 
@@ -315,7 +334,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.job(job)
 				.client(client)
 				.startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-				.status(Contract.ContractStatus.ENDED)
+				.status(Contract.ContractStatus.ACTIVE)
 				.milestones(milestones)
 				.endDate(new Date())
 				.hoursWorked(10)
@@ -411,7 +430,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		proposalRepository.save(proposal2);
 		contractRepository.save(contract2);
 
-		System.out.println("Contract 2 ID: "+contract2.getId());
+//		System.out.println("Contract 2 ID: "+contract2.getId());
 	}
 
 	private void proposalSeed() throws MessagingException, IOException {
