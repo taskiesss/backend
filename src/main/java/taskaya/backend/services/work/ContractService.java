@@ -174,13 +174,15 @@ public class ContractService {
 
         List<DeliverableFile> filesList = milestone.getDeliverableFiles();
         String fileUrl = null;
-        for(MultipartFile file : files){
-            if(file != null && !file.isEmpty()){
-                fileUrl = cloudinaryService.uploadFile(file, "jobs_deliverables");
-                filesList.add(DeliverableFile.builder()
-                                .fileName(file.getOriginalFilename())
-                                .filePath(fileUrl)
-                                .build());
+        if(files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    fileUrl = cloudinaryService.uploadFile(file, "jobs_deliverables");
+                    filesList.add(DeliverableFile.builder()
+                            .fileName(file.getOriginalFilename())
+                            .filePath(fileUrl)
+                            .build());
+                }
             }
         }
 

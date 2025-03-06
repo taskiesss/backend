@@ -294,26 +294,26 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.assignedTo(freelancer.getWorkerEntity())
 				.build();
 
-		List<DeliverableFile> filesList = List.of(
-				DeliverableFile.builder()
-						.fileName("My Calendar")
-						.filePath("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1741255945/jobs_deliverables/k7kcwjfljuuqfa5mlt7y.pdf")
-						.build()
-		);
-
-		List<DeliverableLink> linksList = List.of(
-				DeliverableLink.builder()
-						.fileName("Google")
-						.linkUrl("https://www.google.com/")
-						.build()
-		);
+//		List<DeliverableFile> filesList = List.of(
+//				DeliverableFile.builder()
+//						.fileName("My Calendar")
+//						.filePath()
+//						.build()
+//		);
+//
+//		List<DeliverableLink> linksList = List.of(
+//				DeliverableLink.builder()
+//						.fileName("Google")
+//						.linkUrl("https://www.google.com/")
+//						.build()
+//		);
 
 		List<Milestone> milestones = List.of(
 				Milestone.builder()
 						.name("Contract1 - mile1")
 						.number(1)
-						.deliverableFiles(filesList)
-						.deliverableLinks(linksList)
+//						.deliverableFiles(filesList)
+//						.deliverableLinks(linksList)
 						.description("Mile1Desc")
 						.estimatedHours(5)
 						.dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
@@ -362,7 +362,8 @@ class MyCommandLineRunner implements CommandLineRunner {
 		freelancerRepository.save(freelancer);
 		contractRepository.save(contract);
 
-		System.out.println("Contract 1 ID: "+contract.getId());
+//		System.out.println("Contract 1 ID: "+contract.getId());
+//		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
 
 
 		Job job2 = Job.builder()

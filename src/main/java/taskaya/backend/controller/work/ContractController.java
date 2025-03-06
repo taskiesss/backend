@@ -67,11 +67,6 @@ public class ContractController {
                                                      @RequestPart(value="files", required = false) List<MultipartFile> files,
                                                      @RequestPart(value="links", required = false) String links) throws IOException {
 
-        if (!(files.getFirst().getSize()>0) && (links == null || links.isBlank())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(SimpleResponseDTO.builder().message("At least one of 'files' or 'links' must be provided").build());
-        }
-
         ObjectMapper objectMapper = new ObjectMapper();
         List<DeliverableLinkSubmitRequestDTO> myLinks = Collections.emptyList();
         if (links != null && !links.isEmpty()) {
