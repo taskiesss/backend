@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
+import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
@@ -97,6 +98,16 @@ public class CommunityController {
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size){
         return ResponseEntity.ok(communityService.getJoinRequests(communityId, page, size));
+
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/offers")
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public ResponseEntity<Page<CommunityOfferResponseDTO>> offers (
+            @PathVariable String communityId,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size){
+        return ResponseEntity.ok(communityService.getOffers(communityId, page, size));
 
     }
 }

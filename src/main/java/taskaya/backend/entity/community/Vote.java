@@ -25,6 +25,6 @@ public class Vote {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(nullable = false)
+    @Column
     private Boolean agreed;
 }

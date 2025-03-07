@@ -8,15 +8,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
+import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
-import taskaya.backend.DTO.mappers.CommunityJoinReqResponseMapper;
-import taskaya.backend.DTO.mappers.WorkerEntityWorkdoneResponseMapper;
+import taskaya.backend.DTO.mappers.*;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
-import taskaya.backend.DTO.mappers.CommunityProfileResponseMapper;
-import taskaya.backend.DTO.mappers.CommunitySearchResponseMapper;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.config.Constants;
@@ -25,8 +23,10 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.community.JoinRequest;
+import taskaya.backend.entity.community.Vote;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.notFound.NotFoundException;
@@ -34,8 +34,11 @@ import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityJoinRequestRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.community.CommunityVoteRepository;
+import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.services.CloudinaryService;
+import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.CommunitySpecification;
 
 import java.io.IOException;
@@ -60,6 +63,12 @@ public class CommunityService {
 
     @Autowired
     CommunityJoinRequestRepository communityJoinRequestRepository;
+
+    @Autowired
+    CommunityVoteRepository communityVoteRepository;
+
+    @Autowired
+    ContractRepository contractRepository;
 
     public Community getCommunityByName(String communityName){
         return communityRepository.findByCommunityName(communityName)
@@ -259,21 +268,49 @@ public class CommunityService {
         Community community = communityRepository.findById(UUID.fromString(communityId))
                 .orElseThrow(()-> new NotFoundException("Community Not Found!"));
 
-        //get join req
-        List<JoinRequest> joinRequests = communityJoinRequestRepository.findAllByCommunity(community);
-
-        // map to dto list
-        List<CommunityJoinReqResponseDTO> listDTO = CommunityJoinReqResponseMapper.toDTOList(joinRequests);
 
         //List to Page
         Pageable pageable = PageRequest.of(page, size);
 
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), listDTO.size());
+        Page<JoinRequest> joinRequests = communityJoinRequestRepository.findAllByCommunity(community,pageable);
 
-        List<CommunityJoinReqResponseDTO> paginatedList = listDTO.subList(start, end);
+        return CommunityJoinReqResponseMapper.toDTOPage(joinRequests);
 
-        return new PageImpl<>(paginatedList, pageable, listDTO.size());
+    }
 
+    public Page<CommunityOfferResponseDTO> getOffers(String communityId, int page, int size) {
+        //get community
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Contract> contracts = contractRepository.findAllByStatusAndWorkerEntiy(Contract.ContractStatus.PENDING,community.getWorkerEntity());
+
+        List<CommunityOfferResponseDTO> dtoList = new LinkedList<>();
+
+        for(Contract contract : contracts.getContent()){
+
+            List<Vote> votes = communityVoteRepository.findAllByContract(contract);
+            CommunityOfferResponseDTO dto = CommunityOfferResponseMapper.toDTO(contract);
+
+            for (Vote vote : votes){
+                if (vote.getAgreed()==null){
+                    dto.setLeft(dto.getLeft()+1);
+                } else if (vote.getAgreed().booleanValue()) {
+                    dto.setVoted(dto.getVoted()+1);
+                    dto.setAccepted(dto.getAccepted()+1);
+                }else {
+                    dto.setVoted(dto.getVoted()+1);
+                    dto.setRejected(dto.getRejected()+1);
+                }
+
+                if(vote.getCommunityMember().getFreelancer().getUser().getUsername().equals(JwtService.getAuthenticatedUsername())){
+                    dto.setAgreed(vote.getAgreed());
+                }
+            }
+            dtoList.add(dto);
+        }
+        return new PageImpl<>(dtoList, contracts.getPageable(), contracts.getTotalElements());
     }
 }

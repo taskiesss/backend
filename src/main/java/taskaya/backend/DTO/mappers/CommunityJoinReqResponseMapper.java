@@ -4,9 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
-import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
-import taskaya.backend.entity.Skill;
-import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.JoinRequest;
 import taskaya.backend.entity.freelancer.Freelancer;
 
