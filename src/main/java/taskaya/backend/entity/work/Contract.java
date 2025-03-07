@@ -104,6 +104,4 @@ public class Contract {
         if(this.status == ContractStatus.ACTIVE)
             startDate = new Date();
     }
-
-
 }

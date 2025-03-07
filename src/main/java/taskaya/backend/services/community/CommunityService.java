@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
+import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
@@ -361,5 +362,24 @@ public class CommunityService {
             throw new RuntimeException("Must accept or reject only");
         }
 
+    }
+
+    @Transactional
+    public void vote(String communityId, VoteRequestDTO request) {
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+        CommunityMember communityMember = communityMemberRepository.findByCommunityAndFreelancer(community,freelancer)
+                .orElseThrow(()-> new NotFoundException("Community member Not Found!"));
+
+        Contract contract =contractRepository.findById(UUID.fromString(request.getContractId()))
+                .orElseThrow(()-> new NotFoundException("Contract Not Found!"));
+
+        Vote vote = communityVoteRepository.findByContractAndCommunityMember(contract,communityMember)
+                .orElseThrow(()-> new NotFoundException("Vote Not Found!"));
+
+        vote.setAgreed(request.getAgreed());
+        communityVoteRepository.save(vote);
     }
 }

@@ -1,5 +1,6 @@
 package taskaya.backend.controller.community;
 
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
+import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
@@ -117,8 +119,19 @@ public class CommunityController {
     public ResponseEntity<?> acceptToJoin(
             @PathVariable String communityId,
             @RequestBody AcceptToJoinRequestDTO request
-    ){
+    ) throws MessagingException {
         communityService.acceptToJoin(communityId, request);
         return new ResponseEntity<>(SimpleResponseDTO.builder().message("Freelancer request processed successfully.").build(),HttpStatus.OK);
     }
+
+    @PostMapping("/freelancers/communities/{communityId}/vote")
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public ResponseEntity<?> vote(
+            @PathVariable String communityId,
+            @RequestBody VoteRequestDTO request
+    ){
+        communityService.vote(communityId, request);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Vote recorded successfully.").build(),HttpStatus.OK);
+    }
+
 }

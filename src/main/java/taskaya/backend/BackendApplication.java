@@ -157,6 +157,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.milestones(listmilestone)
 				.build();
 
+
 		Contract activeContract = Contract.builder()
 				.client(clientRepository.findByUser(userRepository.findByUsername("client02").get()).get())
 				.job(jobRepository.findByTitle("job2").get())
@@ -175,18 +176,19 @@ class MyCommandLineRunner implements CommandLineRunner {
 		System.out.println("person3 :" + person3.getFreelancer().getName());
 
 		contractRepository.save(pendingContract);
+		System.out.println("Contact id:"+pendingContract.getId());
 		contractRepository.save(activeContract);
 
 		Vote yesVote = Vote.builder()
 				.contract(pendingContract)
 				.communityMember(person1)
-				.agreed(true)
+				.agreed(null)
 				.build();
 
 		Vote noVote = Vote.builder()
 				.contract(pendingContract)
 				.communityMember(person2)
-				.agreed(false)
+				.agreed(null)
 				.build();
 
 		Vote nullVote = Vote.builder()
@@ -257,7 +259,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		communityJoinRequestRepository.save(joinRequest1);
 		communityJoinRequestRepository.save(joinRequest2);
-		System.out.println(freelancer99.getId());
+		System.out.println("Mohab id:"+freelancer99.getId());
 	}
 
 
