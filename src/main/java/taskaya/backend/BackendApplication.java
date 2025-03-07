@@ -199,6 +199,65 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityVoteRepository.save(yesVote);
 		communityVoteRepository.save(noVote);
 		communityVoteRepository.save(nullVote);
+
+		User user88 = User.builder()
+				.email("mohib@gmail.com")
+				.password(new BCryptPasswordEncoder().encode("Mohib@123"))
+				.username("Mohib")
+				.role(User.Role.FREELANCER)
+				.build();
+
+		User user99 = User.builder()
+				.email("mohab@gmail.com")
+				.password(new BCryptPasswordEncoder().encode("Mohab@123"))
+				.username("Mohab")
+				.role(User.Role.FREELANCER)
+				.build();
+
+		userRepository.save(user88);
+		userRepository.save(user99);
+
+		Freelancer freelancer88 = Freelancer.builder()
+				.name("Mohib")
+				.user(user88)
+				.pricePerHour(45.5)
+				.rate(55)
+				.experienceLevel(ExperienceLevel.entry_level)
+				.build();
+		Freelancer freelancer99 = Freelancer.builder()
+				.name("Mohab")
+				.user(user99)
+				.pricePerHour(45.5)
+				.rate(55)
+				.experienceLevel(ExperienceLevel.entry_level)
+				.build();
+
+		freelancerRepository.save(freelancer99);
+		freelancerRepository.save(freelancer88);
+
+		CommunityMember communityMember =CommunityMember.builder()
+				.community(pabloCommunity)
+				.positionName("clown")
+				.positionPercent(9)
+				.build();
+
+		communityMemberRepository.save(communityMember);
+
+		JoinRequest joinRequest1 = JoinRequest.builder()
+				.community(pabloCommunity)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Mohib").get()).get())
+				.position(communityMember)
+				.build();
+
+		JoinRequest joinRequest2 = JoinRequest.builder()
+				.community(pabloCommunity)
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Mohab").get()).get())
+				.position(communityMember)
+				.build();
+
+		communityJoinRequestRepository.save(joinRequest1);
+		communityJoinRequestRepository.save(joinRequest2);
+		System.out.println(freelancer99.getId());
 	}
 
 

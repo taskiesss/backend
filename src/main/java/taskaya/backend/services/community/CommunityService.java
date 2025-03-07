@@ -8,6 +8,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
@@ -36,6 +37,7 @@ import taskaya.backend.repository.community.CommunityJoinRequestRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.community.CommunityVoteRepository;
+import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.services.CloudinaryService;
@@ -73,6 +75,12 @@ public class CommunityService {
 
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    FreelancerRepository freelancerRepository;
+
+
+
 
     public Community getCommunityByName(String communityName){
         return communityRepository.findByCommunityName(communityName)
@@ -322,5 +330,36 @@ public class CommunityService {
             dtoList.add(dto);
         }
         return new PageImpl<>(dtoList, contracts.getPageable(), contracts.getTotalElements());
+    }
+
+    @Transactional
+    public void acceptToJoin(String communityId, AcceptToJoinRequestDTO request) {
+        //get community
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+
+        if(request.getChoice().equals("accept")) {
+            CommunityMember communityMember = communityMemberRepository
+                    .findByCommunityAndPositionName(community, request.getPositionName())
+                    .orElseThrow(() -> new RuntimeException("community member not found in community service"));
+
+            communityMember.setFreelancer(freelancerRepository.findFreelancerById(UUID.fromString(request.getFreelancerId()))
+                    .orElseThrow(() -> new RuntimeException("Freelancer not found!")));
+
+            communityJoinRequestRepository.deleteByPosition(communityMember);
+
+        } else if (request.getChoice().equals("reject")) {
+            CommunityMember communityMember = communityMemberRepository
+                    .findByCommunityAndPositionName(community, request.getPositionName())
+                    .orElseThrow(() -> new RuntimeException("community member not found in community service"));
+
+            JoinRequest joinRequest =communityJoinRequestRepository.findByFreelancer(freelancerRepository
+                    .findFreelancerById(UUID.fromString(request.getFreelancerId()))
+                    .orElseThrow(() -> new RuntimeException("Freelancer not found in community service")));
+            communityJoinRequestRepository.deleteById(joinRequest.getId());
+        }else {
+            throw new RuntimeException("Must accept or reject only");
+        }
+
     }
 }

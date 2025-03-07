@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
@@ -111,4 +112,13 @@ public class CommunityController {
 
     }
 
+    @PostMapping("/freelancers/communities/{communityId}/accept-to-join")
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public ResponseEntity<?> acceptToJoin(
+            @PathVariable String communityId,
+            @RequestBody AcceptToJoinRequestDTO request
+    ){
+        communityService.acceptToJoin(communityId, request);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Freelancer request processed successfully.").build(),HttpStatus.OK);
+    }
 }
