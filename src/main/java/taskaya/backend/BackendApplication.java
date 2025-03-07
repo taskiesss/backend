@@ -139,10 +139,13 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.number(61)
 				.status(Milestone.MilestoneStatus.NOT_STARTED)
 				.dueDate(new Date())
+				.estimatedHours(7545)
 				.build();
 
 		List<Milestone>listmilestone = new ArrayList<>();
+		List<Milestone>listmilestone2 = new ArrayList<>();
 		listmilestone.add(milestone1);
+		listmilestone2.add(milestone1);
 
 		Contract pendingContract = Contract.builder()
 				.client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
@@ -154,6 +157,16 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.milestones(listmilestone)
 				.build();
 
+		Contract activeContract = Contract.builder()
+				.client(clientRepository.findByUser(userRepository.findByUsername("client02").get()).get())
+				.job(jobRepository.findByTitle("job2").get())
+				.workerEntity(pabloCommunity.getWorkerEntity())
+				.costPerHour(458.77)
+				.status(Contract.ContractStatus.ACTIVE)
+				.payment(Payment.PerProject)
+				.milestones(listmilestone2)
+				.build();
+
 		CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
 		System.out.println("person1 :" + person1.getFreelancer().getName());
 		CommunityMember person2 = pabloCommunity.getCommunityMembers().get(1);
@@ -162,6 +175,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		System.out.println("person3 :" + person3.getFreelancer().getName());
 
 		contractRepository.save(pendingContract);
+		contractRepository.save(activeContract);
 
 		Vote yesVote = Vote.builder()
 				.contract(pendingContract)

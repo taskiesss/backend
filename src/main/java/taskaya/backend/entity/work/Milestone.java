@@ -44,7 +44,7 @@ public class Milestone {
     @Column(name = "description", length = Constants.MAX_DESCRIPTION_SIZE)
     private String description; // Description
 
-    @Column(name = "estimated_hours")
+    @Column(name = "estimated_hours", nullable = false)
     private Integer estimatedHours; // Estimated hours
 
     @Enumerated(EnumType.STRING)

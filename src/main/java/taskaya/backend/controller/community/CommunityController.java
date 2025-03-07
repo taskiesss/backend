@@ -110,4 +110,5 @@ public class CommunityController {
         return ResponseEntity.ok(communityService.getOffers(communityId, page, size));
 
     }
+
 }

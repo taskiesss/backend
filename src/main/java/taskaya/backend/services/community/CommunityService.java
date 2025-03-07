@@ -142,7 +142,7 @@ public class CommunityService {
         }
         return responseDTO;
     }
-//........................................
+
     public Page<WorkerEntityWorkdoneResponseDTO> getCommunityWorkdone(String id, int page, int size){
         List<WorkerEntityWorkdoneResponseDTO> listDTO = new ArrayList<>();
 
