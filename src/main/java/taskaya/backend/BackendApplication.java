@@ -659,7 +659,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		CommunityMember communityMember2 = CommunityMember.builder()
 				.community(community)
-//				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
 				.positionName("backend02")
 				.build();
 

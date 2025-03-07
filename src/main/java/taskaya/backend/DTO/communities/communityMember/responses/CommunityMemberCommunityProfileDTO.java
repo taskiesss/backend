@@ -14,4 +14,6 @@ public class CommunityMemberCommunityProfileDTO {
     String freelancerProfilePicture;
     String name;
     String position;
+    @Builder.Default
+    boolean isAdmin = false ;
 }

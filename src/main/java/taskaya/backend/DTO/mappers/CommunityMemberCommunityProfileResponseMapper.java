@@ -9,24 +9,25 @@ import taskaya.backend.entity.community.CommunityMember;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CommunityMemberCommunityProfileResponseMapper {
 
     public static CommunityMemberCommunityProfileDTO toDTO(CommunityMember communityMember){
         return CommunityMemberCommunityProfileDTO.builder()
-                .name(communityMember.getFreelancer()==null?"open position":communityMember.getFreelancer().getName())
+                .name(communityMember.getFreelancer().getName())
                 .position(communityMember.getPositionName())
-                .freelancerId(communityMember.getFreelancer()==null?"not assigned":communityMember.getFreelancer().getId().toString())
-                .freelancerProfilePicture(communityMember.getFreelancer()==null? Constants.FIRST_PROFILE_PICTURE :communityMember.getFreelancer().getProfilePicture())
+                .freelancerId(communityMember.getFreelancer().getId().toString())
+                .freelancerProfilePicture( communityMember.getFreelancer().getProfilePicture())
+                .isAdmin(communityMember.getCommunity().getAdmin().getId().equals(communityMember.getFreelancer().getId()))
                 .build();
     }
 
     public static List<CommunityMemberCommunityProfileDTO> toDTOList(List<CommunityMember> members){
-        List<CommunityMemberCommunityProfileDTO> result = new LinkedList<>();
-        for (CommunityMember member : members) {
-            result.add(toDTO(member));
-        }
-        return result;
+        return members.stream()
+                .filter(member -> member.getFreelancer() != null)
+                .map(CommunityMemberCommunityProfileResponseMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }
