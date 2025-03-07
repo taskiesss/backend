@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,6 +70,9 @@ public class CommunityService {
 
     @Autowired
     ContractRepository contractRepository;
+
+    @Autowired
+    FreelancerService freelancerService;
 
     public Community getCommunityByName(String communityName){
         return communityRepository.findByCommunityName(communityName)
@@ -278,6 +282,7 @@ public class CommunityService {
 
     }
 
+
     public Page<CommunityOfferResponseDTO> getOffers(String communityId, int page, int size) {
         //get community
         Community community = communityRepository.findById(UUID.fromString(communityId))
@@ -285,14 +290,22 @@ public class CommunityService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Contract> contracts = contractRepository.findAllByStatusAndWorkerEntiy(Contract.ContractStatus.PENDING,community.getWorkerEntity());
+        Page<Contract> contracts = contractRepository.findAllByStatusAndWorkerEntity(Contract.ContractStatus.PENDING,community.getWorkerEntity(),pageable);
 
         List<CommunityOfferResponseDTO> dtoList = new LinkedList<>();
 
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+        CommunityMember communityMember = communityMemberRepository.findByCommunityAndFreelancer(community,freelancer)
+                .orElseThrow(()->new AccessDeniedException("you are not a member"));
+
         for(Contract contract : contracts.getContent()){
+            Vote myVote = communityVoteRepository.findByContractAndCommunityMember(contract,communityMember)
+                    .orElseThrow(()->new RuntimeException("runtime exception in community service"));
 
             List<Vote> votes = communityVoteRepository.findAllByContract(contract);
             CommunityOfferResponseDTO dto = CommunityOfferResponseMapper.toDTO(contract);
+
+            dto.setAgreed(myVote.getAgreed());
 
             for (Vote vote : votes){
                 if (vote.getAgreed()==null){
@@ -305,9 +318,6 @@ public class CommunityService {
                     dto.setRejected(dto.getRejected()+1);
                 }
 
-                if(vote.getCommunityMember().getFreelancer().getUser().getUsername().equals(JwtService.getAuthenticatedUsername())){
-                    dto.setAgreed(vote.getAgreed());
-                }
             }
             dtoList.add(dto);
         }

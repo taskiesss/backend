@@ -15,6 +15,7 @@ import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.JoinRequest;
+import taskaya.backend.entity.community.Vote;
 import taskaya.backend.entity.enums.Payment;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -34,6 +35,7 @@ import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.community.CommunityJoinRequestRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.community.CommunityVoteRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
 import taskaya.backend.repository.work.ContractRepository;
@@ -112,6 +114,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 	@Autowired
 	CommunityMemberRepository communityMemberRepository;
 
+	@Autowired
+	CommunityVoteRepository communityVoteRepository;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
@@ -124,10 +129,63 @@ class MyCommandLineRunner implements CommandLineRunner {
 //		proposalSeed();
 		freelancerWorkdoneseed();
 		communityWorkdoneSeed();
+		communityWithContractPendingAndVotes();
 	}
 
+	private void communityWithContractPendingAndVotes() {
+		Community pabloCommunity = communityRepository.findByCommunityName("Pablo Community").get();
+		Milestone milestone1 = Milestone.builder()
+				.name("milestone11")
+				.number(61)
+				.status(Milestone.MilestoneStatus.NOT_STARTED)
+				.dueDate(new Date())
+				.build();
+
+		List<Milestone>listmilestone = new ArrayList<>();
+		listmilestone.add(milestone1);
+
+		Contract pendingContract = Contract.builder()
+				.client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
+				.job(jobRepository.findByTitle("job1").get())
+				.workerEntity(pabloCommunity.getWorkerEntity())
+				.costPerHour(45.77)
+				.status(Contract.ContractStatus.PENDING)
+				.payment(Payment.PerProject)
+				.milestones(listmilestone)
+				.build();
+
+		CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
+		System.out.println("person1 :" + person1.getFreelancer().getName());
+		CommunityMember person2 = pabloCommunity.getCommunityMembers().get(1);
+		System.out.println("person2 :" + person2.getFreelancer().getName());
+		CommunityMember person3 = pabloCommunity.getCommunityMembers().get(2);
+		System.out.println("person3 :" + person3.getFreelancer().getName());
+
+		contractRepository.save(pendingContract);
+
+		Vote yesVote = Vote.builder()
+				.contract(pendingContract)
+				.communityMember(person1)
+				.agreed(true)
+				.build();
+
+		Vote noVote = Vote.builder()
+				.contract(pendingContract)
+				.communityMember(person2)
+				.agreed(false)
+				.build();
+
+		Vote nullVote = Vote.builder()
+				.contract(pendingContract)
+				.communityMember(person3)
+				.agreed(null)
+				.build();
 
 
+		communityVoteRepository.save(yesVote);
+		communityVoteRepository.save(noVote);
+		communityVoteRepository.save(nullVote);
+	}
 
 
 	private void freelancerWorkdoneseed() {
@@ -508,7 +566,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		CommunityMember communityMember2 = CommunityMember.builder()
 				.community(community)
-//				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
 				.positionName("backend02")
 				.build();
 
@@ -1115,4 +1173,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityJoinRequestRepository.save(joinRequest1);
 		communityJoinRequestRepository.save(joinRequest2);
 	}
+
+
 }

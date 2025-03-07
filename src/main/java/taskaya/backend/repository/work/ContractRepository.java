@@ -1,6 +1,7 @@
 package taskaya.backend.repository.work;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,6 @@ import java.util.UUID;
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, UUID> , JpaSpecificationExecutor<Contract> {
     public Optional<Contract> findByJob(Job job);
-    Page<Contract> findAllByStatusAndWorkerEntiy(Contract.ContractStatus status, WorkerEntity workerEntity);
+    Page<Contract> findAllByStatusAndWorkerEntity(Contract.ContractStatus status, WorkerEntity workerEntity , Pageable pageable);
 
 }

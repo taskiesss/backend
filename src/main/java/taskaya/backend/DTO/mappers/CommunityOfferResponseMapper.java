@@ -18,10 +18,16 @@ import java.util.stream.Collectors;
 public class CommunityOfferResponseMapper {
     public static CommunityOfferResponseDTO toDTO(Contract contract){
 
+        String description=contract.getJob().getDescription() ;
+
+        if (description != null && description.length()>200){
+            description=description.substring(0,199)+"...";
+        }
+
         return CommunityOfferResponseDTO.builder()
                 .contractID(contract.getId().toString())
                 .jobTitle(contract.getJob().getTitle())
-                .description(contract.getDescription())
+                .description(description)
                 .skills(contract.getJob().getSkills().stream().map(Skill::getName).toList())
                 .pricePerHour(contract.getCostPerHour())
                 .sentDate(contract.getSentDate())
