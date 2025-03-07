@@ -210,9 +210,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.build();
 
 		User user99 = User.builder()
-				.email("mohab@gmail.com")
-				.password(new BCryptPasswordEncoder().encode("Mohab@123"))
-				.username("Mohab")
+				.email("jolieattallah@gmail.com")
+				.password(new BCryptPasswordEncoder().encode("Jolie@123"))
+				.username("Jolie")
 				.role(User.Role.FREELANCER)
 				.build();
 
@@ -227,7 +227,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.experienceLevel(ExperienceLevel.entry_level)
 				.build();
 		Freelancer freelancer99 = Freelancer.builder()
-				.name("Mohab")
+				.name("Jolie")
 				.user(user99)
 				.pricePerHour(45.5)
 				.rate(55)
@@ -253,13 +253,13 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 		JoinRequest joinRequest2 = JoinRequest.builder()
 				.community(pabloCommunity)
-				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Mohab").get()).get())
+				.freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Jolie").get()).get())
 				.position(communityMember)
 				.build();
 
 		communityJoinRequestRepository.save(joinRequest1);
 		communityJoinRequestRepository.save(joinRequest2);
-		System.out.println("Mohab id:"+freelancer99.getId());
+		System.out.println("Jolie id:"+freelancer99.getId());
 	}
 
 

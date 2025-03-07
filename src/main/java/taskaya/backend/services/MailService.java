@@ -49,4 +49,18 @@ public class MailService {
 
         sendEmail(to, subject, content);
     }
+
+    public void sendAcceptanceToFreelance(String to, String freelancerName, String communityName) throws MessagingException{
+        String subject = "Welcome to " + communityName;
+        String content = "<html><body>"
+                + "Dear " + freelancerName + ",<br><br>"
+                + "We are pleased to inform you that your request to join <strong>" + communityName + "</strong> has been approved.<br><br>"
+                + "You may now engage with members, access resources, and contribute to discussions.<br><br>"
+                + "Should you have any questions, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        sendEmail(to, subject, content);
+    }
 }

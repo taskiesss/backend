@@ -1,5 +1,6 @@
 package taskaya.backend.services.community;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -42,6 +43,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.services.CloudinaryService;
+import taskaya.backend.services.MailService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.CommunitySpecification;
 
@@ -79,6 +81,9 @@ public class CommunityService {
 
     @Autowired
     FreelancerRepository freelancerRepository;
+
+    @Autowired
+    MailService mailService;
 
 
 
@@ -334,7 +339,7 @@ public class CommunityService {
     }
 
     @Transactional
-    public void acceptToJoin(String communityId, AcceptToJoinRequestDTO request) {
+    public void acceptToJoin(String communityId, AcceptToJoinRequestDTO request)throws MessagingException {
         //get community
         Community community = communityRepository.findById(UUID.fromString(communityId))
                 .orElseThrow(()-> new NotFoundException("Community Not Found!"));
@@ -344,10 +349,15 @@ public class CommunityService {
                     .findByCommunityAndPositionName(community, request.getPositionName())
                     .orElseThrow(() -> new RuntimeException("community member not found in community service"));
 
-            communityMember.setFreelancer(freelancerRepository.findFreelancerById(UUID.fromString(request.getFreelancerId()))
-                    .orElseThrow(() -> new RuntimeException("Freelancer not found!")));
+            Freelancer freelancer = freelancerRepository.findFreelancerById(UUID.fromString(request.getFreelancerId()))
+                    .orElseThrow(() -> new RuntimeException("Freelancer not found!"));
+
+            communityMember.setFreelancer(freelancer);
 
             communityJoinRequestRepository.deleteByPosition(communityMember);
+
+            //send acceptance mail to freelancer
+            mailService.sendAcceptanceToFreelance(freelancer.getUser().getEmail(), freelancer.getName(), community.getCommunityName());
 
         } else if (request.getChoice().equals("reject")) {
             CommunityMember communityMember = communityMemberRepository
