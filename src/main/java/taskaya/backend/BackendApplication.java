@@ -11,10 +11,11 @@ import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.config.Constants;
+import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
-import taskaya.backend.entity.enums.Payment;
+import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
 
@@ -27,6 +28,7 @@ import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.ExperienceLevel;
 
 
+import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
@@ -103,6 +105,9 @@ class MyCommandLineRunner implements CommandLineRunner {
 	@Autowired
 	CommunityRepository communityRepository;
 
+	@Autowired
+	PaymentRepository paymentRepository;
+
 	@Override
 	@Transactional
 	public void run(String... args) throws Exception {
@@ -113,7 +118,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 		communityWithAdmin();
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
-		freelancerWorkdoneseed();
+		freelancerWorkdoneWithPaymentseed();
 		communityWorkdoneSeed();
 	}
 
@@ -184,7 +189,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.client(client)
 				.status(Contract.ContractStatus.ACTIVE)
 				.milestones(milestones)
-				.payment(Payment.PerMilestones)
+				.payment(PaymentMethod.PerMilestones)
 				.workerEntity(community.getWorkerEntity())
 				.hoursWorked(100)
 				.costPerHour(55.55)
@@ -199,7 +204,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.client(client)
 				.status(Proposal.ProposalStatus.HIRED)
 				.job(job)
-				.payment(Payment.PerProject)
+				.payment(PaymentMethod.PerProject)
 				.workerEntity(community.getWorkerEntity())
 				.coverLetter("please accept me")
 				.build();
@@ -262,7 +267,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones2)
 				.workerEntity(community.getWorkerEntity())
-				.payment(Payment.PerProject)
+				.payment(PaymentMethod.PerProject)
 				.hoursWorked(500)
 				.costPerHour(55.55)
 				.build();
@@ -276,7 +281,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.client(client)
 				.status(Proposal.ProposalStatus.HIRED)
 				.job(job2)
-				.payment(Payment.PerProject)
+				.payment(PaymentMethod.PerProject)
 				.workerEntity(community.getWorkerEntity())
 				.coverLetter("please accept me")
 				.build();
@@ -289,7 +294,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 //		System.out.println("Community Contract 2 ID: "+contract2.getId());
 	}
 
-	private void freelancerWorkdoneseed() {
+	private void freelancerWorkdoneWithPaymentseed() {
 		Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
 		Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
 		System.out.println("freelancer01 UUID: "+freelancer.getId());
@@ -346,15 +351,16 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.job(job)
 				.client(client)
 				.startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-				.status(Contract.ContractStatus.ACTIVE)
+				.status(Contract.ContractStatus.ENDED)
 				.milestones(milestones)
 				.endDate(new Date())
 				.hoursWorked(10)
 				.workerEntity(freelancer.getWorkerEntity())
 				.costPerHour(55.55)
-				.payment(Payment.PerMilestones)
+				.payment(PaymentMethod.PerMilestones)
 				.build();
 		job.setContract(contract);
+
 
 		Proposal proposal1= Proposal.builder()
 				.costPerHour(30D)
@@ -364,11 +370,21 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.client(client)
 				.status(Proposal.ProposalStatus.HIRED)
 				.job(job)
-				.payment(Payment.PerMilestones)
+				.payment(PaymentMethod.PerMilestones)
 				.workerEntity(freelancer.getWorkerEntity())
 				.coverLetter("please accept me")
 				.build();
 
+		Payment payment = Payment.builder()
+				.amount(1000D)
+				.date(new Date())
+				.sender(contract.getClient().getUser())
+				.receiver(freelancer.getUser())
+				.contract(contract)
+				.type(Payment.Type.TRANSACTION)
+				.build();
+
+		paymentRepository.save(payment);
 		jobRepository.save(job);
 		proposalRepository.save(proposal1);
 		freelancerRepository.save(freelancer);
@@ -433,7 +449,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.workerEntity(freelancer.getWorkerEntity())
 				.endDate(new Date())
 				.hoursWorked(10)
-				.payment(Payment.PerProject)
+				.payment(PaymentMethod.PerProject)
 				.costPerHour(55.55)
 				.build();
 		job2.setContract(contract2);
@@ -446,7 +462,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.client(client)
 				.status(Proposal.ProposalStatus.HIRED)
 				.job(job2)
-				.payment(Payment.PerProject)
+				.payment(PaymentMethod.PerProject)
 				.workerEntity(freelancer.getWorkerEntity())
 				.coverLetter("please accept me")
 				.build();
@@ -514,7 +530,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.jobId(myJob.getUuid().toString())
 				.candidateId(workerEntity.getId().toString()) //workerEntity ID
 				.pricePerHour(14.6)
-				.freelancerPayment(Payment.PerMilestones)
+				.freelancerPayment(PaymentMethod.PerMilestones)
 				.coverLetter("Please accept my proposal, I need money :_)")
 				.milestones(milestoneList)
 				.build();
@@ -527,7 +543,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 				.jobId(myJob.getUuid().toString())
 				.candidateId(commWorkerEntity.getId().toString()) //workerEntity ID
 				.pricePerHour(14.6)
-				.freelancerPayment(Payment.PerProject)
+				.freelancerPayment(PaymentMethod.PerProject)
 				.coverLetter("Community Cover Letter")
 				.milestones(milestoneList)
 				.build();

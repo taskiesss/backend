@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class PaymentSpecification {
 
-    public static Specification<Payment> searchContract(User receiver, User sender, Date startDate, Date endDate, Payment.Type type) {
+    public static Specification<Payment> searchPayment(User receiver, User sender, Date startDate, Date endDate, Payment.Type type) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (receiver != null) {

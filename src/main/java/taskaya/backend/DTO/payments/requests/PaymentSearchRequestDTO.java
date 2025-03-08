@@ -1,4 +1,4 @@
-package taskaya.backend.DTO.patments;
+package taskaya.backend.DTO.payments.requests;
 
 
 import lombok.Data;

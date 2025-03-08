@@ -3,6 +3,7 @@ package taskaya.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.work.Contract;
 
 import java.util.Date;
@@ -28,6 +29,10 @@ public class Payment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private User receiver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    Community community;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id")

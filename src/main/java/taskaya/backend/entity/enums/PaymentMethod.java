@@ -1,6 +1,6 @@
 package taskaya.backend.entity.enums;
 
-public enum Payment {
+public enum PaymentMethod {
     PerMilestones,
     PerProject
 }

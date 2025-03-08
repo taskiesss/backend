@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.payments.PaymentSearchResponseMapper;
+import taskaya.backend.DTO.payments.responses.PaymentSearchResponseDTO;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.User;
 import taskaya.backend.repository.PaymentRepository;
@@ -18,9 +21,11 @@ public class PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    public Page<Payment> findPayments(User sender, User receiver, Date startDate, Date endDate, Payment.Type type, int page, int size) {
-        var specification = PaymentSpecification.searchContract(receiver, sender, startDate, endDate, type);
-        Pageable pageable = PageRequest.of(page, size);
-        return paymentRepository.findAll(specification, pageable);
+    public Page<PaymentSearchResponseDTO> findPayments(User user ,  Date startDate, Date endDate, Payment.Type type, int page, int size) {
+        var specification = PaymentSpecification.searchPayment(user, user, startDate, endDate, type);
+        Sort sort= Sort.by(Sort.Order.desc("date"));
+        Pageable pageable = PageRequest.of(page, size,sort);
+        Page <Payment> paymentPage = paymentRepository.findAll(specification, pageable);
+        return PaymentSearchResponseMapper.toDTOPage(paymentPage,user);
     }
 }
