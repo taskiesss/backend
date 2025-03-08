@@ -128,7 +128,6 @@ class MyCommandLineRunner implements CommandLineRunner {
 		seedCommunityAndCommunityMember();
 //		proposalSeed();
 		freelancerWorkdoneseed();
-		communityWorkdoneSeed();
 		communityWithContractPendingAndVotes();
 	}
 
