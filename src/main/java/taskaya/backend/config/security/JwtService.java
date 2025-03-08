@@ -124,7 +124,7 @@ public class JwtService {
         return communityRepository.isAdmin(UUID.fromString(communityId) , getUserFromToken().getId());
     }
 
-    private User getUserFromToken(){
+    public User getUserFromToken(){
         return userRepository.findByUsername(getAuthenticatedUsername())
                 .orElseThrow(()->new AccessDeniedException("security failed"));
     }

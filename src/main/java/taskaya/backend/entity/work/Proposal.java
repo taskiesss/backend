@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.config.Constants;
 import taskaya.backend.entity.client.Client;
-import taskaya.backend.entity.enums.Payment;
+import taskaya.backend.entity.enums.PaymentMethod;
+import taskaya.backend.entity.enums.PaymentMethod;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class Proposal {
 
 
     @Column(name = "payment", nullable = false)
-    private Payment payment;
+    private PaymentMethod payment;
 
     @Column(name = "attachment")
     private String attachment;  //attachment URL

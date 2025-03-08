@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
-import taskaya.backend.entity.enums.Payment;
+import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.work.Contract;
 
 import java.util.Date;
@@ -32,5 +32,5 @@ public class ContractDetailsResponseDTO {
     Date startDate;
     Date endDate;
     Boolean isCommunity;
-    Payment projectType;
+    PaymentMethod projectType;
 }
