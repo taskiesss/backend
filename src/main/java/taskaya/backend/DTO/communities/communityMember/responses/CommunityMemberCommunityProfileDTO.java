@@ -16,6 +16,5 @@ public class CommunityMemberCommunityProfileDTO {
     String name;
     String position;
     @Builder.Default
-    @JsonProperty("isAdmin")
-    boolean isAdmin = false ;
+    boolean admin = false ;
 }

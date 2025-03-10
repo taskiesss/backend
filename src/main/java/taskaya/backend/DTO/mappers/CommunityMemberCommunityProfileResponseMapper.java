@@ -20,7 +20,7 @@ public class CommunityMemberCommunityProfileResponseMapper {
                 .position(communityMember.getPositionName())
                 .freelancerId(communityMember.getFreelancer().getId().toString())
                 .freelancerProfilePicture( communityMember.getFreelancer().getProfilePicture())
-                .isAdmin(communityMember.getCommunity().getAdmin().getId().equals(communityMember.getFreelancer().getId()))
+                .admin(communityMember.getCommunity().getAdmin().getId().equals(communityMember.getFreelancer().getId()))
                 .build();
     }
 
