@@ -405,13 +405,16 @@ public class FreelancerService {
         //get freelancer from token
         Freelancer freelancer = getFreelancerFromJWT();
 
-        boolean deleted = cloudinaryService.deleteFile(filePath);
-        if(deleted){
-            //if found and deleted in cloud, update database
-            List<FreelancerPortfolio> portfolioList = freelancer.getPortfolios();
-            portfolioList.removeIf(portfolio -> filePath.equals(portfolio.getPortfolioPdf()));
-            freelancer.setPortfolios(portfolioList);
-            freelancerRepository.save(freelancer);
+        Optional<FreelancerPortfolio> targetPortfolio = freelancer.getPortfolios().stream()
+                .filter(portfolio -> filePath.equals(portfolio.getPortfolioPdf()))
+                .findFirst();
+
+        if(targetPortfolio.isPresent()){
+            boolean deleted = cloudinaryService.deleteFile(filePath);
+            if(deleted) {
+                freelancer.getPortfolios().removeIf(portfolio -> filePath.equals(portfolio.getPortfolioPdf()));
+                freelancerRepository.save(freelancer);
+            }
         }
     }
 

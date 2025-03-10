@@ -1,5 +1,6 @@
 package taskaya.backend.DTO.communities.communityMember.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class CommunityMemberCommunityProfileDTO {
     String name;
     String position;
     @Builder.Default
+    @JsonProperty("isAdmin")
     boolean isAdmin = false ;
 }
