@@ -1,12 +1,9 @@
-package taskaya.backend.DTO.payments;
+package taskaya.backend.DTO.payments.responses;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
-import taskaya.backend.DTO.payments.responses.PaymentSearchResponseDTO;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.User;
-import taskaya.backend.entity.community.Community;
 
 import java.util.LinkedList;
 import java.util.List;

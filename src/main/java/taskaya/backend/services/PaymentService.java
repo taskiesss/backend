@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import taskaya.backend.DTO.payments.PaymentSearchResponseMapper;
+import taskaya.backend.DTO.payments.responses.PaymentSearchResponseMapper;
 import taskaya.backend.DTO.payments.responses.PaymentSearchResponseDTO;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.User;

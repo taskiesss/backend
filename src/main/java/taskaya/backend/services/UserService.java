@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
 import taskaya.backend.DTO.mappers.NameAndPictureResponseMapper;
+import taskaya.backend.DTO.payments.responses.NameAndTotalBalanceMapper;
+import taskaya.backend.DTO.payments.responses.NameAndTotalBalanceResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
@@ -21,7 +23,8 @@ public class UserService {
     FreelancerRepository freelancerRepository;
     @Autowired
     ClientRepository clientRepository;
-
+    @Autowired
+    JwtService jwtService;
     public NameAndPictureResponseDTO nameAndPicture(){
         String username = JwtService.getAuthenticatedUsername();
         User user = userRepository.findByUsername(username)
@@ -37,6 +40,16 @@ public class UserService {
         }
         else {
             throw new RuntimeException("Role undefined.");
+        }
+    }
+
+
+    public NameAndTotalBalanceResponseDTO getUserNameAndBalance(){
+        User user = jwtService.getUserFromToken();
+        if (user.getRole().equals(User.Role.FREELANCER)){
+            return NameAndTotalBalanceMapper.toDTO(freelancerRepository.findByUser(user).get());
+        }else {
+            return NameAndTotalBalanceMapper.toDTO(clientRepository.findByUser(user).get());
         }
     }
 }

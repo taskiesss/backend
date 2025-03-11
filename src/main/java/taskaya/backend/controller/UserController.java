@@ -42,4 +42,8 @@ public class UserController {
         );
     }
 
+    @GetMapping("/finance/profile")
+    public ResponseEntity<?> getUserNameAndBalance() {
+        return ResponseEntity.ok(userService.getUserNameAndBalance());
+    }
 }
