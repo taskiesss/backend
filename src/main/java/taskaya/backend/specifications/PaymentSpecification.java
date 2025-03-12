@@ -13,14 +13,12 @@ public class PaymentSpecification {
     public static Specification<Payment> searchPayment(User receiver, User sender, Date startDate, Date endDate, Payment.Type type) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
-            if (receiver != null) {
-                Predicate receiverPredicate = criteriaBuilder.equal(root.get("receiver"), receiver);
-                predicate = criteriaBuilder.or(predicate, receiverPredicate);
-            }
-            if (sender != null) {
-                Predicate senderPredicate = criteriaBuilder.equal(root.get("sender"), sender);
-                predicate = criteriaBuilder.or(predicate, senderPredicate);
-            }
+            // Include payments where the user is either the sender or the receiver
+            Predicate senderPredicate = criteriaBuilder.equal(root.get("sender"), sender);
+            Predicate receiverPredicate = criteriaBuilder.equal(root.get("receiver"), receiver);
+            predicate = criteriaBuilder.or(senderPredicate, receiverPredicate);
+
+
 
             if (startDate != null) {
                 Predicate startDatePredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("date"), startDate);

@@ -76,6 +76,7 @@ public class Contract {
     private PaymentMethod payment;
 
     @Column(name = "hoursWorked")
+    @Builder.Default
     private Integer hoursWorked = 0;
 
     public enum ContractStatus {
