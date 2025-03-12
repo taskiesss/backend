@@ -175,7 +175,6 @@ public class CommunitiesInitializer {
                 .milestones(milestones)
                 .payment(PaymentMethod.PerProject)
                 .workerEntity(community.getWorkerEntity())
-                .hoursWorked(420)
                 .costPerHour(50D)
                 .endDate(new Date())
                 .build();
@@ -279,7 +278,6 @@ public class CommunitiesInitializer {
                 .milestones(milestones2)
                 .workerEntity(community.getWorkerEntity())
                 .payment(PaymentMethod.PerProject)
-                .hoursWorked(700)
                 .costPerHour(10D)
                 .build();
         job2.setContract(contract2);

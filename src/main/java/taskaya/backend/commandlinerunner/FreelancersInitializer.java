@@ -215,7 +215,6 @@ public class FreelancersInitializer {
                 .status(Contract.ContractStatus.ENDED)
                 .milestones(milestones)
                 .endDate(new Date())
-                .hoursWorked(10)
                 .workerEntity(freelancer.getWorkerEntity())
                 .costPerHour(55.55)
                 .payment(PaymentMethod.PerMilestones)
@@ -309,7 +308,6 @@ public class FreelancersInitializer {
                 .milestones(milestones2)
                 .workerEntity(freelancer.getWorkerEntity())
                 .endDate(new Date())
-                .hoursWorked(10)
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(55.55)
                 .build();
