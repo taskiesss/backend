@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.client.ClientBalance;
+import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.services.client.ClientService;
@@ -64,15 +66,30 @@ public class ClientsInitializer {
 
         client1.setSkills(new HashSet<>(skills1));
         client1.setRate(3);
+
+        ClientBalance clientBalance1 = client1.getBalance();
+        clientBalance1.setAvailable(10000.0);
+        clientBalance1.setRestricted(700000.0);
+
         clientRepository.save(client1);
 
 
         client2.setSkills(new HashSet<>(skills2));
         client2.setRate(2);
+
+        ClientBalance clientBalance2 = client2.getBalance();
+        clientBalance2.setAvailable(20000.0);
+        clientBalance2.setRestricted(100000.0);
+
         clientRepository.save(client2);
 
         client3.setSkills(new HashSet<>(skills3));
         client3.setRate(3.5F);
+
+        ClientBalance clientBalance3 = client3.getBalance();
+        clientBalance3.setAvailable(10000.0);
+        clientBalance3.setRestricted(70000.0);
+
         clientRepository.save(client3);
 
     }

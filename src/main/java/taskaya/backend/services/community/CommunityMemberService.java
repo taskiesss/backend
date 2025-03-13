@@ -28,7 +28,9 @@ public class CommunityMemberService {
     @Transactional
     public void saveMember(CommunityMember communityMember){
         communityMemberRepository.save(communityMember);
-        communityMember.getCommunity().getCommunityMembers().add(communityMember);
+        if (!communityMember.getCommunity().getCommunityMembers().contains(communityMember)) {
+            communityMember.getCommunity().getCommunityMembers().add(communityMember);
+        }
         communityService.updateIsFull(communityMember.getCommunity());
     }
 

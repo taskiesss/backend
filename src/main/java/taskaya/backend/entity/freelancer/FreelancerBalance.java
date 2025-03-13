@@ -24,9 +24,4 @@ public class FreelancerBalance {
     @Column(name = "work_in_progress", nullable = false)
     private Double workInProgress=0.0;
 
-    @Column(nullable = false)
-    private Double pending=0.0;
-
-    @Column(name = "in_review", nullable = false)
-    private Double inReview=0.0;
 }

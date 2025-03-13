@@ -11,6 +11,7 @@ import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
@@ -113,6 +114,10 @@ public class FreelancersInitializer {
         freelancer1.setLanguages(new HashSet<>(List.of("english")));
         freelancer1.setPortfolios(portfolios);
 
+        FreelancerBalance freelancerBalance1 = freelancer1.getBalance();
+        freelancerBalance1.setAvailable(10000.0);
+        freelancerBalance1.setWorkInProgress(2000.0);
+
         freelancerRepository.save(freelancer1);
 
 
@@ -126,6 +131,11 @@ public class FreelancersInitializer {
         freelancer2.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/nf173ownjkrkm24qioi7.jpg");
         freelancer2.setLanguages(new HashSet<>(List.of("english")));
 //		freelancer2.setPortfolios(portfolios);
+
+        FreelancerBalance freelancerBalance2 = freelancer2.getBalance();
+        freelancerBalance2.setAvailable(20000.0);
+        freelancerBalance2.setWorkInProgress(4000.0);
+
         freelancerRepository.save(freelancer2);
 
         freelancer3.setSkills(new HashSet<>(skills3));
@@ -138,6 +148,11 @@ public class FreelancersInitializer {
         freelancer3.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/ugwy7jflz41djmpmn1co.jpg");
         freelancer3.setLanguages(new HashSet<>(List.of("english")));
 //		freelancer3.setPortfolios(portfolios);
+
+        FreelancerBalance freelancerBalance3 = freelancer3.getBalance();
+        freelancerBalance3.setAvailable(30000.0);
+        freelancerBalance3.setWorkInProgress(6000.0);
+
         freelancerRepository.save(freelancer3);
 
     }

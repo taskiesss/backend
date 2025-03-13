@@ -180,4 +180,21 @@ public class JwtService {
         }
     }
 
+    public  boolean isCommunityAdminOrFreelancerForContract(String contractId){
+        User user = getUserFromToken();
+        Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
+        WorkerEntity contractWorkerEntity = contract.getWorkerEntity();
+
+        if (contractWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
+            Freelancer freelancer = freelancerRepository.findByUser(user)
+                    .orElseThrow(()->new AccessDeniedException("security failed"));
+            return contractWorkerEntity.getId().equals(freelancer.getWorkerEntity().getId());
+        }else {
+            Community community = communityRepository.findByWorkerEntity(contractWorkerEntity)
+                    .orElseThrow(()->new AccessDeniedException("security failed"));
+            return isCommunityAdmin(community.getUuid().toString());
+        }
+
+    }
+
 }
