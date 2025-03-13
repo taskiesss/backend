@@ -70,6 +70,8 @@ public class CommunitiesInitializer {
                 .workerEntity(workerEntity)
                 .avrgHoursPerWeek(6)
                 .pricePerHour(35)
+                .country("cairo,Egypt")
+                .title("software development")
                 .status(Community.CommunityStatus.AVAILABLE)
                 .rate(3)
                 .skills(new HashSet<>(skills))

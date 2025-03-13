@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
@@ -219,6 +220,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .user(user88)
                 .pricePerHour(45.5)
                 .rate(55)
+                .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)
                 .build();
         Freelancer freelancer99 = Freelancer.builder()
@@ -226,6 +228,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .user(user99)
                 .pricePerHour(45.5)
                 .rate(55)
+                .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)
                 .build();
 
@@ -238,7 +241,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .positionPercent(9)
                 .build();
 
-        communityMemberRepository.save(communityMember);
+        communityMemberService.saveMember(communityMember);
 
         JoinRequest joinRequest1 = JoinRequest.builder()
                 .community(pabloCommunity)

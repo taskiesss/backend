@@ -68,7 +68,8 @@ public class Community {
     private String description;
 
     @Column(name = "is_full", nullable = false)
-    private Boolean isFull;
+    @Builder.Default
+    private Boolean isFull=true;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -92,17 +93,5 @@ public class Community {
         BUSY
     }
 
-    @PreUpdate
-    @PrePersist
-    public void preUpdate() {
 
-        for(CommunityMember communityMember :communityMembers){
-            if (communityMember.getFreelancer()== null) {
-                isFull = false;
-                return;
-            }
-
-        }
-        isFull=true;
-    }
 }

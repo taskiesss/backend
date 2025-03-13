@@ -3,6 +3,7 @@ package taskaya.backend.services.community;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
@@ -64,6 +65,7 @@ public class CommunityService {
     @Autowired
     CommunityMemberRepository communityMemberRepository;
 
+
     @Autowired
     CloudinaryService cloudinaryService;
 
@@ -85,6 +87,13 @@ public class CommunityService {
     @Autowired
     MailService mailService;
 
+    //di lazem ne3melaha autowire bel setter  MAHADESH YE8AIARHA
+    private CommunityMemberService communityMemberService;
+
+    @Autowired
+    public void setCommunityMemberService(@Lazy CommunityMemberService communityMemberService) {
+        this.communityMemberService = communityMemberService;
+    }
 
 
 
@@ -353,7 +362,7 @@ public class CommunityService {
                     .orElseThrow(() -> new RuntimeException("Freelancer not found!"));
 
             communityMember.setFreelancer(freelancer);
-
+            communityMemberService.saveMember(communityMember);
             communityJoinRequestRepository.deleteByPosition(communityMember);
 
             //send acceptance mail to freelancer
@@ -392,4 +401,20 @@ public class CommunityService {
         vote.setAgreed(request.getAgreed());
         communityVoteRepository.save(vote);
     }
+
+    @Transactional
+    public void updateIsFull(Community community) {
+
+        for(CommunityMember communityMember :community.getCommunityMembers()){
+            if (communityMember.getFreelancer()== null) {
+                community.setIsFull(false);
+                communityRepository.save(community);
+                return;
+            }
+
+        }
+        community.setIsFull(true);
+        communityRepository.save(community);
+    }
 }
+
