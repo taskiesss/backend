@@ -19,7 +19,7 @@ public class CommunityJoinReqResponseMapper {
                 .freelancerID(freelancer.getId())
                 .name(nameOrUsername)
                 .profilePicture(freelancer.getProfilePicture())
-                .positionName(joinRequest.getPosition().toString())
+                .positionName(joinRequest.getPosition().getPositionName())
                 .build();
     }
 
