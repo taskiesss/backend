@@ -10,18 +10,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberCommunityProfileDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
-import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
-import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
-import taskaya.backend.DTO.communities.responses.CommunityProfileResponseDTO;
+import taskaya.backend.DTO.communities.responses.*;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.mappers.*;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
-import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
@@ -415,6 +413,39 @@ public class CommunityService {
         }
         community.setIsFull(true);
         communityRepository.save(community);
+    }
+
+    public CommunityVotesDetailsResponseDTO getVotesDetails(String communityId, String contractId) {
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+
+        Contract contract = contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(()-> new NotFoundException("Contract Not Found in details!"));
+
+        List<CommunityMemberCommunityProfileDTO> accepted=new ArrayList<>();
+        List<CommunityMemberCommunityProfileDTO> rejected=new ArrayList<>();
+        List<CommunityMemberCommunityProfileDTO> remaining=new ArrayList<>();
+
+        for(CommunityMember communityMember : community.getCommunityMembers()){
+            if(communityMember.getFreelancer()!=null){
+                CommunityMemberCommunityProfileDTO communityMemberCommunityProfileDTO = CommunityMemberCommunityProfileResponseMapper.toDTO(communityMember);
+                Vote vote = communityVoteRepository.findByContractAndCommunityMember(contract,communityMember)
+                        .orElseThrow(()-> new NotFoundException("Vote Not Found!"));
+                if(vote.getAgreed() == null){
+                    remaining.add(communityMemberCommunityProfileDTO);
+                }else if (vote.getAgreed().equals(false)) {
+                    rejected.add(communityMemberCommunityProfileDTO);
+                }else if (vote.getAgreed().equals(true)){
+                    accepted.add(communityMemberCommunityProfileDTO);
+                }
+            }
+
+        }
+        return CommunityVotesDetailsResponseDTO.builder()
+                .accepted(accepted)
+                .rejected(rejected)
+                .remaining(remaining)
+                .build();
     }
 }
 

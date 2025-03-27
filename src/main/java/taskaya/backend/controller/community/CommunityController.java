@@ -15,6 +15,7 @@ import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
 import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
+import taskaya.backend.DTO.communities.responses.CommunityVotesDetailsResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
@@ -132,6 +133,15 @@ public class CommunityController {
     ){
         communityService.vote(communityId, request);
         return new ResponseEntity<>(SimpleResponseDTO.builder().message("Vote recorded successfully.").build(),HttpStatus.OK);
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/votes/{contractId}")
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public ResponseEntity<CommunityVotesDetailsResponseDTO> getVotesDetails(
+            @PathVariable String communityId,
+            @PathVariable String contractId
+    ){
+        return ResponseEntity.ok(communityService.getVotesDetails(communityId,contractId));
     }
 
 }
