@@ -32,10 +32,7 @@ import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.community.CommunityVoteRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
-import taskaya.backend.repository.work.ContractRepository;
-import taskaya.backend.repository.work.JobRepository;
-import taskaya.backend.repository.work.ProposalRepository;
-import taskaya.backend.repository.work.WorkerEntityRepository;
+import taskaya.backend.repository.work.*;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.community.CommunityMemberService;
@@ -113,6 +110,9 @@ class MyCommandLineRunner implements CommandLineRunner {
     @Autowired
     PaymentRepository paymentRepository;
 
+    @Autowired
+    MilestoneRepository milestoneRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -126,6 +126,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         freelancersInitializer.freelancerWorkdoneWithPaymentseed();
         communityWithContractPendingAndVotes();
         communitiesInitializer.communityWorkdoneSeed();
+        mileStoneRequestReview();
     }
 
     private void communityWithContractPendingAndVotes() {
@@ -497,6 +498,105 @@ class MyCommandLineRunner implements CommandLineRunner {
             System.out.println("✅ Skills already exist in database.");
         }
 
+
+    }
+
+    public void mileStoneRequestReview(){
+
+        User userC = userRepository.findByUsername("client01").get();
+        Client client = clientRepository.findByUser(userC).get();
+
+        User userF = userRepository.findByUsername("freelancer03").get();
+        Freelancer freelancer = freelancerRepository.findByUser(userF).get();
+        WorkerEntity workerEntity = freelancer.getWorkerEntity();
+
+        Job job = Job.builder()
+                .title("job with a pending mileStone.")
+                .client(client)
+                .assignedTo(workerEntity)
+                .status(Job.JobStatus.IN_PROGRESS)
+                .description("This is a job with a pending mileStone to test the requestReview feature.")
+                .postedAt(new Date())
+                .experienceLevel(ExperienceLevel.entry_level)
+                .pricePerHour(565)
+                .projectLength(ProjectLength._more_than_6_months)
+                .build();
+
+        List<Milestone> milestones = new ArrayList<>();
+
+        milestones.add(Milestone.builder()
+                .name("Project Kickoff")
+                .startDate(new Date())
+                .dueDate(new Date(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000)) // 7 days later
+                .endDate(null)
+                .number(1)
+                .description("Initial meeting and project planning.")
+                .estimatedHours(10)
+                .status(Milestone.MilestoneStatus.IN_PROGRESS)
+                .build());
+
+        milestones.add(Milestone.builder()
+                .name("Design Phase")
+                .startDate(new Date(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000)) // Starts in a week
+                .dueDate(new Date(System.currentTimeMillis() + 14L * 24 * 60 * 60 * 1000)) // Due in 2 weeks
+                .endDate(null)
+                .number(2)
+                .description("Creating wireframes and design mockups.")
+                .estimatedHours(20)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build());
+
+        milestones.add(Milestone.builder()
+                .name("Development Phase")
+                .startDate(new Date(System.currentTimeMillis() + 14L * 24 * 60 * 60 * 1000)) // Starts in 2 weeks
+                .dueDate(new Date(System.currentTimeMillis() + 28L * 24 * 60 * 60 * 1000)) // Due in 4 weeks
+                .endDate(null)
+                .number(3)
+                .description("Implementing core features and functionality.")
+                .estimatedHours(50)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build());
+
+        milestones.add(Milestone.builder()
+                .name("Testing & QA")
+                .startDate(new Date(System.currentTimeMillis() + 28L * 24 * 60 * 60 * 1000)) // Starts in 4 weeks
+                .dueDate(new Date(System.currentTimeMillis() + 35L * 24 * 60 * 60 * 1000)) // Due in 5 weeks
+                .endDate(null)
+                .number(4)
+                .description("Testing, debugging, and quality assurance.")
+                .estimatedHours(30)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build());
+
+        milestones.add(Milestone.builder()
+                .name("Project Delivery")
+                .startDate(new Date(System.currentTimeMillis() + 35L * 24 * 60 * 60 * 1000)) // Starts in 5 weeks
+                .dueDate(new Date(System.currentTimeMillis() + 42L * 24 * 60 * 60 * 1000)) // Due in 6 weeks
+                .endDate(null)
+                .number(5)
+                .description("Final project handover and documentation.")
+                .estimatedHours(15)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build());
+
+
+
+        Contract contract = Contract.builder()
+                .job(job)
+                .workerEntity(workerEntity)
+                .client(client)
+                .description("This is a contract for the job with a pending mileStone to requestReview feature.")
+                .costPerHour(45.8)
+                .status(Contract.ContractStatus.ACTIVE)
+                .milestones(milestones)
+                .payment(PaymentMethod.PerMilestones)
+                .build();
+
+
+
+        jobRepository.save(job);
+        contractRepository.save(contract);
+        System.out.println("Milestone request review contract id: "+contract.getId().toString());
 
     }
 

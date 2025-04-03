@@ -2,6 +2,7 @@ package taskaya.backend.controller.work;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -118,5 +119,16 @@ public class ContractController {
                 .sortDirection(SortDirection.DESC)
                 .build();
         return ResponseEntity.ok(contractService.searchContracts(myContractsPageRequestDTO, community.getWorkerEntity().getId(), null));
+    }
+
+    @PostMapping("/freelancers/contracts/{contractId}/milestones/{milestoneIndex}/request-review")
+    @PreAuthorize("@jwtService.isCommunityAdminOrFreelancerForContract(#contractId)")
+    public ResponseEntity<?> requestReview(
+            @PathVariable String contractId,
+            @PathVariable int milestoneIndex
+    )throws MessagingException {
+        contractService.requestReview(contractId,milestoneIndex);
+        return ResponseEntity.status(HttpStatus.OK).body("Review request sent successfully and email notification sent to the client");
+
     }
 }

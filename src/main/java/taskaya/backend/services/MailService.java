@@ -63,4 +63,21 @@ public class MailService {
 
         sendEmail(to, subject, content);
     }
+
+    public void sendNotificationMailToClient(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName) throws MessagingException {
+        String subject = "Milestone Review Request: " + milestoneName + " - " + jobTitle;
+        String content = "<html><body>"
+                + "Dear " + clientName + ",<br><br>"
+                + "We would like to inform you that <strong>" + freelancerOrCommunityName + "</strong> has requested a review for the milestone <strong>" + milestoneName + "</strong> "
+                + "in the project <strong>" + jobTitle + "</strong>.<br><br>"
+                + "Please take a moment to review the milestone and provide your feedback or approval.<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        sendEmail(to, subject, content);
+    }
+
+
 }

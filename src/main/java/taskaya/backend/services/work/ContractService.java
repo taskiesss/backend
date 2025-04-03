@@ -1,5 +1,6 @@
 package taskaya.backend.services.work;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -17,6 +18,7 @@ import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
@@ -29,6 +31,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.MilestoneRepository;
 import taskaya.backend.services.CloudinaryService;
+import taskaya.backend.services.MailService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
 
@@ -54,6 +57,9 @@ public class ContractService {
 
     @Autowired
     MilestoneRepository milestoneRepository;
+
+    @Autowired
+    MailService mailService;
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
                                                               UUID workerEntityId ,UUID clientId) {
@@ -244,6 +250,34 @@ public class ContractService {
                 milestoneRepository.save(milestone);
         }else{
             throw new RuntimeException("File Type Missing!");
+        }
+    }
+
+    public void requestReview(String contractId, int milestoneIndex) throws MessagingException {
+        Contract contract = contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(()-> new NotFoundException("Contract Not Found!"));
+        Milestone milestone = contract.getMilestones().get(milestoneIndex);
+        if(milestone.getStatus() == Milestone.MilestoneStatus.IN_PROGRESS){
+            milestone.setStatus(Milestone.MilestoneStatus.PENDING_REVIEW);
+
+            //send to client in milestonename for jobtitle
+            Client client = contract.getClient();
+            WorkerEntity workerEntity = contract.getWorkerEntity();
+
+            if(workerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
+                Freelancer freelancer = freelancerRepository.findByWorkerEntity(workerEntity)
+                        .orElseThrow(()-> new RuntimeException("Freelancer Not Found!"));
+                mailService.sendNotificationMailToClient(client.getUser().getEmail(), client.getName(), freelancer.getName(), contract.getJob().getTitle(),contract.getMilestones().get(milestoneIndex).getName());
+            }
+            else{
+                Community community = communityRepository.findByWorkerEntity(workerEntity)
+                        .orElseThrow(()-> new RuntimeException("Community Not Found!"));
+                mailService.sendNotificationMailToClient(client.getUser().getEmail(), client.getName(),community.getCommunityName(),contract.getJob().getTitle(),contract.getMilestones().get(milestoneIndex).getName());
+            }
+
+
+        }else{
+            throw new IllegalArgumentException("Bad request - Milestone status must be IN_PROGRESS");
         }
     }
 }
