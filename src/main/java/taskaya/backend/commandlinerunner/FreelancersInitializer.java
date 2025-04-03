@@ -3,6 +3,7 @@ package taskaya.backend.commandlinerunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
@@ -13,10 +14,7 @@ import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBalance;
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
-import taskaya.backend.entity.work.Contract;
-import taskaya.backend.entity.work.Job;
-import taskaya.backend.entity.work.Milestone;
-import taskaya.backend.entity.work.Proposal;
+import taskaya.backend.entity.work.*;
 import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
@@ -355,6 +353,56 @@ public class FreelancersInitializer {
         paymentRepository.save(payment2);
         proposalRepository.save(proposal2);
         contractRepository.save(contract2);
+
+    }
+
+    public void freelancerWorkInProgressSeed() {
+        Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
+        Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
+
+        Job activeJob = jobRepository.findByTitle("network engineer").get();
+        activeJob.setStatus(Job.JobStatus.IN_PROGRESS);
+        activeJob.setAssignedTo(freelancer.getWorkerEntity());
+        jobRepository.save(activeJob);
+
+        //create the milestones for the active job
+        Milestone milestone = Milestone.builder()
+                .name("5G Network Engineer - Milestone 1")
+                .number(1)
+                .description("Mile1Desc")
+                .estimatedHours(5)
+                .dueDate(new Date(2026-1900, 1, 20, 15, 30, 0))
+                .status(Milestone.MilestoneStatus.IN_PROGRESS)
+                .deliverableFiles(List.of(DeliverableFile.builder()
+                        .fileName("first submission")
+                        .filePath(Constants.DELIVERABLE_FILE_PATH)
+                        .build()))
+                .build();
+        Milestone milestone2 = Milestone.builder()
+                .name("5G Network Engineer - Milestone 2")
+                .number(2)
+                .description("Mile2Desc")
+                .estimatedHours(3)
+                .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build();
+
+        List<Milestone> milestones = List.of(milestone, milestone2);
+
+        Contract activeContract = Contract.builder()
+                .job(activeJob)
+                .client(client)
+                .status(Contract.ContractStatus.ACTIVE)
+                .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .milestones(milestones)
+                .workerEntity(freelancer.getWorkerEntity())
+                .endDate(new Date())
+                .payment(PaymentMethod.PerProject)
+                .costPerHour(55.55)
+                .build();
+        activeJob.setContract(activeContract);
+
+        contractRepository.save(activeContract) ;
 
     }
 }

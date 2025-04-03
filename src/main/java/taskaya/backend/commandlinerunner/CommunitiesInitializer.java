@@ -2,6 +2,7 @@ package taskaya.backend.commandlinerunner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
@@ -74,6 +75,7 @@ public class CommunitiesInitializer {
                 .title("software development")
                 .status(Community.CommunityStatus.AVAILABLE)
                 .rate(3)
+                .profilePicture(Constants.PABLO_COMMUNITY_PROFILE_PICTURE)
                 .skills(new HashSet<>(skills))
                 .description("Welcome to PABLO community , where innovation meets excellence.\n" +
                         "\n" +
@@ -173,7 +175,7 @@ public class CommunitiesInitializer {
         Contract contract = Contract.builder()
                 .job(job)
                 .client(client)
-                .status(Contract.ContractStatus.ACTIVE)
+                .status(Contract.ContractStatus.ENDED)
                 .milestones(milestones)
                 .payment(PaymentMethod.PerProject)
                 .workerEntity(community.getWorkerEntity())

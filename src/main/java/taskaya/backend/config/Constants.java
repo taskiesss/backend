@@ -12,4 +12,8 @@ public class Constants {
     public static final String FIRST_COVER_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740310761/cover_photos/ymqmqgosk4rxmcxd2tvw.jpg";
 
 
+    public static String DELIVERABLE_FILE_PATH = "https://res.cloudinary.com/dhfb7i5h1/raw/upload/v1742221928/jobs_deliverables/aed07678-6835-4b08-ab71-c3b3a9128b1fUntitled1.ipynb";
+
+    public static String PABLO_COMMUNITY_PROFILE_PICTURE = "https://res.cloudinary.com/dhfb7i5h1/image/upload/v1742475026/freelancers_profile_pictures/kl9kvzp74vxbkbpdnwxm.webp";
+
 }

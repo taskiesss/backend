@@ -126,12 +126,13 @@ class MyCommandLineRunner implements CommandLineRunner {
         freelancersInitializer.freelancerWorkdoneWithPaymentseed();
         communityWithContractPendingAndVotes();
         communitiesInitializer.communityWorkdoneSeed();
+        freelancersInitializer.freelancerWorkInProgressSeed();
         mileStoneRequestReview();
     }
 
     private void communityWithContractPendingAndVotes() {
         Community pabloCommunity = communityRepository.findByCommunityName("Pablo Community").get();
-        Milestone milestone1 = Milestone.builder()
+        Milestone milestone = Milestone.builder()
                 .name("milestone11")
                 .number(61)
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
@@ -140,9 +141,9 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .build();
 
         List<Milestone> listmilestone = new ArrayList<>();
-        List<Milestone>listmilestone2 = new ArrayList<>();
-        listmilestone.add(milestone1);
-        listmilestone2.add(milestone1);
+
+        listmilestone.add(milestone);
+
 
         Contract pendingContract = Contract.builder()
                 .client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
@@ -155,9 +156,34 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .build();
 
 
+        Job activeJob = jobRepository.findByTitle("club website").get();
+        activeJob.setStatus(Job.JobStatus.IN_PROGRESS);
+        activeJob.setAssignedTo(pabloCommunity.getWorkerEntity());
+        jobRepository.save(activeJob);
+
+        //creating milestones for active contract and the first milestone status will be in progress
+        //milestone 1
+        Milestone milestone1 = Milestone.builder()
+                .name("milestone 1")
+                .number(1)
+                .status(Milestone.MilestoneStatus.IN_PROGRESS)
+                .dueDate(new Date())
+                .estimatedHours(7545)
+                .build();
+
+        Milestone milestone2 = Milestone.builder()
+                .name("milestone 2")
+                .number(2)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .dueDate(new Date())
+                .estimatedHours(7545)
+                .build();
+
+        List<Milestone> listmilestone2 = List.of(milestone1,milestone2);
+
         Contract activeContract = Contract.builder()
                 .client(clientRepository.findByUser(userRepository.findByUsername("client02").get()).get())
-                .job(jobRepository.findByTitle("job2").get())
+                .job(activeJob)
                 .workerEntity(pabloCommunity.getWorkerEntity())
                 .costPerHour(458.77)
                 .status(Contract.ContractStatus.ACTIVE)
@@ -238,7 +264,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
         CommunityMember communityMember =CommunityMember.builder()
                 .community(pabloCommunity)
-                .positionName("clown")
+                .positionName("AI developer")
                 .positionPercent(9)
                 .build();
 

@@ -189,6 +189,39 @@ public class JobsInitializer {
         job2.setSkills(new HashSet<>(skills2));
         jobRepository.saveAll(List.of(job1, job2));
 
+        Job activeJobForCommunity = Job.builder()
+                .title("club website")
+                .client(client2)
+                .experienceLevel(ExperienceLevel.intermediate)
+                .projectLength(ProjectLength._3_to_6_months)
+                .status(Job.JobStatus.NOT_ASSIGNED)
+                .description("Develop a comprehensive club website with features including member registration, event management, news updates, photo galleries, and a forum for discussions. The website should be responsive, user-friendly, and secure, with integration to social media platforms and a content management system for easy updates")
+                .skills(new HashSet<>(skills1))
+                .pricePerHour(50)
+                .build();
+
+        jobRepository.save(activeJobForCommunity);
+
+        Job networkengineer = Job.builder()
+                .title("network engineer")
+                .client(client1)
+                .experienceLevel(ExperienceLevel.intermediate)
+                .projectLength(ProjectLength._3_to_6_months)
+                .status(Job.JobStatus.IN_PROGRESS)
+                .description("Job Description:\n" +
+                        "We are seeking a skilled 5G Network Engineer to design, implement, and optimize next-generation wireless networks. The ideal candidate will have experience in 5G NR (New Radio), network architecture, RF planning, and core network functions to support high-speed, low-latency communication systems.\n" +
+                        "\n" +
+                        "Responsibilities:\n" +
+                        "Design and deploy 5G network infrastructure, including radio access networks (RAN) and core networks.\n" +
+                        "Conduct network planning, optimization, and troubleshooting to ensure performance and reliability.\n" +
+                        "Implement massive MIMO, beamforming, and network slicing for enhanced efficiency.\n" +
+                        "Work with edge computing and cloud-native solutions for 5G networks.\n" +
+                        "Ensure compliance with 3GPP standards and industry best practices.\n" +
+                        "Collaborate with cross-functional teams to develop IoT, AI, and 5G applications.\n" +
+                        "Perform network testing and validation using simulation tools and real-world environments.\n")
+                .pricePerHour(40)
+                .build();
+        jobRepository.save(networkengineer);
 
     }
 
