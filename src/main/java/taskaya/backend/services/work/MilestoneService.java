@@ -18,4 +18,13 @@ public class MilestoneService {
 
     @Transactional
     public void saveAll(List<Milestone> milestone){milestoneRepository.saveAll(milestone);}
+
+    public Milestone getMilestone(List<Milestone> milestones,int number){
+        for(Milestone milestone : milestones){
+            if(milestone.getNumber() == number){
+                return milestone;
+            }
+        }
+        throw new IllegalArgumentException("Milestone number doesn't exist.");
+    }
 }

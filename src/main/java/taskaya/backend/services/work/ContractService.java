@@ -61,6 +61,11 @@ public class ContractService {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    MilestoneService milestoneService;
+
+
+
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
                                                               UUID workerEntityId ,UUID clientId) {
 
@@ -256,9 +261,11 @@ public class ContractService {
     public void requestReview(String contractId, int milestoneIndex) throws MessagingException {
         Contract contract = contractRepository.findById(UUID.fromString(contractId))
                 .orElseThrow(()-> new NotFoundException("Contract Not Found!"));
-        Milestone milestone = contract.getMilestones().get(milestoneIndex);
+        Milestone milestone = milestoneService.getMilestone(contract.getMilestones(),milestoneIndex);
         if(milestone.getStatus() == Milestone.MilestoneStatus.IN_PROGRESS){
             milestone.setStatus(Milestone.MilestoneStatus.PENDING_REVIEW);
+            milestoneRepository.save(milestone);
+
 
             //send to client in milestonename for jobtitle
             Client client = contract.getClient();

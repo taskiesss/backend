@@ -1,0 +1,129 @@
+[33m545104d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m update
+[33mf10970e[m[33m ([m[1;31morigin/JobTalentAndSubmission[m[33m, [m[1;32mJobTalentAndSubmission[m[33m)[m request review for a milestone in progress is done.
+[33m131a74d[m show votes details for a contract is done.
+[33m9a1fb8e[m intialization adjustments
+[33mc2ca258[m initializations edits
+[33mfaf7bf4[m some edits
+[33mace2947[m community is full logic
+[33m43c8be5[m fix bug
+[33me56ea40[m edited hours worked in Contract
+[33m263feb0[m separate command line runner and fix bugs in payments
+[33mb978cb4[m finance page is done
+[33m77b63c6[m isAdmin to admin
+[33ma0a9669[m logic edits
+[33m56686cb[m merge finance branch
+[33md482722[m merging jobAndTalentBranch
+[33mce89f5a[m[33m ([m[1;31morigin/jobAndTalentBranch[m[33m, [m[1;32mjobAndTalentBranch[m[33m)[m jobAndTalentBranch update
+[33m029b371[m[33m ([m[1;31morigin/financeBranch[m[33m)[m get transaction history is done
+[33me873d26[m accept join request mail feature added
+[33m1be8f85[m community votes done
+[33m116feb8[m accept to join community is done
+[33m1c982d7[m specification and some edits for frontend requests
+[33mb06e0a9[m active contract for community done
+[33m3e07fae[m community offers are done
+[33m07f20ea[m offerResponse added
+[33m2d27c49[m community join request done
+[33m19ed217[m Merge branch 'deliverableSubmissionBranch'
+[33m363c80a[m some edits 3
+[33maa39650[m some edits
+[33mede3c01[m[33m ([m[1;31morigin/deliverableSubmissionBranch[m[33m)[m files submission edits
+[33mb1e032f[m edits in submission
+[33mfb7d2de[m remove description from submission
+[33mb346972[m delete submission
+[33m9fdc464[m add submission
+[33mca81e6a[m Get milestone submissions
+[33me78a89a[m some edits
+[33m4eccb7a[m community, communityMember and commandLineRunner update
+[33m160e21c[m security edits
+[33m7b48482[m Contract Details edits
+[33m629f2ba[m Contract Details
+[33md2eac25[m add pictures and update freelancers
+[33m30eee80[m edit pdf in cloudinary
+[33m3dc9142[m add role for name and picture request
+[33m6a87a1c[m bug fix
+[33m8d4bff7[m cloudinary bug fix
+[33m0596f9e[m edit cloudinary upload and delete
+[33mafb371c[m merge
+[33m13d3bd4[m[33m ([m[1;31morigin/communityProfileBranch[m[33m)[m some edits
+[33mec9460c[m Profile picture, cover, skills, description, header: DONE
+[33m7b9dc56[m[33m ([m[1;31morigin/MyContractsBranch[m[33m)[m find my contracts for freelancer is done (it is general and can be used for clients and communities )
+[33m51f13cc[m GET profile and workdone, some edits
+[33m2b562fc[m security edits
+[33me57b9ec[m edits
+[33m6aceced[m changing status
+[33mcab1a65[m edit for job details search
+[33mcb7296c[m add cover photoes
+[33m7ad13e8[m add Cover Photo & edit Cloudinary Config
+[33m7256348[m[33m ([m[1;31morigin/myProposalsPageBranch[m[33m)[m header section patch
+[33m1974c9d[m my proposals page done
+[33mb81e8b4[m some edits
+[33m6bf04fa[m mina
+[33m8588772[m merge mina freelancer profile
+[33m3c6e207[m[33m ([m[1;31morigin/minaFreelancerProfile[m[33m)[m features added
+[33mc65a12d[m some edits
+[33m511a5a0[m some edits
+[33md19d93b[m merge laraFreelancerProfileBranch
+[33mcdb73c3[m[33m ([m[1;31morigin/laraFreelancerProfileBranch[m[33m, [m[1;32mlaraFreelancerProfileBranch[m[33m)[m get freelancer portfoio is done
+[33m6c9d5bf[m[33m ([m[1;31morigin/MartinFreelancerProfileBranch[m[33m)[m patch languages ,educations ,linkedin ,description and employment history are done
+[33m1bbee2f[m skills,country and price patch for freelancers and name and piture login done
+[33m5016b5a[m first getter for freelancer profile  is done and some bug fixes
+[33m6cfa310[m edit upload in cloudinary
+[33m52f9ecd[m profile pictures
+[33m28cc06a[m s
+[33m65b1652[m fix mistakes
+[33m6838e48[m some edits
+[33m700dd3e[m Merge branch 'master' of https://github.com/taskiesss/backend
+[33m8d87ef5[m Add Cloudinary Config
+[33m00763b1[m update security
+[33madd0149[m edit in submit proposal
+[33m6c3d32b[m add authorization checks in Proposal Submit
+[33m6b1f850[m merge submitProposal to master
+[33m017ebbe[m[33m ([m[1;31morigin/submitProposal[m[33m)[m edit in seed
+[33m3346191[m sumbit proposal finished without testing endpoint security
+[33m24e2bd1[m merging done
+[33mb5aa453[m[33m ([m[1;31morigin/getJobsBranch[m[33m)[m freelancer owned communities and get jobs details are done
+[33m9ae1e2e[m update security
+[33me92f308[m disable cors
+[33m9b3aa28[m change stucture of entities
+[33mc239fe5[m response entity
+[33m57321f5[m  fix error to be compatible with frontend
+[33m4e7371e[m change dto attribute name
+[33m0c34d09[m fix error in dtos search
+[33mce78177[m send limited description size in  the search + fix bug in sortBy rate in jobservice
+[33m4e5a3cb[m fix sort bug if sortBy is null
+[33m58ecdd8[m merge firstLoginBranch with master
+[33mfaf8d0c[m[33m ([m[1;31morigin/editSearchCommunity[m[33m)[m edit freelancer and jobs search
+[33m19d1424[m[33m ([m[1;31morigin/firstLoginBranch[m[33m)[m done login freelancer first login form
+[33mf7f9d33[m freeancer form start
+[33m87c8669[m edit request and response
+[33m5c12b19[m adjust jobs rates for search  , adjust login
+[33m59b4cde[m bug fix in search
+[33m66fb7fa[m fixing bugs
+[33m6e43b96[m add enum for sortBy
+[33m3a32157[m isfull for communities - bug fix for job search - profile picture for search response
+[33m4539af0[m merging community Search
+[33maf47f2c[m[33m ([m[1;31morigin/communitySearchBranch[m[33m)[m community search finished
+[33m0d95dbd[m add search Community
+[33m0c19e58[m job search update : return the not assigned jobs
+[33m7e6a693[m merge job and freelancer search
+[33m0ae2499[m[33m ([m[1;31morigin/freelancerSearchBranch[m[33m)[m done freelancer search
+[33ma2ec8ae[m[33m ([m[1;31morigin/jobSearchBranch[m[33m)[m job search done
+[33m6093a5b[m intialize DTOs ,mappers , some edits for commandLinerunner and repos
+[33mabbeb4f[m login can be by username or email + add enums for entities
+[33m1ff2b77[m spring security is done , login is done with jwt token generation
+[33mf9c4a72[m start spring security
+[33me63d220[m some intializations
+[33mb4c699e[m adjust by 1-saving freelancers and clients with their entities And 2-enhancng sign up security making the contents of the three requests be the same
+[33mdf9d9e2[m for integrations
+[33mb6317a5[m edit for integration
+[33mfc526f4[m add cors
+[33m34ec50f[m sign up updated
+[33m6630909[m sign up updated
+[33m0154798[m re-organize of sign up ... preparing for task every 5 mins to clear cached OTPs
+[33md37aa81[m sign up exceptions are handled
+[33m14eb19b[m update sign up ,without exception handling or checking passwords
+[33m6be0e31[m start sign up page
+[33m9a3aa52[m update database small bug
+[33m1f9beb4[m databse almost finished ...payments, msg , notifications tables are missing
+[33mfcd8349[m continue entities
+[33mffb3a5f[m create some entities
