@@ -26,9 +26,9 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // Primary key
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
-    private Job job; // Associated Job
+    private Job job;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_entity_id", nullable = false)

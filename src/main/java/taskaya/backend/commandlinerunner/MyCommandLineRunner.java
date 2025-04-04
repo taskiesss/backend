@@ -190,6 +190,8 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .payment(PaymentMethod.PerProject)
                 .milestones(listmilestone2)
                 .build();
+        activeJob.setContract(activeContract);
+        jobRepository.save(activeJob);
 
         CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
         System.out.println("person1 :" + person1.getFreelancer().getName());
@@ -620,6 +622,7 @@ class MyCommandLineRunner implements CommandLineRunner {
 
 
 
+        job.setContract(contract);
         jobRepository.save(job);
         contractRepository.save(contract);
         System.out.println("Milestone request review contract id: "+contract.getId().toString());

@@ -398,11 +398,25 @@ public class FreelancersInitializer {
                 .workerEntity(freelancer.getWorkerEntity())
                 .endDate(new Date())
                 .payment(PaymentMethod.PerProject)
-                .costPerHour(55.55)
+                .costPerHour(55.559)
                 .build();
         activeJob.setContract(activeContract);
 
+
+        Contract deletedContract = Contract.builder()
+                .job(activeJob)
+                .client(client)
+                .status(Contract.ContractStatus.REJECTED)
+                .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .milestones(milestones)
+                .workerEntity(freelancer.getWorkerEntity())
+                .endDate(new Date())
+                .payment(PaymentMethod.PerProject)
+                .costPerHour(30.0)
+                .build();
+
         contractRepository.save(activeContract) ;
+        contractRepository.save(deletedContract);
 
     }
 }
