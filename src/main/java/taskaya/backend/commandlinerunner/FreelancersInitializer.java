@@ -91,9 +91,21 @@ public class FreelancersInitializer {
         List<String> skillNames3 = List.of("Machine Learning", "Deep Learning", "Natural Language Processing (NLP)");
         List<Skill> skills3 = skillRepository.findByNameIn(skillNames3);
 
+        User freelancerUser4 = User.builder()
+                .email("abdelrahmanrashwan101@gmail.com")
+                .role(User.Role.FREELANCER)
+                .username("freelancer04")
+                .password(new BCryptPasswordEncoder().encode("Freelancer4@123"))
+                .build();
+
+
+        List<String> skillNames4 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills4 = skillRepository.findByNameIn(skillNames4);
+
         Freelancer freelancer1=freelancerService.createFreelancer(freelancerUser1);
         Freelancer freelancer2=freelancerService.createFreelancer(freelancerUser2);
         Freelancer freelancer3=freelancerService.createFreelancer(freelancerUser3);
+        Freelancer freelancer4=freelancerService.createFreelancer(freelancerUser4);
 
         List<FreelancerPortfolio> portfolios= new ArrayList<>();
         portfolios.add(FreelancerPortfolio.builder()
@@ -152,6 +164,24 @@ public class FreelancersInitializer {
         freelancerBalance3.setWorkInProgress(6000.0);
 
         freelancerRepository.save(freelancer3);
+
+
+        freelancer4.setSkills(new HashSet<>(skills3));
+        freelancer4.setPricePerHour(70D);
+        freelancer4.setRate(2);
+        freelancer4.setDescription("best freelancer you will deal with ;)");
+        freelancer4.setTitle("fullstack developer");
+        freelancer4.setCountry("cairo,Egypt");
+        freelancer4.setName("Abdelrahman Rashwan");
+        freelancer4.setProfilePicture(Constants.FIRST_PROFILE_PICTURE);
+        freelancer4.setLanguages(new HashSet<>(List.of("english")));
+//		freelancer3.setPortfolios(portfolios);
+
+        FreelancerBalance freelancerBalance34 = freelancer4.getBalance();
+        freelancerBalance3.setAvailable(30000.0);
+        freelancerBalance3.setWorkInProgress(6000.0);
+
+        freelancerRepository.save(freelancer4);
 
     }
 

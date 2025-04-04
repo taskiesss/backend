@@ -18,6 +18,8 @@ import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
@@ -32,6 +34,7 @@ import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.MilestoneRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
 
@@ -64,6 +67,14 @@ public class ContractService {
     @Autowired
     MilestoneService milestoneService;
 
+    @Autowired
+    CommunityService communityService;
+
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    FreelancerService freelancerService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -120,6 +131,7 @@ public class ContractService {
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
     public ContractDetailsResponseDTO getContractDetails(String id) {
         Contract contract = getContractById(id);
+        boolean isUserCommunityAdmin = false;
 
         String freelancerName, freelancerPicture, freelancerId;
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
@@ -134,9 +146,15 @@ public class ContractService {
             freelancerName = community.getCommunityName();
             freelancerPicture = community.getProfilePicture();
             freelancerId = community.getUuid().toString();
+            isUserCommunityAdmin = setIsUserCommunityAddmin(contract,community);
         }
 
-        return ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId);
+        ContractDetailsResponseDTO responseDTO= ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId);
+
+        //set the isCommunityAdmin field
+        responseDTO.setIsCommunityAdmin(isUserCommunityAdmin);
+
+        return responseDTO;
     }
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
@@ -286,5 +304,15 @@ public class ContractService {
         }else{
             throw new IllegalArgumentException("Bad request - Milestone status must be IN_PROGRESS");
         }
+    }
+
+
+    //helper functions :
+    private Boolean setIsUserCommunityAddmin(Contract contract ,Community community){
+
+        if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
+            return communityService.isUserCommunityAddmin(community);
+        }
+        return false;
     }
 }

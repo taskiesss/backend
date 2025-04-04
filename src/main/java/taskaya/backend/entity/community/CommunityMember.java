@@ -28,6 +28,9 @@ public class CommunityMember {
     @Column(name = "position_name", nullable = false, length = 100)
     private String positionName;
 
+    @Column(name = "description",length = 256)
+    private String description;
+
     @Column(name = "position_percent", nullable = false)
     private float positionPercent;
 
@@ -38,6 +41,7 @@ public class CommunityMember {
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // Avoid circular references in JSON serialization
     private List<JoinRequest> joinRequests = new ArrayList<>();
+
 
     //unique within a community
     //make sure that you set the community before the position name for the Community member

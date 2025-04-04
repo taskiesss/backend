@@ -83,6 +83,9 @@ public class CommunityService {
     FreelancerRepository freelancerRepository;
 
     @Autowired
+    JwtService jwtService;
+
+    @Autowired
     MailService mailService;
 
     //di lazem ne3melaha autowire bel setter  MAHADESH YE8AIARHA
@@ -446,6 +449,25 @@ public class CommunityService {
                 .rejected(rejected)
                 .remaining(remaining)
                 .build();
+    }
+
+
+
+    //helper functions :
+
+    public boolean isCommunityAdmin(Freelancer freelancer, Community community) {
+        return freelancer.getId().equals(community.getAdmin().getId());
+    }
+
+    public Boolean isUserCommunityAddmin(Community community){
+        User user = jwtService.getUserFromToken();
+        if (user.getRole() == User.Role.FREELANCER ) {
+            Freelancer freelancer = freelancerRepository.findByUser(user)
+                    .orElseThrow(()-> new NotFoundException("freelancer not found"));
+
+            return isCommunityAdmin(freelancer,community);
+        }
+        return false;
     }
 }
 

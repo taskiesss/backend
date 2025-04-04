@@ -46,8 +46,8 @@ public class Job {
     @Temporal(TemporalType.TIMESTAMP)
     private Date postedAt ;
 
-    @Column(name = "started_at")
-    private Date startedAt;
+//    @Column(name = "started_at")
+//    private Date startedAt;
 
     @Column(name = "ended_at")
     private Date endedAt;

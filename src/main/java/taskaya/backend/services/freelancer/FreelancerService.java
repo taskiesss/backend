@@ -76,6 +76,8 @@ public class FreelancerService {
     @Autowired
     JobRepository jobRepository;
 
+    @Autowired
+    JwtService jwtService;
 
     @Transactional
     public Freelancer createFreelancer(User user){
@@ -428,9 +430,7 @@ public class FreelancerService {
     }
 
     public Freelancer getFreelancerFromJWT(){
-        String username = JwtService.getAuthenticatedUsername();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(()->new NotFoundException("Username not found!"));
+        User user = jwtService.getUserFromToken();
         return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
     }
 

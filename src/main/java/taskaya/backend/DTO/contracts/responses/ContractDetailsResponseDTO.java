@@ -32,5 +32,7 @@ public class ContractDetailsResponseDTO {
     Date startDate;
     Date endDate;
     Boolean isCommunity;
+    @Builder.Default
+    Boolean isCommunityAdmin= false;
     PaymentMethod projectType;
 }
