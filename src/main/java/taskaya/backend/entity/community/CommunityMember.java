@@ -19,7 +19,7 @@ public class CommunityMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Integer for optimized performance
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "community_id", nullable = false)

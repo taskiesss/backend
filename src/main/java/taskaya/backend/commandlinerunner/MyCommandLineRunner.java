@@ -21,6 +21,8 @@ import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerBalance;
+import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.repository.PaymentRepository;
@@ -256,6 +258,8 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .name("Jolie")
                 .user(user99)
                 .pricePerHour(45.5)
+                .freelancerBusiness(new FreelancerBusiness())
+                .balance(new FreelancerBalance())
                 .rate(55)
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)

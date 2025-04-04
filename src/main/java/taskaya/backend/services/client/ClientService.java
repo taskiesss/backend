@@ -4,16 +4,21 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import taskaya.backend.config.Constants;
+import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
 import taskaya.backend.entity.client.ClientBusiness;
+import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientRepository;
 
 @Service
 public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private JwtService jwtService;
 
     @Transactional
     public Client createClient(User user){
@@ -30,6 +35,11 @@ public class ClientService {
         clientRepository.save(client);
         return client;
 
+    }
+
+    public Client getClientFromJWT(){
+        User user = jwtService.getUserFromToken();
+        return clientRepository.findByUser(user).orElseThrow(()-> new NotFoundException("client not found"));
     }
 
 

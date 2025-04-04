@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.clients.SimpleJobClientResponseDTO;
+import taskaya.backend.DTO.jobs.requests.JobPostingDTO;
 import taskaya.backend.DTO.mappers.JobDetailsResponseMapper;
 import taskaya.backend.DTO.mappers.JobSearchResponseMapper;
 import taskaya.backend.DTO.jobs.requests.JobSearchRequestDTO;
@@ -15,6 +16,7 @@ import taskaya.backend.DTO.jobs.responses.JobSearchResponseDTO;
 import taskaya.backend.DTO.mappers.SimpleJobClientResponseMapper;
 import taskaya.backend.DTO.proposals.responses.JobDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
@@ -23,15 +25,17 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Proposal;
 import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
 import taskaya.backend.exceptions.notFound.NotFoundException;
+import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.repository.work.ProposalRepository;
+import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.JobSpecification;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -42,9 +46,13 @@ public class JobService {
     @Autowired
     private FreelancerService freelancerService;
     @Autowired
-    ProposalRepository proposalRepository;
+    private ClientService clientService;
     @Autowired
-    CommunityRepository communityRepository;
+    private ProposalRepository proposalRepository;
+    @Autowired
+    private CommunityRepository communityRepository;
+    @Autowired
+    private SkillRepository skillRepository;
 
     public Page<JobSearchResponseDTO> searchJobs(JobSearchRequestDTO request) {
         Specification<Job> spec = JobSpecification.filterJobs(request);
@@ -118,5 +126,31 @@ public class JobService {
 
         return true;
 
+    }
+
+    public void postJob(JobPostingDTO request) {
+
+
+        Job job = Job.builder()
+                .title(request.getTitle())
+                .projectLength(request.getProjectLength())
+                .experienceLevel(request.getExperienceLevel())
+                .pricePerHour(request.getExpectedPricePerHour())
+                .description(request.getDescription())
+                .status(Job.JobStatus.NOT_ASSIGNED)
+                .client(clientService.getClientFromJWT())
+                .build();
+        //this line is essential to prevent error in skills database ...(DK why)
+        jobRepository.save(job);
+        if (request.getSkills() == null
+                || request.getSkills().isEmpty() ){
+            throw new IllegalArgumentException("at least one skill should be selected");
+        }else{
+            Set<Skill> skills = new HashSet<>(request.getSkills());
+            skillRepository.saveAll(skills);
+            job.setSkills(skills);
+        }
+
+        jobRepository.save(job);
     }
 }

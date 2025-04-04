@@ -13,4 +13,6 @@ import taskaya.backend.entity.User;
 public class NameAndPictureResponseDTO {
     private String profilePicture;
     private String name;
-    User.Role role ;}
+    User.Role role ;
+    String id ;
+}

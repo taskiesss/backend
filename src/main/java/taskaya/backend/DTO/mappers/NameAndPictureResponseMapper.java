@@ -14,6 +14,7 @@ public class NameAndPictureResponseMapper {
                 .profilePicture(freelancer.getProfilePicture())
                 .name(freelancer.getUser().getUsername())
                 .role(User.Role.FREELANCER)
+                .id(freelancer.getId().toString())
                 .build();
     }
     public static NameAndPictureResponseDTO toDTO(Client client){
@@ -21,6 +22,7 @@ public class NameAndPictureResponseMapper {
                 .profilePicture(client.getProfilePicture())
                 .name(client.getUser().getUsername())
                 .role(User.Role.CLIENT)
+                .id(client.getId().toString())
                 .build();
     }
 }
