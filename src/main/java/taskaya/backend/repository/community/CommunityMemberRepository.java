@@ -23,6 +23,5 @@ public interface CommunityMemberRepository extends JpaRepository<CommunityMember
 
     Optional<CommunityMember> findByCommunityAndFreelancer(Community community , Freelancer freelancer);
     Optional<CommunityMember> findByCommunityAndPositionName(Community community , String positionName);
-
-
+    Optional<CommunityMember> findByIdAndCommunityUuid(Long memberId, UUID communityId);
 }

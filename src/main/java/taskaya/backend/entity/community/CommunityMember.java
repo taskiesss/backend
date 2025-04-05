@@ -42,6 +42,9 @@ public class CommunityMember {
     @JsonIgnore // Avoid circular references in JSON serialization
     private List<JoinRequest> joinRequests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "communityMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes = new ArrayList<>();
+
 
     //unique within a community
     //make sure that you set the community before the position name for the Community member
