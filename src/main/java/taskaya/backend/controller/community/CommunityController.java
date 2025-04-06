@@ -23,6 +23,7 @@ import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.entity.community.Community;
+import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
 
 import java.io.IOException;
@@ -33,6 +34,9 @@ import java.util.List;
 public class CommunityController {
     @Autowired
     CommunityService communityService;
+
+    @Autowired
+    CommunityMemberService communityMemberService;
 
     @PostMapping
     public Community getCommunity(@RequestParam String commName){
@@ -150,14 +154,14 @@ public class CommunityController {
     @GetMapping("/freelancers/communities/{communityId}/roles-and-positions")
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
     public ResponseEntity<List<CommunityMemberSettingsResponseDTO>> getMembersPositionAndRole(@PathVariable String communityId){
-        return ResponseEntity.ok(communityService.getMembersPositionAndRole(communityId));
+        return ResponseEntity.ok(communityMemberService.getMembersPositionAndRole(communityId));
     }
 
     @PostMapping("/freelancers/communities/{communityId}/update-positions")
     @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
     public ResponseEntity<?> updateCommunityMembers(@PathVariable String communityId,
                                                     @RequestBody List<CommunityMemberUpdateRequestDTO> membersDTOs){
-        communityService.updateCommunityMembers(communityId, membersDTOs);
+        communityMemberService.updateCommunityMembers(communityId, membersDTOs);
         return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
     }
 }
