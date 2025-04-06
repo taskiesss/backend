@@ -171,7 +171,7 @@ public class ContractService {
         return MilestonesContractDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
     }
 
-    @PreAuthorize("@jwtService.fileSubmissionAuth(#contractId)")
+    @PreAuthorize("@jwtService.contractDetailsAuth(#contractId)")
     public MilestoneSubmissionResponseDTO getMilestoneSubmission(String contractId, String milestoneIndex) {
         Contract contract = getContractById(contractId);
 

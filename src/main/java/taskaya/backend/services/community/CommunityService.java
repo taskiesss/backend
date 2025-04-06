@@ -48,6 +48,7 @@ import taskaya.backend.specifications.CommunitySpecification;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityService {
@@ -450,8 +451,6 @@ public class CommunityService {
                 .remaining(remaining)
                 .build();
     }
-
-
 
     //helper functions :
 

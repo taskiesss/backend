@@ -10,6 +10,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.communities.communityMember.requests.CommunityMemberUpdateRequestDTO;
+import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberSettingsResponseDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
@@ -19,15 +21,20 @@ import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.entity.community.Community;
+import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping
 public class CommunityController {
     @Autowired
     CommunityService communityService;
+
+    @Autowired
+    CommunityMemberService communityMemberService;
 
     @PostMapping
     public Community getCommunity(@RequestParam String commName){
@@ -162,4 +169,17 @@ public class CommunityController {
         return new ResponseEntity<>(SimpleResponseDTO.builder().message("accepted.").build(),HttpStatus.OK);
     }
 
+    @GetMapping("/freelancers/communities/{communityId}/roles-and-positions")
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public ResponseEntity<List<CommunityMemberSettingsResponseDTO>> getMembersPositionAndRole(@PathVariable String communityId){
+        return ResponseEntity.ok(communityMemberService.getMembersPositionAndRole(communityId));
+    }
+
+    @PostMapping("/freelancers/communities/{communityId}/update-positions")
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public ResponseEntity<?> updateCommunityMembers(@PathVariable String communityId,
+                                                    @RequestBody List<CommunityMemberUpdateRequestDTO> membersDTOs){
+        communityMemberService.updateCommunityMembers(communityId, membersDTOs);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
+    }
 }
