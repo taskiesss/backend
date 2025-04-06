@@ -469,5 +469,35 @@ public class CommunityService {
         }
         return false;
     }
+
+    public Page<CommunityAvailablePositionsResponseDTO> getAvailablePositions(String communityId, int page, int size) {
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community not found"));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CommunityMember> communityMembers = communityMemberRepository.findByCommunityAndFreelancer(community,null,pageable);
+
+        return CommunityAvailablePositionsResponseMapper.toDTOPage(communityMembers);
+    }
+
+    @Transactional
+    public void requestToJoin(String communityId, long positionId) {
+        Freelancer freelancer = freelancerService.getFreelancerFromJWT();
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()-> new NotFoundException("Community not found"));
+        CommunityMember position = communityMemberRepository.findByIdAndCommunity(positionId, community)
+                .orElseThrow(()-> new NotFoundException("Community member not found"));
+
+        communityJoinRequestRepository.deleteByFreelancerAndCommunity(freelancer,community);
+
+        JoinRequest joinRequest = JoinRequest.builder()
+                .position(position)
+                .freelancer(freelancer)
+                .community(community)
+                .build();
+
+        communityJoinRequestRepository.save(joinRequest);
+    }
 }
 

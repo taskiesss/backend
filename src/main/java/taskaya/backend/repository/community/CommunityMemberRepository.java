@@ -1,8 +1,9 @@
 package taskaya.backend.repository.community;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
@@ -23,6 +24,6 @@ public interface CommunityMemberRepository extends JpaRepository<CommunityMember
 
     Optional<CommunityMember> findByCommunityAndFreelancer(Community community , Freelancer freelancer);
     Optional<CommunityMember> findByCommunityAndPositionName(Community community , String positionName);
-
-
+    Page<CommunityMember> findByCommunityAndFreelancer(Community community, Freelancer freelancer, Pageable pageable);
+    Optional<CommunityMember> findByIdAndCommunity(Long id, Community community);
 }

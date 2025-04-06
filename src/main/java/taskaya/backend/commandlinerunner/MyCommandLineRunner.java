@@ -268,24 +268,34 @@ class MyCommandLineRunner implements CommandLineRunner {
         freelancerRepository.save(freelancer99);
         freelancerRepository.save(freelancer88);
 
-        CommunityMember communityMember =CommunityMember.builder()
+        CommunityMember communityMember1 =CommunityMember.builder()
                 .community(pabloCommunity)
                 .positionName("AI developer")
                 .positionPercent(9)
                 .build();
 
-        communityMemberService.saveMember(communityMember);
+        communityMemberService.saveMember(communityMember1);
+        System.out.println("Pablo's community open position id: "+communityMember1.getId());
+
+        CommunityMember communityMember2 =CommunityMember.builder()
+                .community(pabloCommunity)
+                .positionName("Frontend developer")
+                .positionPercent(9)
+                .build();
+
+        communityMemberService.saveMember(communityMember2);
+        System.out.println("Pablo's community open position 2 id: "+communityMember2.getId());
 
         JoinRequest joinRequest1 = JoinRequest.builder()
                 .community(pabloCommunity)
                 .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Mohib").get()).get())
-                .position(communityMember)
+                .position(communityMember1)
                 .build();
 
         JoinRequest joinRequest2 = JoinRequest.builder()
                 .community(pabloCommunity)
                 .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("Jolie").get()).get())
-                .position(communityMember)
+                .position(communityMember1)
                 .build();
 
         communityJoinRequestRepository.save(joinRequest1);

@@ -113,7 +113,10 @@
 							<version>1.18.34</version>
 						</path>
 					</annotationProcessorPaths>
-				</configuration>
+                    <source>22</source>
+                    <target>22</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

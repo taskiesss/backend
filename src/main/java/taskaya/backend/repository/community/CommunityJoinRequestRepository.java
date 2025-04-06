@@ -15,8 +15,7 @@ import java.util.UUID;
 @Repository
 public interface CommunityJoinRequestRepository extends JpaRepository<JoinRequest, Integer>{
     Page<JoinRequest> findAllByCommunity(Community community, Pageable pageable);
-
     JoinRequest findByFreelancer(Freelancer freelancer);
-
     void deleteByPosition(CommunityMember communityMember);
+    void deleteByFreelancerAndCommunity(Freelancer freelancer, Community community);
 }

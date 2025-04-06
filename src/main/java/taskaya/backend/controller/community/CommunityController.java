@@ -6,16 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
-import taskaya.backend.DTO.communities.responses.CommunityJoinReqResponseDTO;
-import taskaya.backend.DTO.communities.responses.CommunityOfferResponseDTO;
-import taskaya.backend.DTO.communities.responses.CommunitySearchResponseDTO;
-import taskaya.backend.DTO.communities.responses.CommunityVotesDetailsResponseDTO;
+import taskaya.backend.DTO.communities.responses.*;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
@@ -142,6 +140,26 @@ public class CommunityController {
             @PathVariable String contractId
     ){
         return ResponseEntity.ok(communityService.getVotesDetails(communityId,contractId));
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/available-positions")
+    @PreAuthorize("@jwtService.isNotCommunityMember(#communityId)")
+    public ResponseEntity<Page<CommunityAvailablePositionsResponseDTO>>getAvailablePositions(
+            @PathVariable String communityId,
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(communityService.getAvailablePositions(communityId,page,size));
+    }
+
+    @PostMapping("/freelancers/communities/{communityId}/join-request/{positionId}")
+    @PreAuthorize("@jwtService.isNotCommunityMember(#communityId)")
+    public ResponseEntity<?> requestToJoin(
+            @PathVariable String communityId,
+            @PathVariable long positionId
+    ){
+        communityService.requestToJoin(communityId, positionId);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("accepted.").build(),HttpStatus.OK);
     }
 
 }

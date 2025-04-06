@@ -133,6 +133,10 @@ public class JwtService {
         return communityMemberRepository.isMember(UUID.fromString(communityId) , getUserFromToken().getId());
     }
 
+    public boolean isNotCommunityMember(String communityId){
+        return !communityMemberRepository.isMember(UUID.fromString(communityId) , getUserFromToken().getId());
+    }
+
     public boolean isClient(){
         return clientRepository.existsById(getUserFromToken().getId());
     }
