@@ -218,7 +218,7 @@ public class FreelancersInitializer {
 //						.build()
 //		);
 
-        List<Milestone> milestones = List.of(
+        List<Milestone> milestones =new ArrayList<>( List.of(
                 Milestone.builder()
                         .name("Contract1 - mile1")
                         .number(1)
@@ -249,7 +249,7 @@ public class FreelancersInitializer {
                         .status(Milestone.MilestoneStatus.APPROVED)
                         .build()
 
-        );
+        ));
 
         Contract contract = Contract.builder()
                 .job(job)
@@ -323,7 +323,7 @@ public class FreelancersInitializer {
                 .build();
 
 
-        List<Milestone> milestones2 = List.of(
+        ArrayList<Milestone> milestones2 = new ArrayList<>(List.of(
                 Milestone.builder()
                         .name("Contract2 - mile1")
                         .number(1)
@@ -341,7 +341,7 @@ public class FreelancersInitializer {
                         .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                         .status(Milestone.MilestoneStatus.APPROVED)
                         .build()
-        );
+        ));
 
         Contract contract2 = Contract.builder()
                 .job(job2)
@@ -417,7 +417,7 @@ public class FreelancersInitializer {
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .build();
 
-        List<Milestone> milestones = List.of(milestone, milestone2);
+        ArrayList<Milestone> milestones = new ArrayList<>(List.of(milestone, milestone2));
 
         Contract activeContract = Contract.builder()
                 .job(activeJob)

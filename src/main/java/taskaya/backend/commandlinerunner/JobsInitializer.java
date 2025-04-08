@@ -43,7 +43,32 @@ public class JobsInitializer {
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
                 .status(Job.JobStatus.NOT_ASSIGNED)
-                .description("this is the first job")
+                .description("We are seeking a detail-oriented and knowledgeable AI Model Trainer to support the development of cutting-edge artificial intelligence models in the medical field. You will be responsible for curating, annotating, and validating medical data, ensuring compliance with healthcare regulations, and working closely with engineers and researchers to improve model accuracy. Your expertise in medicine will guide the training of models for diagnostics, symptom analysis, and treatment planning.\n" +
+                        "\n" +
+                        "\uD83D\uDD27 Key Responsibilities:\n" +
+                        "\n" +
+                        "\uD83E\uDD1D Collaborate with medical professionals and AI teams to define objectives and relevant terminology.\n" +
+                        "\n" +
+                        "\uD83D\uDDC2\uFE0F Collect, review, and annotate clinical data such as patient records, lab results, and imaging for supervised training.\n" +
+                        "\n" +
+                        "\uD83D\uDD10 Ensure all data handling complies with HIPAA and other medical data privacy regulations.\n" +
+                        "\n" +
+                        "✅ Conduct quality checks on datasets and annotations to maintain integrity.\n" +
+                        "\n" +
+                        "\uD83D\uDCCA Evaluate model predictions and provide feedback to refine accuracy and reduce bias.\n" +
+                        "\n" +
+                        "\uD83D\uDCDA Stay updated with trends in medical AI and propose ideas to enhance training strategies.\n" +
+                        "\n" +
+                        "\uD83C\uDF93 Qualifications:\n" +
+                        "\n" +
+                        "\uD83E\uDE7A Bachelor’s degree or higher in Medicine, Nursing, Biomedical Science, or related fields.\n" +
+                        "\n" +
+                        "\uD83E\uDD16 Familiarity with AI/ML concepts, data annotation tools, and healthcare data types.\n" +
+                        "\n" +
+                        "\uD83E\uDDFE Strong understanding of medical terminology, clinical workflows, and diagnosis codes (e.g., ICD-10).\n" +
+                        "\n" +
+                        "\uD83D\uDCAC Excellent communication and collaboration skills.\n" +
+                        "\n")
                 .pricePerHour(40)
                 .build();
 

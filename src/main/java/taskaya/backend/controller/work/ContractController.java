@@ -131,4 +131,15 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.OK).body("Review request sent successfully and email notification sent to the client");
 
     }
+
+    @PostMapping("/clients/contracts/{contractId}/milestones/{milestoneIndex}/approve-milestone" )
+    @PreAuthorize("@jwtService.contractDetailsAuth(#contractId)")
+    public ResponseEntity<?> approveMilestone(
+            @PathVariable String contractId,
+            @PathVariable String milestoneIndex
+    )throws MessagingException {
+        contractService.approveMilestone(contractId,milestoneIndex);
+        return ResponseEntity.status(HttpStatus.OK).body("Review request sent successfully and email notification sent to the client");
+
+    }
 }

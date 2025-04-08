@@ -64,7 +64,7 @@ public class MailService {
         sendEmail(to, subject, content);
     }
 
-    public void sendNotificationMailToClient(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName) throws MessagingException {
+    public void sendNotificationMailToClientforReviewRequest(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName) throws MessagingException {
         String subject = "Milestone Review Request: " + milestoneName + " - " + jobTitle;
         String content = "<html><body>"
                 + "Dear " + clientName + ",<br><br>"
@@ -79,5 +79,20 @@ public class MailService {
         sendEmail(to, subject, content);
     }
 
+
+    public void sendMailToFreelancerAfterClientApproval(String to, String freelancerName, String jobTitle, String milestoneName) throws MessagingException {
+        String subject = "Milestone Approved: " + milestoneName + " - " + jobTitle;
+        String content = "<html><body>"
+                + "Dear " + freelancerName + ",<br><br>"
+                + "We are pleased to inform you that the milestone <strong>" + milestoneName + "</strong> "
+                + "in the project <strong>" + jobTitle + "</strong> has been approved.<br><br>"
+                + "Congratulations on this achievement!<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        sendEmail(to, subject, content);
+    }
 
 }

@@ -40,6 +40,7 @@ import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.services.work.ContractService;
 import taskaya.backend.services.work.ProposalService;
 import taskaya.backend.services.work.WorkerEntityService;
 
@@ -115,6 +116,9 @@ class MyCommandLineRunner implements CommandLineRunner {
     @Autowired
     MilestoneRepository milestoneRepository;
 
+    @Autowired
+    ContractService contractService;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -142,7 +146,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .estimatedHours(7545)
                 .build();
 
-        List<Milestone> listmilestone = new ArrayList<>();
+        ArrayList<Milestone> listmilestone = new ArrayList<>();
 
         listmilestone.add(milestone);
 
@@ -168,32 +172,65 @@ class MyCommandLineRunner implements CommandLineRunner {
         Milestone milestone1 = Milestone.builder()
                 .name("milestone 1")
                 .number(1)
-                .status(Milestone.MilestoneStatus.IN_PROGRESS)
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
-                .estimatedHours(7545)
+                .description("\uD83D\uDE80 The first milestone of our club website development is officially complete! " +
+                        "\uD83E\uDD73 We kicked things off by laying down a strong foundation \uD83E\uDDF1—starting with" +
+                        " a fully responsive homepage \uD83D\uDDA5\uFE0F\uD83D\uDCF1 that captures the club’s identity " +
+                        "\uD83C\uDFAF. We implemented smooth navigation \uD83D\uDD17, a sleek UI design ✨, and an" +
+                        " engaging landing section that tells our story \uD83D\uDCD6. We also integrated a basic member " +
+                        "login system \uD83D\uDD10 to prepare for future personalized features. The homepage is now " +
+                        "live with sections like About Us \uD83D\uDC65, Events \uD83D\uDCC5, and Contact ✉\uFE0F—each built " +
+                        "with accessibility and performance in mind ⚙\uFE0F. Behind the scenes, we set up our codebase on" +
+                        " GitHub \uD83E\uDDD1\u200D\uD83D\uDCBB\uD83D\uDCC1, organized our components for scalability " +
+                        "\uD83D\uDCD0, and documented everything for future developers \uD83D\uDCD3. This milestone was " +
+                        "all about creating the first impression \uD83D\uDCAB and ensuring that the project has a clean," +
+                        " efficient base to grow on \uD83C\uDF31. On to the next phase—member profiles and event " +
+                        "registration!")
+                .estimatedHours(80)
                 .build();
+
 
         Milestone milestone2 = Milestone.builder()
                 .name("milestone 2")
                 .number(2)
+                .description("\uD83D\uDE80 The first milestone of our club website development is officially complete! " +
+                        "\uD83E\uDD73 We kicked things off by laying down a strong foundation " +
+                        "\uD83E\uDDF1—starting with a fully responsive homepage \uD83D\uDDA5\uFE0F\uD83D\uDCF1 that" +
+                        " captures the club’s identity \uD83C\uDFAF. We implemented smooth navigation \uD83D\uDD17, " +
+                        "a sleek UI design ✨, and an engaging landing section that tells our story \uD83D\uDCD6. " +
+                        "We also integrated a basic member login system \uD83D\uDD10 to prepare for future personalized " +
+                        "features. The homepage is now live with sections like About Us \uD83D\uDC65, Events \uD83D\uDCC5, " +
+                        "and Contact ✉\uFE0F—each built with accessibility and performance in mind ⚙\uFE0F. Behind the" +
+                        " scenes, we set up our codebase on GitHub \uD83E\uDDD1\u200D\uD83D\uDCBB\uD83D\uDCC1, organized " +
+                        "our components for scalability \uD83D\uDCD0, and documented everything for future developers" +
+                        " \uD83D\uDCD3. This milestone was all about creating the first impression \uD83D\uDCAB and " +
+                        "ensuring that the project has a clean, efficient base to grow on \uD83C\uDF31. On to the next " +
+                        "phase—member profiles and event registration!")
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
-                .estimatedHours(7545)
+                .estimatedHours(90)
                 .build();
 
-        List<Milestone> listmilestone2 = List.of(milestone1,milestone2);
+        ArrayList<Milestone> listmilestone2 = new ArrayList<>(List.of(milestone1,milestone2));
 
         Contract activeContract = Contract.builder()
                 .client(clientRepository.findByUser(userRepository.findByUsername("client02").get()).get())
                 .job(activeJob)
                 .workerEntity(pabloCommunity.getWorkerEntity())
-                .costPerHour(458.77)
-                .status(Contract.ContractStatus.ACTIVE)
-                .payment(PaymentMethod.PerProject)
+                .costPerHour(20d)
+                .status(Contract.ContractStatus.PENDING)
+                .payment(PaymentMethod.PerMilestones)
                 .milestones(listmilestone2)
                 .build();
+
         activeJob.setContract(activeContract);
         jobRepository.save(activeJob);
+
+        contractRepository.save(activeContract);
+        contractService.startContract(activeContract);
+        System.out.println("club contract Active contract id: "+activeContract.getId());
+
 
         CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
         System.out.println("person1 :" + person1.getFreelancer().getName());
@@ -564,7 +601,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .projectLength(ProjectLength._more_than_6_months)
                 .build();
 
-        List<Milestone> milestones = new ArrayList<>();
+        ArrayList<Milestone> milestones = new ArrayList<>();
 
         milestones.add(Milestone.builder()
                 .name("Project Kickoff")

@@ -8,10 +8,7 @@ import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.PaymentMethod;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -33,6 +30,10 @@ public class Contract {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_entity_id", nullable = false)
     private WorkerEntity workerEntity; // Associated WorkerEntity
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id") // Foreign key in the ContractContributor table
+    private List<ContractContributor> contractContributors = new LinkedList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
@@ -98,8 +99,15 @@ public class Contract {
     }
 
     public void setStatus(ContractStatus status){
+
         this.status = status;
-        if(this.status == ContractStatus.ACTIVE)
+        if(this.status == ContractStatus.ACTIVE) {
             startDate = new Date();
+            //set milestone number 1 to be active , i am not sure that the first milestone is the first one in the list
+            Milestone milestone = milestones.stream().filter(milestone1 -> milestone1.getNumber()==1)
+                    .findFirst()
+                    .orElseThrow(()->new RuntimeException("milestone 1 not found"));
+            milestone.setStatus(Milestone.MilestoneStatus.IN_PROGRESS);
+        }
     }
 }

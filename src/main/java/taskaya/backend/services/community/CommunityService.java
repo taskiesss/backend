@@ -498,5 +498,10 @@ public class CommunityService {
 
         communityJoinRequestRepository.save(joinRequest);
     }
+
+    public Community getCommunityByWorkerEntity (WorkerEntity workerEntity){
+        return communityRepository.findByWorkerEntity(workerEntity)
+                .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+    }
 }
 

@@ -43,7 +43,7 @@ public class Payment {
     private Date date = new Date();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", length = 65)
+    @Column(name = "type",length = 15)
     private Type type; // Payment type
 
 

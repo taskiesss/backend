@@ -80,7 +80,7 @@ public class FreelancerService {
     JwtService jwtService;
 
     @Transactional
-    public Freelancer createFreelancer(User user){
+    public Freelancer createFreelancer(User user) {
 
         user.setRole(User.Role.FREELANCER);
 
@@ -102,7 +102,6 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
         return freelancer;
     }
-
 
 
     public Page<FreelancerSearchResponseDTO> searchFreelancers(FreenlancerSearchRequestDTO requestDTO) {
@@ -129,8 +128,8 @@ public class FreelancerService {
 
             // Create Page Request for pagination
             pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize(), sort);
-        }else {
-            pageable=PageRequest.of(requestDTO.getPage(), requestDTO.getSize());
+        } else {
+            pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize());
         }
         // Get page of freelancers based on specification, sorting, and pagination
         Page<Freelancer> freelancerPage = freelancerRepository.findAll(specification, pageable);
@@ -140,63 +139,62 @@ public class FreelancerService {
     }
 
     @Transactional
-    public void saveFreelancer(Freelancer freelancer){
+    public void saveFreelancer(Freelancer freelancer) {
         freelancerRepository.save(freelancer);
     }
 
-    public Freelancer getById(UUID uuid){
+    public Freelancer getById(UUID uuid) {
         return freelancerRepository.findFreelancerById(uuid)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found with ID: " + uuid));
     }
 
     @Transactional
-    public void fillForm(FirstTimeFreelancerFormDTO firstTimeFreelancerFormDTO){
+    public void fillForm(FirstTimeFreelancerFormDTO firstTimeFreelancerFormDTO) {
 
         Freelancer freelancer = getFreelancerFromJWT();
 
 
         //
-        if(firstTimeFreelancerFormDTO.getFirstName() == null
+        if (firstTimeFreelancerFormDTO.getFirstName() == null
                 || firstTimeFreelancerFormDTO.getLastName() == null
                 || firstTimeFreelancerFormDTO.getFirstName().isEmpty()
-                || firstTimeFreelancerFormDTO.getLastName().isEmpty() ){
+                || firstTimeFreelancerFormDTO.getLastName().isEmpty()) {
             throw new FirstTimeFreelancerFormException("First name and last name fields are required.");
-        }else{
-            String fullName = firstTimeFreelancerFormDTO.getFirstName() +" "+ firstTimeFreelancerFormDTO.getLastName();
+        } else {
+            String fullName = firstTimeFreelancerFormDTO.getFirstName() + " " + firstTimeFreelancerFormDTO.getLastName();
             freelancer.setName(fullName);
         }
 
-        if(firstTimeFreelancerFormDTO.getProfessionalTitle() == null
-                || firstTimeFreelancerFormDTO.getProfessionalTitle().isEmpty()){
+        if (firstTimeFreelancerFormDTO.getProfessionalTitle() == null
+                || firstTimeFreelancerFormDTO.getProfessionalTitle().isEmpty()) {
             throw new FirstTimeFreelancerFormException("Title is required.");
-        }else {
+        } else {
             freelancer.setTitle(firstTimeFreelancerFormDTO.getProfessionalTitle());
         }
 
         if (firstTimeFreelancerFormDTO.getSkills() == null
-                || firstTimeFreelancerFormDTO.getSkills().isEmpty() ){
+                || firstTimeFreelancerFormDTO.getSkills().isEmpty()) {
             throw new FirstTimeFreelancerFormException("Skills are required.");
-        }else{
+        } else {
             Set<Skill> skills = new HashSet<>(firstTimeFreelancerFormDTO.getSkills());
             skillRepository.saveAll(skills);
             freelancer.setSkills(skills);
         }
 
-        if(firstTimeFreelancerFormDTO.getHourlyRate() == null
-                || firstTimeFreelancerFormDTO.getHourlyRate() <=0){
+        if (firstTimeFreelancerFormDTO.getHourlyRate() == null
+                || firstTimeFreelancerFormDTO.getHourlyRate() <= 0) {
             throw new FirstTimeFreelancerFormException("Hourly rate must be greater than 0.");
-        }else{
+        } else {
             freelancer.setPricePerHour(firstTimeFreelancerFormDTO.getHourlyRate());
         }
 
-        if(firstTimeFreelancerFormDTO.getProfessionalSummary() == null
+        if (firstTimeFreelancerFormDTO.getProfessionalSummary() == null
                 || firstTimeFreelancerFormDTO.getProfessionalSummary().isEmpty()
-              ){
+        ) {
             throw new FirstTimeFreelancerFormException("Professional summary is required");
-        }else if (firstTimeFreelancerFormDTO.getProfessionalSummary().length()> Constants.MAX_DESCRIPTION_SIZE){
+        } else if (firstTimeFreelancerFormDTO.getProfessionalSummary().length() > Constants.MAX_DESCRIPTION_SIZE) {
             throw new FirstTimeFreelancerFormException("description length should not exceed 1000 chars");
-        }
-        else{
+        } else {
             freelancer.setDescription(firstTimeFreelancerFormDTO.getProfessionalSummary());
         }
 
@@ -208,16 +206,16 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    public List<FreelancerOwnedCommunitiesResponseDTO> freelancerOwnedCommunities(){
+    public List<FreelancerOwnedCommunitiesResponseDTO> freelancerOwnedCommunities() {
 
         Freelancer freelancer = getFreelancerFromJWT();
         List<FreelancerOwnedCommunitiesResponseDTO> responseDTOS = new ArrayList<>();
         responseDTOS.add(FreelancerOwnedCommunitiesResponseMapper.toDTO(freelancer));
         List<Community> communities = communityRepository.findAllByAdmin(freelancer);
-        if(communities == null || communities.isEmpty()){
+        if (communities == null || communities.isEmpty()) {
             System.out.println("This freelancer isn't an admin in any community");
-        }else{
-            for(Community community:communities){
+        } else {
+            for (Community community : communities) {
                 responseDTOS.add(FreelancerOwnedCommunitiesResponseMapper.toDTO(community));
             }
         }
@@ -227,7 +225,7 @@ public class FreelancerService {
 
     public FreelancerProfileDTO getProfileDetails(String id) {
 
-        Freelancer freelancer =getFreelancerById(id);
+        Freelancer freelancer = getFreelancerById(id);
         return FreelancerProfileMapper.toDTO(freelancer);
 
     }
@@ -269,18 +267,18 @@ public class FreelancerService {
     }
 
     @Transactional
-    public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO){
+    public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO) {
 
-        if(requestDTO.getPricePerHour() == null
-        ||requestDTO.getPricePerHour() < 0
-        ||requestDTO.getCountry()==null
-        ||requestDTO.getJobTitle() ==null
-        || requestDTO.getLastName() ==null
-        ||requestDTO.getFirstName()==null)
+        if (requestDTO.getPricePerHour() == null
+                || requestDTO.getPricePerHour() < 0
+                || requestDTO.getCountry() == null
+                || requestDTO.getJobTitle() == null
+                || requestDTO.getLastName() == null
+                || requestDTO.getFirstName() == null)
             throw new RuntimeException("All fields are required");
 
         Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setName(requestDTO.getFirstName()+" "+requestDTO.getLastName());
+        freelancer.setName(requestDTO.getFirstName() + " " + requestDTO.getLastName());
         freelancer.setPricePerHour(requestDTO.getPricePerHour());
         freelancer.setCountry(requestDTO.getCountry());
         freelancer.setTitle(requestDTO.getJobTitle());
@@ -295,7 +293,7 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id , org.springframework.data.domain.Pageable pageable) {
+    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id, org.springframework.data.domain.Pageable pageable) {
 
         Freelancer freelancer = getFreelancerById(id);
         List<FreelancerPortfolio> portfolios = freelancer.getPortfolios();
@@ -328,7 +326,7 @@ public class FreelancerService {
 
         //delete old picture
         String currentPicture = freelancer.getProfilePicture();
-        if(!(currentPicture.equals(Constants.FIRST_PROFILE_PICTURE)))
+        if (!(currentPicture.equals(Constants.FIRST_PROFILE_PICTURE)))
             cloudinaryService.deleteFile(currentPicture);
 
         //store new picture
@@ -350,7 +348,7 @@ public class FreelancerService {
 
         //delete old picture
         String currentPicture = freelancer.getCoverPhoto();
-        if(!(currentPicture.equals(Constants.FIRST_COVER_PICTURE)))
+        if (!(currentPicture.equals(Constants.FIRST_COVER_PICTURE)))
             cloudinaryService.deleteFile(currentPicture);
 
         //store new picture
@@ -360,7 +358,7 @@ public class FreelancerService {
     }
 
 
-    public Page<WorkerEntityWorkdoneResponseDTO> getFreelancerWorkdone(String id, int page, int size){
+    public Page<WorkerEntityWorkdoneResponseDTO> getFreelancerWorkdone(String id, int page, int size) {
         List<WorkerEntityWorkdoneResponseDTO> listDTO = new ArrayList<>();
 
         //get freelancer
@@ -386,7 +384,7 @@ public class FreelancerService {
     }
 
     @Transactional
-    public void addPortfolio(String name, MultipartFile file) throws IOException{
+    public void addPortfolio(String name, MultipartFile file) throws IOException {
         //get freelancer from token
         Freelancer freelancer = getFreelancerFromJWT();
 
@@ -403,7 +401,7 @@ public class FreelancerService {
     }
 
     @Transactional
-    public void deletePortfolio(String filePath) throws IOException{
+    public void deletePortfolio(String filePath) throws IOException {
         //get freelancer from token
         Freelancer freelancer = getFreelancerFromJWT();
 
@@ -411,9 +409,9 @@ public class FreelancerService {
                 .filter(portfolio -> filePath.equals(portfolio.getPortfolioPdf()))
                 .findFirst();
 
-        if(targetPortfolio.isPresent()){
+        if (targetPortfolio.isPresent()) {
             boolean deleted = cloudinaryService.deleteFile(filePath);
-            if(deleted) {
+            if (deleted) {
                 freelancer.getPortfolios().removeIf(portfolio -> filePath.equals(portfolio.getPortfolioPdf()));
                 freelancerRepository.save(freelancer);
             }
@@ -421,7 +419,7 @@ public class FreelancerService {
     }
 
     @Transactional
-    public void updateAvrgHoursPerWeek(AvrHoursPerWeekUpdateRequestDTO requestDTO){
+    public void updateAvrgHoursPerWeek(AvrHoursPerWeekUpdateRequestDTO requestDTO) {
         //get freelancer from token
         Freelancer freelancer = getFreelancerFromJWT();
 
@@ -429,20 +427,26 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    public Freelancer getFreelancerFromJWT(){
+    public Freelancer getFreelancerFromJWT() {
         User user = jwtService.getUserFromToken();
-        return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
+        return freelancerRepository.findByUser(user).orElseThrow(() -> new NotFoundException("freelancer not found"));
     }
 
-    Freelancer getFreelancerById(String id){
+    Freelancer getFreelancerById(String id) {
         Freelancer freelancer;
-        if (id.equals("my_profile")){
+        if (id.equals("my_profile")) {
             freelancer = getFreelancerFromJWT();
-        }else {
+        } else {
             freelancer = freelancerRepository.findById(UUID.fromString(id))
-                    .orElseThrow(()->new NotFoundException("freelancer not found"));
+                    .orElseThrow(() -> new NotFoundException("freelancer not found"));
         }
         return freelancer;
+    }
+
+
+    public Freelancer getFreelancerByWorkerEntity(WorkerEntity workerEntity){
+        return freelancerRepository.findByWorkerEntity(workerEntity)
+                .orElseThrow(() -> new NotFoundException("freelancer not found"));
     }
 
 

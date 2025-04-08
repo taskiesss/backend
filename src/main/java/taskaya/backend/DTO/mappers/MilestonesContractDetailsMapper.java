@@ -8,6 +8,8 @@ import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsRespons
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Milestone;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,8 +27,10 @@ public class MilestonesContractDetailsMapper {
     }
 
     public static List<MilestonesContractDetailsResponseDTO> toListDTO(List<Milestone> milestones){
+        ArrayList<Milestone> milestonesArray = new ArrayList(milestones);
+        milestonesArray.sort(Comparator.comparing(Milestone::getNumber));
         List<MilestonesContractDetailsResponseDTO> result = new LinkedList<>();
-        for(Milestone milestone : milestones){
+        for(Milestone milestone : milestonesArray){
             result.add(toDTO(milestone));
         }
         return result;

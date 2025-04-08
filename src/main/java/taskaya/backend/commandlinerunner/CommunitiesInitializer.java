@@ -25,6 +25,7 @@ import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.community.CommunityService;
+import taskaya.backend.services.work.ContractService;
 
 import java.util.*;
 
@@ -53,6 +54,9 @@ public class CommunitiesInitializer {
     private ProposalRepository proposalRepository;
     @Autowired
     private ContractRepository contractRepository;
+
+    @Autowired
+    private ContractService contractService;
 
 
     public void communityWithAdmin(){
@@ -150,7 +154,7 @@ public class CommunitiesInitializer {
                 .build();
 
 
-        List<Milestone> milestones = List.of(
+        ArrayList<Milestone> milestones = new ArrayList<>(List.of(
                 Milestone.builder()
                         .name("mile1")
                         .description("first desc")
@@ -170,7 +174,7 @@ public class CommunitiesInitializer {
                         .estimatedHours(300)
                         .status(Milestone.MilestoneStatus.APPROVED)
                         .build()
-        );
+        ));
 
         Contract contract = Contract.builder()
                 .job(job)
@@ -182,6 +186,10 @@ public class CommunitiesInitializer {
                 .costPerHour(50D)
                 .endDate(new Date())
                 .build();
+        jobRepository.save(job);
+        contractService.startContract(contract);
+        contract.setStatus(Contract.ContractStatus.ENDED);
+
         job.setContract(contract);
 
         Proposal proposal1= Proposal.builder()
@@ -257,7 +265,7 @@ public class CommunitiesInitializer {
                 .build();
 
 
-        List<Milestone> milestones2 = List.of(
+        ArrayList<Milestone> milestones2 = new ArrayList<>(List.of(
                 Milestone.builder()
                         .name("mile1")
                         .number(1)
@@ -273,7 +281,7 @@ public class CommunitiesInitializer {
                         .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                         .status(Milestone.MilestoneStatus.APPROVED)
                         .build()
-        );
+        ));
 
         Contract contract2 = Contract.builder()
                 .job(job2)
