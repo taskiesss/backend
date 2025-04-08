@@ -50,6 +50,7 @@ public class CommunityMember {
     //make sure that you set the community before the position name for the Community member
     public void setPositionName(String positionName) {
         for (CommunityMember communityMember : community.getCommunityMembers()) {
+            if(communityMember == this) continue;
             if (communityMember.getPositionName().equals(positionName)) {
                 throw new IllegalArgumentException("Position name must be unique within a community");
             }

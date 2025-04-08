@@ -35,4 +35,6 @@ public class ContractDetailsResponseDTO {
     @Builder.Default
     Boolean isCommunityAdmin= false;
     PaymentMethod projectType;
+    Double memberPercentage;
+    Double memberEarnings;
 }

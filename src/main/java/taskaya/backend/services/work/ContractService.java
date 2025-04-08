@@ -141,6 +141,7 @@ public class ContractService {
     public ContractDetailsResponseDTO getContractDetails(String id) {
         Contract contract = getContractById(id);
         boolean isUserCommunityAdmin = false;
+        Double memberPercentage = 0.0;
 
         String freelancerName, freelancerPicture, freelancerId;
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
@@ -156,9 +157,18 @@ public class ContractService {
             freelancerPicture = community.getProfilePicture();
             freelancerId = community.getUuid().toString();
             isUserCommunityAdmin = setIsUserCommunityAddmin(contract,community);
+
+            Freelancer currentFreelancer = getFreelancerFromJWT();
+
+            ContractContributor contributor = contract.getContractContributors().stream()
+                    .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Contributor not found for current freelancer"));
+
+            memberPercentage = (double)contributor.getPercentage();
         }
 
-        ContractDetailsResponseDTO responseDTO= ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId);
+        ContractDetailsResponseDTO responseDTO= ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId,memberPercentage);
 
         //set the isCommunityAdmin field
         responseDTO.setIsCommunityAdmin(isUserCommunityAdmin);
@@ -444,6 +454,10 @@ public class ContractService {
         }else {
             return List.of(freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()));
         }
+    }
+    public Freelancer getFreelancerFromJWT(){
+        User user = jwtService.getUserFromToken();
+        return freelancerRepository.findByUser(user).orElseThrow(()-> new NotFoundException("freelancer not found"));
     }
 }
 

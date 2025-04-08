@@ -14,11 +14,12 @@ import java.util.List;
 @Component
 public class ContractDetailsMapper {
     public static ContractDetailsResponseDTO toDTO(Contract contract, String freelancerName,
-                                                   String freelancerPicture, String freelancerId){
+                                                   String freelancerPicture, String freelancerId,Double memberPercentage){
         Integer hoursWorked = contract.getMilestones().stream()
                 .filter(m -> m.getStatus() == Milestone.MilestoneStatus.APPROVED)
                 .mapToInt(Milestone::getEstimatedHours)
                 .sum();
+        Double totalEarnings = contract.getCostPerHour()* hoursWorked;
 
         return ContractDetailsResponseDTO.builder()
                 .jobId(contract.getJob().getUuid().toString())
@@ -35,7 +36,9 @@ public class ContractDetailsMapper {
                 .endDate(contract.getEndDate())
                 .projectType(contract.getPayment())
                 .hoursWorked(hoursWorked)
-                .totalCurrentEarnings(contract.getCostPerHour()* hoursWorked)
+                .memberPercentage(memberPercentage)
+                .memberEarnings(memberPercentage*totalEarnings)
+                .totalCurrentEarnings(totalEarnings)
                 .isCommunity(contract.getWorkerEntity().getType()==WorkerEntity.WorkerType.COMMUNITY)
                 .build();
     }
