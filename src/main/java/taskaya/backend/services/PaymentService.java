@@ -88,7 +88,7 @@ public class PaymentService {
                 ContractContributor contractContributor :
                 contract.getContractContributors()
         ) {
-            double freelancerAmountBeforeCommission= (contractContributor.getPercentage()/100) * totalValue;
+            double freelancerAmountBeforeCommission= (contractContributor.getPercentage()) * totalValue;
             double freelancerAmountAfterCommission = freelancerAmountBeforeCommission - freelancerAmountBeforeCommission * Constants.COMMISSION_PERCENTAGE;
             // Create a new payment for each freelancer
             paymentsForCommunityMembers.add(

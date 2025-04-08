@@ -21,5 +21,5 @@ import java.util.UUID;
 public interface ContractRepository extends JpaRepository<Contract, UUID> , JpaSpecificationExecutor<Contract> {
     public Optional<Contract> findByJob(Job job);
     Page<Contract> findAllByStatusAndWorkerEntity(Contract.ContractStatus status, WorkerEntity workerEntity , Pageable pageable);
-
+    List<Contract> findAllByStatusAndJob(Contract.ContractStatus contractStatus, Job job);
 }

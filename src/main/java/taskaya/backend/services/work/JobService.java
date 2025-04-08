@@ -22,6 +22,7 @@ import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Proposal;
 import taskaya.backend.entity.work.WorkerEntity;
@@ -151,6 +152,14 @@ public class JobService {
             job.setSkills(skills);
         }
 
+        jobRepository.save(job);
+    }
+
+    public void assignJobByContract(Contract contract){
+        Job job = job = contract.getJob();
+        job.setAssignedTo(contract.getWorkerEntity());
+        job.setStatus(Job.JobStatus.IN_PROGRESS);
+        job.setContract(contract);
         jobRepository.save(job);
     }
 }

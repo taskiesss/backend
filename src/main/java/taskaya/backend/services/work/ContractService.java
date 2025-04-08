@@ -44,6 +44,7 @@ import taskaya.backend.specifications.ContractSpecification;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ContractService {
@@ -80,6 +81,9 @@ public class ContractService {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    JobService jobService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -301,12 +305,20 @@ public class ContractService {
             if(workerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
                 Freelancer freelancer = freelancerRepository.findByWorkerEntity(workerEntity)
                         .orElseThrow(()-> new RuntimeException("Freelancer Not Found!"));
-                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail(), client.getName(), freelancer.getName(), contract.getJob().getTitle(),getMilestoneByIndex(contract,milestoneIndex).getName());
+                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail()
+                        , client.getName()
+                        , freelancer.getName()
+                        , contract.getJob().getTitle()
+                        ,getMilestoneByIndex(contract,milestoneIndex).getName());
             }
             else{
                 Community community = communityRepository.findByWorkerEntity(workerEntity)
                         .orElseThrow(()-> new RuntimeException("Community Not Found!"));
-                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail(), client.getName(),community.getCommunityName(),contract.getJob().getTitle(),getMilestoneByIndex(contract,milestoneIndex).getName());
+                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail()
+                        , client.getName()
+                        ,community.getCommunityName()
+                        ,contract.getJob().getTitle()
+                        ,getMilestoneByIndex(contract,milestoneIndex).getName());
             }
 
 
@@ -324,21 +336,29 @@ public class ContractService {
             Community community = communityRepository.findByWorkerEntity(contract.getWorkerEntity())
                     .orElseThrow(()-> new NotFoundException("Community Not Found!"));
 
+            Stream<CommunityMember> assignedMembers=community.getCommunityMembers().stream().filter(communityMember -> communityMember.getFreelancer()!=null);
+            Double totalPercenatges = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
+
             contract.setContractContributors(
                     community.getCommunityMembers().stream()
                             .filter(communityMember -> communityMember.getFreelancer()!=null)
                             .map(communityMember ->
                                     ContractContributor.builder()
                                             .freelancer(communityMember.getFreelancer())
-                                            .Percentage(communityMember.getPositionPercent())
+                                            .Percentage(communityMember.getPositionPercent()/totalPercenatges.floatValue())
                                             .build()
                             ).collect(Collectors.toList())
             );
+
+
         }
         contract.setStatus(Contract.ContractStatus.ACTIVE);
 
         contractRepository.save(contract);
-        System.out.println("contraccccttttttt" + contract.getId());
+        jobService.assignJobByContract(contract);
+        rejectOtherContractAfterAcceptingOne(contract);
+
+        System.out.println("contract just started : "+ contract.getId());
     }
 
     public void approveMilestone (String contractId, String milestoneIndex ) throws MessagingException {
@@ -444,6 +464,19 @@ public class ContractService {
         }else {
             return List.of(freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()));
         }
+    }
+
+    public void rejectOtherContractAfterAcceptingOne(Contract acceptedContract){
+        //find contracts  for this job and status is pending
+        List<Contract> contracts = contractRepository
+                .findAllByStatusAndJob(Contract.ContractStatus.PENDING, acceptedContract.getJob());
+        for (Contract contract : contracts) {
+//            if (!contract.getId().equals(acceptedContract.getId())) {   //not needed because we guarantee that the accepted contract is inProgress
+                contract.setStatus(Contract.ContractStatus.REJECTED);
+                contractRepository.save(contract);
+//            }
+        }
+
     }
 }
 
