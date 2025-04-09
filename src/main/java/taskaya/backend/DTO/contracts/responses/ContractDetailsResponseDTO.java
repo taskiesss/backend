@@ -10,7 +10,7 @@ import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.work.Contract;
 
 import java.util.Date;
-import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -37,4 +37,11 @@ public class ContractDetailsResponseDTO {
     PaymentMethod projectType;
     Double memberPercentage;
     Double memberEarnings;
+    @Builder.Default
+    boolean voteIsDone=false;
+    @Builder.Default
+    boolean pendingClientToRate = false;
+    @Builder.Default
+    boolean pendingFreelancerToRate = false;
+
 }

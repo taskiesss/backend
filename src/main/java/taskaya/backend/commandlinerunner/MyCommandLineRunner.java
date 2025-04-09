@@ -141,6 +141,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         Milestone milestone = Milestone.builder()
                 .name("milestone11")
                 .number(61)
+                .description("description1")
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
                 .estimatedHours(7545)
@@ -228,7 +229,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         jobRepository.save(activeJob);
 
         contractRepository.save(activeContract);
-        contractService.startContract(activeContract);
+        contractService.startContract(activeContract,false);
         System.out.println("club contract Active contract id: "+activeContract.getId());
 
 
@@ -271,7 +272,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .password(new BCryptPasswordEncoder().encode("Mohib@123"))
                 .username("Mohib")
                 .role(User.Role.FREELANCER)
-                .build();
+                 .build();
 
         User user99 = User.builder()
                 .email("jolieattallah@gmail.com")
@@ -458,7 +459,6 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .country("Benseuf")
                 .admin(freelancerService.getById(user.getId()))
                 .workerEntity(workerEntity)
-                .avrgHoursPerWeek(6)
                 .pricePerHour(35)
                 .status(Community.CommunityStatus.AVAILABLE)
                 .rate(3)
@@ -467,6 +467,8 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .isFull(false)
                 .experienceLevel(exp)
                 .build();
+
+        community.getFreelancerBusiness().setAvgHoursPerWeek(600.0);
 
         CommunityMember communityMember1 = CommunityMember.builder()
                 .positionPercent(40.1F)

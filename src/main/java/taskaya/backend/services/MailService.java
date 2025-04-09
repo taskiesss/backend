@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.WorkerEntity;
 
 @Service
 public class MailService {
@@ -25,7 +27,7 @@ public class MailService {
         mailSender.send(message);
     }
 
-    public void sendOtpEmail(String to, String otp) throws MessagingException {
+    public void sendOtpEmail(String to, String otp)  {
         String subject = "Your Taskaya OTP Code";
         String content = "Hi,<br>You've requested an OTP code to verify your email.<br>\nYour OTP code is:<br><strong>" + otp + "</strong><br>Please do not share this code with anyone.<br>\n" +
                 "\n" +
@@ -34,10 +36,14 @@ public class MailService {
                 "Sincerely,<br>\n" +
                 "\n" +
                 " <strong>Taskaya Team</strong><br>";
-        sendEmail(to, subject, content);
+        try {
+            sendEmail(to, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void sendProposalToClient(String to, String from, String jobTitle) throws MessagingException{
+    public void sendProposalToClient(String to, String from, String jobTitle) {
         String subject = "New Proposal Received";
         String content = "Hello,<br><br>"
                 + "You have received a new proposal for the job: <strong>" + jobTitle + "</strong>.<br><br>"
@@ -47,10 +53,14 @@ public class MailService {
                 + "Best regards,<br>"
                 + "<strong>Taskaya Team</strong>";
 
-        sendEmail(to, subject, content);
+        try {
+            sendEmail(to, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void sendAcceptanceToFreelance(String to, String freelancerName, String communityName) throws MessagingException{
+    public void sendAcceptanceToFreelance(String to, String freelancerName, String communityName) {
         String subject = "Welcome to " + communityName;
         String content = "<html><body>"
                 + "Dear " + freelancerName + ",<br><br>"
@@ -61,10 +71,14 @@ public class MailService {
                 + "<strong>Taskaya Team</strong>"
                 + "</body></html>";
 
-        sendEmail(to, subject, content);
+        try {
+            sendEmail(to, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void sendNotificationMailToClientforReviewRequest(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName) throws MessagingException {
+    public void sendNotificationMailToClientforReviewRequest(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName)  {
         String subject = "Milestone Review Request: " + milestoneName + " - " + jobTitle;
         String content = "<html><body>"
                 + "Dear " + clientName + ",<br><br>"
@@ -76,11 +90,15 @@ public class MailService {
                 + "<strong>Taskaya Team</strong>"
                 + "</body></html>";
 
-        sendEmail(to, subject, content);
+        try {
+            sendEmail(to, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public void sendMailToFreelancerAfterClientApproval(String to, String freelancerName, String jobTitle, String milestoneName) throws MessagingException {
+    public void sendMailToFreelancerAfterClientApproval(String to, String freelancerName, String jobTitle, String milestoneName)  {
         String subject = "Milestone Approved: " + milestoneName + " - " + jobTitle;
         String content = "<html><body>"
                 + "Dear " + freelancerName + ",<br><br>"
@@ -92,7 +110,47 @@ public class MailService {
                 + "<strong>Taskaya Team</strong>"
                 + "</body></html>";
 
-        sendEmail(to, subject, content);
+        try {
+            sendEmail(to, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public void sendEmailForFreelancerForStartingContract(String email, Contract contract) {
+        String subject = "Contract Activation: " + contract.getJob().getTitle();
+        String addedBy = contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY ? "as a community member" : "";
+        String content = "<html><body>"
+                + "Dear Freelancer,<br><br>"
+                + "We are excited to inform you "+addedBy+" that your contract titled <strong>" + contract.getJob().getTitle() + "</strong> has been activated.<br><br>"
+                + "You can now start working on the project and track your progress.<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        try {
+            sendEmail(email, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendEmailForClientForStartingContract(String email, Contract contract) {
+        String subject = "Contract Activation: " + contract.getJob().getTitle();
+        String content = "<html><body>"
+                +"Dear Client,<br><br>"
+                + "We are excited to inform you that your contract titled <strong>" + contract.getJob().getTitle() + "</strong> has been activated.<br><br>"
+                + "You can now track the progress of the freelancer working on your contracts through your dashboard.<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        try {
+            sendEmail(email, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

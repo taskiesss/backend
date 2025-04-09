@@ -21,15 +21,7 @@ public class PaymentSearchResponseMapper {
 
         if(payment.getType() == Payment.Type.TRANSACTION) {
 
-            if (payment.getCommunity() != null) {
-                dto.setDescription("payment for community " + payment.getCommunity().getCommunityName());
-            } else {
-                User sender = payment.getSender();
-                User receiver = payment.getReceiver();
-                if (sender != null && receiver != null) {
-                    dto.setDescription("payment from " + sender.getUsername() + " to " + receiver.getUsername());
-                }
-            }
+            dto.setDescription("Payment for "+payment.getContract().getJob().getTitle());
 
             if (payment.getSender() != null && payment.getSender().getId().equals(user.getId())) {
                 dto.setAmount(-payment.getAmount());

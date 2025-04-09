@@ -1,5 +1,6 @@
 package taskaya.backend.commandlinerunner;
 
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import taskaya.backend.config.Constants;
@@ -73,7 +74,6 @@ public class CommunitiesInitializer {
                 .communityName("Pablo Community")
                 .admin(freelancer)
                 .workerEntity(workerEntity)
-                .avrgHoursPerWeek(6)
                 .pricePerHour(35)
                 .country("cairo,Egypt")
                 .title("software development")
@@ -95,6 +95,7 @@ public class CommunitiesInitializer {
                         "✅ Tailor-made Software Solutions")
                 .experienceLevel(ExperienceLevel.expert)
                 .build();
+        community.getFreelancerBusiness().setAvgHoursPerWeek(300.0);
 
 //		communityService.save(community);
 //		community.getCommunityMembers().add(CommunityMember.builder().community(community).freelancer(freelancerRepository.findByUser(user).get()).positionName("fullstack").build());
@@ -131,7 +132,7 @@ public class CommunitiesInitializer {
 
 
 
-    public void communityWorkdoneSeed() {
+    public void communityWorkdoneSeed() throws MessagingException {
         Community community = communityRepository.findByCommunityName("Pablo Community").orElseThrow();
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
         System.out.println("pablo Community UUID: "+community.getUuid());
@@ -175,7 +176,7 @@ public class CommunitiesInitializer {
                         .number(2)
                         .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                         .estimatedHours(300)
-                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
                         .build()
         ));
 
@@ -186,14 +187,17 @@ public class CommunitiesInitializer {
                 .milestones(milestones)
                 .payment(PaymentMethod.PerProject)
                 .workerEntity(community.getWorkerEntity())
-                .costPerHour(50D)
+                .costPerHour(20D)
                 .endDate(new Date())
                 .build();
         jobRepository.save(job);
-        contractService.startContract(contract);
-        contract.setStatus(Contract.ContractStatus.ENDED);
+        contractService.startContract(contract,false);
 
+        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         job.setContract(contract);
+//        contractService.endContract(contract);
+        contractService.approveMilestone(contract.getId().toString(),"2",false);
+        jobRepository.save(job);
 
         Proposal proposal1= Proposal.builder()
                 .costPerHour(30D)
@@ -209,33 +213,11 @@ public class CommunitiesInitializer {
                 .build();
         Double paymentAmount = 420 * 50.0;
 
-        Payment clientPayment =Payment.builder()
-                .sender(client.getUser())
-                .amount(paymentAmount)
-                .community(community)
-                .contract(contract)
-                .type(Payment.Type.TRANSACTION)
-                .build();
+
 
         //create payments for each community memeber for this job
-        List <Payment> paymentsForCommunityMembers = new LinkedList<>();
-        for (
-                CommunityMember communityMember :
-                communityMemberService.getAssignedMembers(community.getCommunityMembers())
-        ) {
-            paymentsForCommunityMembers.add(
-                    Payment.builder()
-                            .sender(client.getUser())
-                            .amount(communityMember.getPositionPercent() * paymentAmount/100)
-                            .community(community)
-                            .contract(contract)
-                            .receiver(communityMember.getFreelancer().getUser())
-                            .type(Payment.Type.TRANSACTION)
-                            .build()
-            );
-        }
-        paymentRepository.save(clientPayment);
-        paymentRepository.saveAll(paymentsForCommunityMembers);
+
+
         jobRepository.save(job);
         proposalRepository.save(proposal1);
         communityRepository.save(community);
@@ -272,6 +254,16 @@ public class CommunitiesInitializer {
                 Milestone.builder()
                         .name("mile1")
                         .number(1)
+                        .description("the primary goal is to establish a strong base for the full-stack application. This includes selecting and configuring the core technologies, setting up the development environment, and laying out the fundamental project structure on both the frontend and backend sides. Key activities and deliverables often include:\n" +
+                                "\n" +
+                                "Technical Stack Selection: Finalize the chosen frameworks, libraries, and tools (e.g., React for the frontend, Node.js/Express for the backend, etc.) based on project requirements and team expertise.\n" +
+                                "\n" +
+                                "Repository and Version Control Setup: Create the Git repository (or use another version control system) to ensure collaboration and code management best practices are in place.\n" +
+                                "\n" +
+                                "Project Architecture & Folder Structure: Define a clear, standardized architecture for frontend and backend modules (e.g., naming conventions, file organization, key directory layout) to maintain consistency and scalability.\n" +
+                                "\n" +
+                                "Initial Build Scripts & Basic Configuration: Configure build tools (e.g., Webpack) or other bundlers, set up test scripts, and prepare basic deployment scripts if applicable.\n" +
+                                "\n")
                         .estimatedHours(400)
                         .dueDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                         .status(Milestone.MilestoneStatus.APPROVED)
@@ -280,9 +272,40 @@ public class CommunitiesInitializer {
                 Milestone.builder()
                         .name("mile2")
                         .number(2)
+                        .description("the focus shifts toward establishing the data layer and implementing essential user-related functionality. The goal is to ensure that the application’s core entities are properly stored and retrieved, and that users can securely access and interact with the system. Key objectives typically include:\n" +
+                                "\n" +
+                                "Database Setup & Schema Design\n" +
+                                "\n" +
+                                "Select and configure the database solution (e.g., PostgreSQL, MongoDB).\n" +
+                                "\n" +
+                                "Define the initial data models and relationships needed to support core features.\n" +
+                                "\n" +
+                                "Implement database migrations or seeding strategies (if required) to keep the schema consistent across environments.\n" +
+                                "\n" +
+                                "User Authentication & Authorization\n" +
+                                "\n" +
+                                "Implement a secure authentication flow (e.g., JWT-based tokens or session-based auth).\n" +
+                                "\n" +
+                                "Set up basic user registration, login, and logout functionality.\n" +
+                                "\n" +
+                                "Integrate role-based or permission-based access controls as applicable.\n" +
+                                "\n" +
+                                "Backend API Endpoints\n" +
+                                "\n" +
+                                "Create foundational CRUD endpoints for key data entities (e.g., users, products, or other relevant resources).\n" +
+                                "\n" +
+                                "Enforce authentication and authorization on protected routes to prevent unauthorized access.\n" +
+                                "\n" +
+                                "Frontend Integration\n" +
+                                "\n" +
+                                "Develop forms or UI components to register new users and log in existing ones.\n" +
+                                "\n" +
+                                "Ensure frontend authentication flows are correctly integrated with the backend (e.g., storing tokens, handling session).\n" +
+                                "\n" +
+                                "Present user-specific data in a basic dashboard or relevant views, confirming the end-to-end data flow.")
                         .estimatedHours(300)
                         .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
                         .build()
         ));
 
@@ -295,7 +318,12 @@ public class CommunitiesInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(10D)
                 .build();
+        jobRepository.save(job2);
+        contractService.startContract(contract2,false);
+        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         job2.setContract(contract2);
+        contractService.approveMilestone(contract2.getId().toString(),"2",false);
+        jobRepository.save(job2);
 
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
@@ -310,34 +338,6 @@ public class CommunitiesInitializer {
                 .coverLetter("please accept me")
                 .build();
 
-        paymentAmount = 700*10.0;
-        Payment clientPayment2 =Payment.builder()
-                .sender(client.getUser())
-                .amount(paymentAmount)
-                .community(community)
-                .contract(contract2)
-                .type(Payment.Type.TRANSACTION)
-                .build();
-
-        //create payments for each community memeber for this job
-        List <Payment> paymentsForCommunityMembers2 = new LinkedList<>();
-        for (
-                CommunityMember communityMember :
-                communityMemberService.getAssignedMembers(community.getCommunityMembers())
-        ) {
-            paymentsForCommunityMembers2.add(
-                    Payment.builder()
-                            .sender(client.getUser())
-                            .amount(communityMember.getPositionPercent() * paymentAmount/100)
-                            .community(community)
-                            .contract(contract2)
-                            .receiver(communityMember.getFreelancer().getUser())
-                            .type(Payment.Type.TRANSACTION)
-                            .build()
-            );
-        }
-        paymentRepository.save(clientPayment2);
-        paymentRepository.saveAll(paymentsForCommunityMembers2);
         communityRepository.save(community);
         jobRepository.save(job2);
         proposalRepository.save(proposal2);
