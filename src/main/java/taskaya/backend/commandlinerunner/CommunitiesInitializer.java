@@ -102,22 +102,25 @@ public class CommunitiesInitializer {
                 .community(community)
                 .freelancer(freelancer)
                 .positionName("backend01")
-                .positionPercent(40)
+                .positionPercent(20)
+                .description("Backend design and implementation")
                 .build();
 
 
         CommunityMember communityMember2 = CommunityMember.builder()
                 .community(community)
-                .positionPercent(30)
+                .positionPercent(20)
                 .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get())
                 .positionName("backend02")
+                .description("Backend design and implementation")
                 .build();
 
         CommunityMember communityMember3 = CommunityMember.builder()
                 .community(community)
-                .positionPercent(30)
+                .positionPercent(20)
                 .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").get()).get())
                 .positionName("backend03")
+                .description("Backend design and implementation")
                 .build();
         community.getCommunityMembers().addAll(List.of(communityMember,communityMember2,communityMember3));
         communityService.save(community);

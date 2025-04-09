@@ -308,7 +308,8 @@ class MyCommandLineRunner implements CommandLineRunner {
         CommunityMember communityMember1 =CommunityMember.builder()
                 .community(pabloCommunity)
                 .positionName("AI developer")
-                .positionPercent(9)
+                .positionPercent(20)
+                .description("AI implementation and integration")
                 .build();
 
         communityMemberService.saveMember(communityMember1);
@@ -317,7 +318,8 @@ class MyCommandLineRunner implements CommandLineRunner {
         CommunityMember communityMember2 =CommunityMember.builder()
                 .community(pabloCommunity)
                 .positionName("Frontend developer")
-                .positionPercent(9)
+                .positionPercent(20)
+                .description("Interface design and implementation")
                 .build();
 
         communityMemberService.saveMember(communityMember2);
