@@ -271,7 +271,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .password(new BCryptPasswordEncoder().encode("Mohib@123"))
                 .username("Mohib")
                 .role(User.Role.FREELANCER)
-                .build();
+                 .build();
 
         User user99 = User.builder()
                 .email("jolieattallah@gmail.com")

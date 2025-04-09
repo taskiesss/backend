@@ -89,6 +89,9 @@ public class CommunityService {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    VoteService voteService;
+
     //di lazem ne3melaha autowire bel setter  MAHADESH YE8AIARHA
     private CommunityMemberService communityMemberService;
 
@@ -364,6 +367,11 @@ public class CommunityService {
                     .orElseThrow(() -> new RuntimeException("Freelancer not found!"));
 
             communityMember.setFreelancer(freelancer);
+
+            List<Contract> pendingContracts = contractRepository.findAllByStatusAndWorkerEntity(Contract.ContractStatus.PENDING,community.getWorkerEntity());
+            voteService.createVotesForNewMember(communityMember,pendingContracts);
+
+
             communityMemberService.saveMember(communityMember);
             communityJoinRequestRepository.deleteByPosition(communityMember);
 
@@ -396,6 +404,10 @@ public class CommunityService {
 
         Contract contract =contractRepository.findById(UUID.fromString(request.getContractId()))
                 .orElseThrow(()-> new NotFoundException("Contract Not Found!"));
+
+        if (contract.getStatus() != Contract.ContractStatus.PENDING ) {
+            throw new IllegalArgumentException("Contract is not in pending status");
+        }
 
         Vote vote = communityVoteRepository.findByContractAndCommunityMember(contract,communityMember)
                 .orElseThrow(()-> new NotFoundException("Vote Not Found!"));
