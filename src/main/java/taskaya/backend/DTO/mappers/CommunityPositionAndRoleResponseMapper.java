@@ -1,7 +1,9 @@
 package taskaya.backend.DTO.mappers;
 
 import org.springframework.stereotype.Component;
+import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberCommunityProfileDTO;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberSettingsResponseDTO;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.community.CommunityMember;
 
 import java.util.List;
@@ -23,6 +25,14 @@ public class CommunityPositionAndRoleResponseMapper {
                 .build();
         if(communityMember.getFreelancer() != null)
             memberDTO.setNameAndPicture(CommunityMemberCommunityProfileResponseMapper.toDTO(communityMember));
+        else {
+            memberDTO.setNameAndPicture(CommunityMemberCommunityProfileDTO.builder()
+                            .name("Unassinged")
+                            .freelancerProfilePicture(Constants.FIRST_PROFILE_PICTURE)
+                            .position(communityMember.getPositionName())
+                    .build());
+        }
+
         return memberDTO;
     }
 
