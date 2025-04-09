@@ -141,6 +141,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         Milestone milestone = Milestone.builder()
                 .name("milestone11")
                 .number(61)
+                .description("description1")
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
                 .estimatedHours(7545)
@@ -228,7 +229,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         jobRepository.save(activeJob);
 
         contractRepository.save(activeContract);
-        contractService.startContract(activeContract);
+        contractService.startContract(activeContract,false);
         System.out.println("club contract Active contract id: "+activeContract.getId());
 
 

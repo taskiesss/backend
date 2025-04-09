@@ -146,13 +146,11 @@ public class JwtService {
     }
 
     public boolean contractDetailsAuth(String contractId){
-        User user = getUserFromToken();
         Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
         if(isClient()){
-            UUID clientId = clientRepository.findByUser(user)
-                    .orElseThrow(()->new AccessDeniedException("security failed")).getId();
-            return clientId.equals(contract.getClient().getId());
+            return isClientContractOwner(contractId);
         }else{
+            User user = getUserFromToken();
             WorkerEntity contractWorkerEntity = contract.getWorkerEntity();
             if(contractWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
                 Freelancer freelancer = freelancerRepository.findByUser(user)
@@ -166,6 +164,14 @@ public class JwtService {
             }
         }
     }
+
+    public boolean isClientContractOwner(String contractId){
+        Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
+            UUID clientId = clientRepository.findByUser(getUserFromToken())
+                    .orElseThrow(() -> new AccessDeniedException("security failed")).getId();
+            return clientId.equals(contract.getClient().getId());
+    }
+
 
     public boolean fileSubmissionAuth(String contractId){
         User user = getUserFromToken();

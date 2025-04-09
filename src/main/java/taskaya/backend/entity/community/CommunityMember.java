@@ -55,4 +55,13 @@ public class CommunityMember {
             }
         }
     }
+    public void setFreelancer(Freelancer freelancer) {
+        this.freelancer = freelancer;
+
+        if (freelancer == null) {
+            votes =new ArrayList<>();  //this is made for : if the freelancer is removed from the community
+                                                            // or left the community
+                                                            // , the votes should be removed too
+        }
+    }
 }

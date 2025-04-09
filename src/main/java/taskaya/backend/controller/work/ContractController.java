@@ -138,8 +138,17 @@ public class ContractController {
             @PathVariable String contractId,
             @PathVariable String milestoneIndex
     )throws MessagingException {
-        contractService.approveMilestone(contractId,milestoneIndex);
+        contractService.approveMilestone(contractId,milestoneIndex,true);
         return ResponseEntity.status(HttpStatus.OK).body("Review request sent successfully and email notification sent to the client");
 
+    }
+
+    @PostMapping("/api/contracts/{contractId}/rate-contract/{rate}")
+    public ResponseEntity<?> rateContract(
+            @PathVariable String contractId,
+            @PathVariable int rate
+    ){
+        contractService.rateContract(contractId,rate);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 }

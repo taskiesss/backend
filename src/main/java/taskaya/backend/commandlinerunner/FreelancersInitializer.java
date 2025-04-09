@@ -24,6 +24,7 @@ import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.services.work.ContractService;
 
 import java.util.*;
 
@@ -56,6 +57,8 @@ public class FreelancersInitializer {
     @Autowired
     private ProposalRepository proposalRepository;
 
+    @Autowired
+    ContractService contractService;
 
     public void freelancerSeed(){
 
@@ -246,7 +249,7 @@ public class FreelancersInitializer {
                         .description("Mile3Desc")
                         .estimatedHours(5)
                         .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
-                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
                         .build()
 
         ));
@@ -263,6 +266,10 @@ public class FreelancersInitializer {
                 .payment(PaymentMethod.PerMilestones)
                 .build();
         job.setContract(contract);
+        jobRepository.save(job);
+        contractService.startContract(contract,false);
+        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        contractService.approveMilestone(contract.getId().toString(),"3",false);
 
 
         Proposal proposal1= Proposal.builder()
@@ -278,16 +285,8 @@ public class FreelancersInitializer {
                 .coverLetter("please accept me")
                 .build();
 
-        Payment payment = Payment.builder()
-                .amount(1000D)
-                .date(new Date())
-                .sender(contract.getClient().getUser())
-                .receiver(freelancer.getUser())
-                .contract(contract)
-                .type(Payment.Type.TRANSACTION)
-                .build();
 
-        paymentRepository.save(payment);
+
         jobRepository.save(job);
         proposalRepository.save(proposal1);
         freelancerRepository.save(freelancer);
@@ -339,7 +338,7 @@ public class FreelancersInitializer {
                         .description("Mile2Desc")
                         .estimatedHours(3)
                         .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
                         .build()
         ));
 
@@ -352,9 +351,14 @@ public class FreelancersInitializer {
                 .workerEntity(freelancer.getWorkerEntity())
                 .endDate(new Date())
                 .payment(PaymentMethod.PerProject)
-                .costPerHour(55.55)
+                .costPerHour(20d)
                 .build();
         job2.setContract(contract2);
+        jobRepository.save(job2);
+        contractService.startContract(contract2,false);
+        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        contractService.approveMilestone(contract2.getId().toString(),"2",false);
+
 
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
@@ -369,18 +373,9 @@ public class FreelancersInitializer {
                 .coverLetter("please accept me")
                 .build();
 
-        Payment payment2 = Payment.builder()
-                .amount(444.4D)
-                .date(new Date())
-                .sender(contract2.getClient().getUser())
-                .receiver(freelancer.getUser())
-                .contract(contract2)
-                .type(Payment.Type.TRANSACTION)
-                .build();
 
         freelancerRepository.save(freelancer);
         jobRepository.save(job2);
-        paymentRepository.save(payment2);
         proposalRepository.save(proposal2);
         contractRepository.save(contract2);
 

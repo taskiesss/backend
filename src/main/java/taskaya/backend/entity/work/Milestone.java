@@ -41,7 +41,7 @@ public class Milestone {
     @Column(name = "number", nullable = false)
     private Integer number; // Milestone number
 
-    @Column(name = "description", length = Constants.MAX_DESCRIPTION_SIZE)
+    @Column(name = "description", length = Constants.MAX_DESCRIPTION_SIZE, nullable = false)
     private String description; // Description
 
     @Column(name = "estimated_hours", nullable = false)

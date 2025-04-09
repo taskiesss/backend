@@ -43,5 +43,12 @@ public class VoteService {
         communityVoteRepository.saveAll(votes);
     }
 
+    public boolean isVoteDone(Contract contract){
+        if (contract.getStatus() != Contract.ContractStatus.PENDING){
+            throw new IllegalArgumentException("contract is not pending");
+        }
+        List<Vote> votes = communityVoteRepository.findAllByContract(contract);
+        return votes.stream().allMatch(vote -> vote.getAgreed()!=null && vote.getAgreed());
+    }
 
 }
