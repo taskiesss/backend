@@ -456,7 +456,6 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .country("Benseuf")
                 .admin(freelancerService.getById(user.getId()))
                 .workerEntity(workerEntity)
-                .avrgHoursPerWeek(6)
                 .pricePerHour(35)
                 .status(Community.CommunityStatus.AVAILABLE)
                 .rate(3)
@@ -465,6 +464,8 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .isFull(false)
                 .experienceLevel(exp)
                 .build();
+
+        community.getFreelancerBusiness().setAvgHoursPerWeek(600.0);
 
         CommunityMember communityMember1 = CommunityMember.builder()
                 .positionPercent(40.1F)

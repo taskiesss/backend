@@ -1,5 +1,6 @@
 package taskaya.backend.commandlinerunner;
 
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import taskaya.backend.config.Constants;
@@ -73,7 +74,6 @@ public class CommunitiesInitializer {
                 .communityName("Pablo Community")
                 .admin(freelancer)
                 .workerEntity(workerEntity)
-                .avrgHoursPerWeek(6)
                 .pricePerHour(35)
                 .country("cairo,Egypt")
                 .title("software development")
@@ -95,6 +95,7 @@ public class CommunitiesInitializer {
                         "✅ Tailor-made Software Solutions")
                 .experienceLevel(ExperienceLevel.expert)
                 .build();
+        community.getFreelancerBusiness().setAvgHoursPerWeek(300.0);
 
 //		communityService.save(community);
 //		community.getCommunityMembers().add(CommunityMember.builder().community(community).freelancer(freelancerRepository.findByUser(user).get()).positionName("fullstack").build());
@@ -128,7 +129,7 @@ public class CommunitiesInitializer {
 
 
 
-    public void communityWorkdoneSeed() {
+    public void communityWorkdoneSeed() throws MessagingException {
         Community community = communityRepository.findByCommunityName("Pablo Community").orElseThrow();
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
         System.out.println("pablo Community UUID: "+community.getUuid());
@@ -188,9 +189,11 @@ public class CommunitiesInitializer {
                 .build();
         jobRepository.save(job);
         contractService.startContract(contract);
-        contract.setStatus(Contract.ContractStatus.ENDED);
 
+        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         job.setContract(contract);
+        contractService.endContract(contract);
+        jobRepository.save(job);
 
         Proposal proposal1= Proposal.builder()
                 .costPerHour(30D)
@@ -292,7 +295,13 @@ public class CommunitiesInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(10D)
                 .build();
+        jobRepository.save(job2);
+        contractService.startContract(contract2);
+
+        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         job2.setContract(contract2);
+        contractService.endContract(contract2);
+        jobRepository.save(job2);
 
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)

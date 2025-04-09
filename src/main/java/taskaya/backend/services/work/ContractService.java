@@ -21,16 +21,21 @@ import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsRespons
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.exceptions.notFound.NotFoundException;
+import taskaya.backend.repository.client.ClientBalanceRepository;
+import taskaya.backend.repository.client.ClientBusinessRepository;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.freelancer.FreelancerBusinessRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.MilestoneRepository;
@@ -59,6 +64,11 @@ public class ContractService {
     FreelancerRepository freelancerRepository;
 
     @Autowired
+    ClientBusinessRepository clientBusinessRepository;
+
+    @Autowired
+    FreelancerBusinessRepository freelancerBusinessRepository;
+    @Autowired
     CommunityRepository communityRepository;
 
     @Autowired
@@ -84,6 +94,7 @@ public class ContractService {
 
     @Autowired
     JobService jobService;
+
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -337,7 +348,7 @@ public class ContractService {
                     .orElseThrow(()-> new NotFoundException("Community Not Found!"));
 
             Stream<CommunityMember> assignedMembers=community.getCommunityMembers().stream().filter(communityMember -> communityMember.getFreelancer()!=null);
-            Double totalPercenatges = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
+            double totalPercenatges = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
 
             contract.setContractContributors(
                     community.getCommunityMembers().stream()
@@ -345,7 +356,7 @@ public class ContractService {
                             .map(communityMember ->
                                     ContractContributor.builder()
                                             .freelancer(communityMember.getFreelancer())
-                                            .Percentage(communityMember.getPositionPercent()/totalPercenatges.floatValue())
+                                            .Percentage(communityMember.getPositionPercent()/ (float) totalPercenatges)
                                             .build()
                             ).collect(Collectors.toList())
             );
@@ -362,7 +373,7 @@ public class ContractService {
     }
 
     public void approveMilestone (String contractId, String milestoneIndex ) throws MessagingException {
-        Integer milestoneIndexx = Integer.parseInt(milestoneIndex);
+        int milestoneIndexx = Integer.parseInt(milestoneIndex);
         Contract contract = getActiveContract(contractId);
         Milestone milestone = getMilestoneByIndex(contract,milestoneIndexx);
 
@@ -371,24 +382,27 @@ public class ContractService {
 
         milestone.setStatus(Milestone.MilestoneStatus.APPROVED);
         List<Milestone> milestonesToBePaid = getMilestonesToBePaid(contract);
+
+        double totalPayment = 0;
+
+
         if (milestonesToBePaid != null) {
             if(contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.COMMUNITY){
-                paymentService.payForCommunityContract(contract, milestonesToBePaid);
+                totalPayment = paymentService.payForCommunityContract(contract, milestonesToBePaid);
 
             }
             else {
-                paymentService.payForFreelancerContract(contract, milestonesToBePaid);
+                totalPayment = paymentService.payForFreelancerContract(contract, milestonesToBePaid);
 
             }
+            ClientBusiness clientBusiness = contract.getClient().getClientBusiness();
+            clientBusiness.setTotalSpent(clientBusiness.getTotalSpent()+totalPayment);
+            clientBusinessRepository.save(clientBusiness);
         }
 
 
         if (milestoneIndexx == contract.getMilestones().size()){
-            contract.setStatus(Contract.ContractStatus.ENDED);
-            contract.getJob().setStatus(Job.JobStatus.DONE);
-            contract.setEndDate(new Date());
-            contract.getJob().setEndedAt(new Date());
-            contractRepository.save(contract);
+            endContract(contract);
         }
         else{
             //set the next milestone to be in progress
@@ -396,6 +410,7 @@ public class ContractService {
             nextMilestone.setStatus(Milestone.MilestoneStatus.IN_PROGRESS);
             milestoneRepository.save(nextMilestone);
         }
+
 
 
         List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
@@ -477,6 +492,35 @@ public class ContractService {
 //            }
         }
 
+    }
+
+    public void endContract(Contract contract){
+
+        if(!(contract.getStatus().equals(Contract.ContractStatus.ACTIVE))){
+            throw new RuntimeException("Invalid Request, Contract no longer Active!");
+        }
+        contract.setStatus(Contract.ContractStatus.ENDED);
+        contract.getJob().setStatus(Job.JobStatus.DONE);
+        contract.setEndDate(new Date());
+        contract.getJob().setEndedAt(new Date());
+
+
+        //update the client business
+        ClientBusiness clientBusiness = contract.getClient().getClientBusiness();
+        clientBusiness.setCompletedJobs(clientBusiness.getCompletedJobs()+1);
+        clientBusinessRepository.save(clientBusiness);
+
+        //update the freelancer or community the community business
+        FreelancerBusiness freelancerBusiness =
+                contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.FREELANCER ?
+                        freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()).getFreelancerBusiness() :
+                        communityService.getCommunityByWorkerEntity(contract.getWorkerEntity()).getFreelancerBusiness();
+
+        freelancerBusiness.setCompletedJobs(freelancerBusiness.getCompletedJobs()+1);
+
+        freelancerBusinessRepository.save(freelancerBusiness);
+
+        contractRepository.save(contract);
     }
 }
 

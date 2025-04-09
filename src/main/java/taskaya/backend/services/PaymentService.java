@@ -58,7 +58,7 @@ public class PaymentService {
     }
 
 
-    public void payForCommunityContract(Contract contract , List<Milestone> milestones) {
+    public double payForCommunityContract(Contract contract , List<Milestone> milestones) {
 
         Community community = communityService.getCommunityByWorkerEntity(contract.getWorkerEntity());
         double totalValue = getPaymentValue(contract, milestones);
@@ -115,10 +115,11 @@ public class PaymentService {
 
         }
         paymentRepository.saveAll(paymentsForCommunityMembers);
+        return totalValue;
     }
 
 
-    public void payForFreelancerContract (Contract contract, List<Milestone>milestones){
+    public double payForFreelancerContract (Contract contract, List<Milestone>milestones){
         Freelancer freelancer = freelancerService
                 .getFreelancerByWorkerEntity(contract.getWorkerEntity());
         double totalValue = getPaymentValue(contract, milestones);
@@ -149,6 +150,7 @@ public class PaymentService {
 
         freelancerBalanceRepository.save(freelancerBalance);
 
+        return totalValue;
     }
 
 

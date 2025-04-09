@@ -6,6 +6,7 @@ import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.work.WorkerEntity;
 
 import java.util.ArrayList;
@@ -51,8 +52,10 @@ public class Community {
     private Freelancer admin;
 
 
-    @Column(name = "average_hours_per_week", nullable = false)
-    private float avrgHoursPerWeek;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "freelancer_business_id", referencedColumnName = "id")
+    @Builder.Default
+    private FreelancerBusiness freelancerBusiness = new FreelancerBusiness();
 
     @Column(name = "price_per_hour", nullable = false)
     private double pricePerHour;
