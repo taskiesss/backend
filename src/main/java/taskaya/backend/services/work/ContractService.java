@@ -177,7 +177,7 @@ public class ContractService {
             freelancerId = community.getUuid().toString();
             isUserCommunityAdmin = setIsUserCommunityAddmin(contract,community);
 
-            Freelancer currentFreelancer = getFreelancerFromJWT();
+            Freelancer currentFreelancer = freelancerService.getFreelancerFromJWT();
 
             ContractContributor contributor = contract.getContractContributors().stream()
                     .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
@@ -522,10 +522,7 @@ public class ContractService {
             return List.of(freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()));
         }
     }
-    public Freelancer getFreelancerFromJWT() {
-        User user = jwtService.getUserFromToken();
-        return freelancerRepository.findByUser(user).orElseThrow(() -> new NotFoundException("freelancer not found"));
-    }
+
     public void rejectOtherContractAfterAcceptingOne(Contract acceptedContract){
         //find contracts  for this job and status is pending
         List<Contract> contracts = contractRepository
