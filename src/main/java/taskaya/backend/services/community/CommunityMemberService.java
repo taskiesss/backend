@@ -72,6 +72,15 @@ public class CommunityMemberService {
                 .map(CommunityMemberUpdateRequestDTO::getPositionId)
                 .toList();
 
+        UUID adminId = community.getAdmin().getId();
+        boolean adminExists = existingMembers.stream()
+                .filter(member -> dtoMemberIds.contains(member.getId()))
+                .anyMatch(member -> member.getFreelancer() != null && member.getFreelancer().getId().equals(adminId));
+
+        if (!adminExists) {
+            throw new RuntimeException("Admin cannot be removed from the community");
+        }
+
         List<CommunityMember> toDelete = existingMembers.stream()
                 .filter(member -> member.getId() != null && !dtoMemberIds.contains(member.getId()))
                 .toList();

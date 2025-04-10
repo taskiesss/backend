@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 @Component
 public class CommunityPositionAndRoleResponseMapper {
     public static CommunityMemberSettingsResponseDTO toDTO(CommunityMember communityMember,Integer sum){
-        Integer currentPercentage = 0;
+        Double currentPercentage = 0.0;
         if (communityMember.getFreelancer() != null) {
-            currentPercentage = (int)((communityMember.getPositionPercent() / (float)sum)*100);
+            currentPercentage = Double.valueOf(String.format("%.2f",
+                    ((communityMember.getPositionPercent() / (double) sum) * 100)));
         }
 
         CommunityMemberSettingsResponseDTO memberDTO = CommunityMemberSettingsResponseDTO.builder()

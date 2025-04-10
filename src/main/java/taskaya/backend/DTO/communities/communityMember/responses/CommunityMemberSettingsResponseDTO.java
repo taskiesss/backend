@@ -13,6 +13,6 @@ public class CommunityMemberSettingsResponseDTO {
     CommunityMemberCommunityProfileDTO nameAndPicture;
     String description;
     Long positionId;
-    Integer currentPercentage;
+    Double currentPercentage;
     Integer futurePercentage;
 }
