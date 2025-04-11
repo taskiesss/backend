@@ -4,13 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommunityMemberSettingsResponseDTO {
-    Boolean isUserAdmin;
-    List<CommunityMemberPositionAndRoleDTO> communityMembers;
+public class CommunityMemberPositionAndRoleDTO {
+    CommunityMemberCommunityProfileDTO nameAndPicture;
+    String description;
+    Long positionId;
+    Double currentPercentage;
+    Integer futurePercentage;
 }

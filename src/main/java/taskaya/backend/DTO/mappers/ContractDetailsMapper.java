@@ -47,7 +47,7 @@ public class ContractDetailsMapper {
                 .endDate(contract.getEndDate())
                 .projectType(contract.getPayment())
                 .hoursWorked(hoursWorked)
-                .memberPercentage(memberPercentage)
+                .memberPercentage(memberPercentage*100.0)
                 .memberEarnings(memberPercentage*totalEarnings)
                 .totalCurrentEarnings(totalEarnings)
                 .isCommunity(contract.getWorkerEntity().getType()==WorkerEntity.WorkerType.COMMUNITY)

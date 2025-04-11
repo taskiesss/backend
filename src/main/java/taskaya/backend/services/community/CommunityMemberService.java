@@ -5,10 +5,12 @@ import jakarta.persistence.PreUpdate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.communities.communityMember.requests.CommunityMemberUpdateRequestDTO;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberSettingsResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityPositionAndRoleResponseMapper;
+import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.exceptions.notFound.NotFoundException;
@@ -25,6 +27,8 @@ public class CommunityMemberService {
     private CommunityMemberRepository communityMemberRepository;
     @Autowired
     private CommunityRepository communityRepository;
+    @Autowired
+    private JwtService jwtService;
 
     private CommunityService communityService;
 
@@ -55,11 +59,15 @@ public class CommunityMemberService {
         return positions.stream().filter(communityMember -> communityMember.getFreelancer()==null).toList();
     }
 
-    public List<CommunityMemberSettingsResponseDTO> getMembersPositionAndRole(String communityId){
+    public CommunityMemberSettingsResponseDTO getMembersSettingsPosition(String communityId){
         Community community = communityRepository.findById(UUID.fromString(communityId))
                 .orElseThrow(()-> new NotFoundException("Community Not Found!"));
 
-        return CommunityPositionAndRoleResponseMapper.toDTOList(community.getCommunityMembers());
+
+        return CommunityMemberSettingsResponseDTO.builder()
+                .isUserAdmin(jwtService.isCommunityAdmin(communityId))
+                .communityMembers(CommunityPositionAndRoleResponseMapper.toDTOList(community.getCommunityMembers()))
+                .build();
     }
 
     @Transactional

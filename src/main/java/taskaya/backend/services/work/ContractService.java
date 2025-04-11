@@ -178,13 +178,15 @@ public class ContractService {
             isUserCommunityAdmin = setIsUserCommunityAddmin(contract,community);
 
             Freelancer currentFreelancer = freelancerService.getFreelancerFromJWT();
+            if(contract.getStatus().equals(Contract.ContractStatus.ACTIVE) || contract.getStatus().equals(Contract.ContractStatus.ENDED))
+            {
+                ContractContributor contributor = contract.getContractContributors().stream()
+                        .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Contributor not found for current freelancer"));
 
-            ContractContributor contributor = contract.getContractContributors().stream()
-                    .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Contributor not found for current freelancer"));
-
-            memberPercentage = (double)contributor.getPercentage();
+                memberPercentage = (double) contributor.getPercentage();
+            }
         }
 
         ContractDetailsResponseDTO responseDTO= ContractDetailsMapper.toDTO(contract,freelancerName,freelancerPicture,freelancerId,memberPercentage);

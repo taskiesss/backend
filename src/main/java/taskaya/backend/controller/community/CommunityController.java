@@ -171,8 +171,8 @@ public class CommunityController {
 
     @GetMapping("/freelancers/communities/{communityId}/roles-and-positions")
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
-    public ResponseEntity<List<CommunityMemberSettingsResponseDTO>> getMembersPositionAndRole(@PathVariable String communityId){
-        return ResponseEntity.ok(communityMemberService.getMembersPositionAndRole(communityId));
+    public ResponseEntity<CommunityMemberSettingsResponseDTO> getMembersPositionAndRole(@PathVariable String communityId){
+        return ResponseEntity.ok(communityMemberService.getMembersSettingsPosition(communityId));
     }
 
     @PostMapping("/freelancers/communities/{communityId}/update-positions")
