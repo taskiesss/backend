@@ -151,4 +151,14 @@ public class ContractController {
         contractService.rateContract(contractId,rate);
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
+
+    @PostMapping("/freelancers/contracts/{contractId}/approve-contract:")
+    @PreAuthorize("@jwtService.isCommunityAdminOrFreelancerForContract(#contractId)")
+    public ResponseEntity<?> approveContract(
+            @PathVariable String contractId,
+            @RequestBody boolean accepted
+    ){
+        contractService.approveContract(contractId,accepted);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
+    }
 }

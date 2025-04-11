@@ -29,10 +29,8 @@ import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.freelancer.FreelancerBusiness;
-import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.exceptions.notFound.NotFoundException;
-import taskaya.backend.repository.client.ClientBalanceRepository;
 import taskaya.backend.repository.client.ClientBusinessRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.community.CommunityRepository;
@@ -364,7 +362,7 @@ public class ContractService {
                     .orElseThrow(()-> new NotFoundException("Community Not Found!"));
 
             Stream<CommunityMember> assignedMembers=community.getCommunityMembers().stream().filter(communityMember -> communityMember.getFreelancer()!=null);
-            double totalPercenatges = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
+            double totalPercentages = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
 
             contract.setContractContributors(
                     community.getCommunityMembers().stream()
@@ -372,7 +370,7 @@ public class ContractService {
                             .map(communityMember ->
                                     ContractContributor.builder()
                                             .freelancer(communityMember.getFreelancer())
-                                            .Percentage(communityMember.getPositionPercent()/ (float) totalPercenatges)
+                                            .Percentage(communityMember.getPositionPercent()/ (float) totalPercentages)
                                             .build()
                             ).collect(Collectors.toList())
             );
@@ -463,6 +461,14 @@ public class ContractService {
             freelancerRateClient(contract,rate);
         }
 
+    }
+
+    public void approveContract(String contractId, boolean accepted) {
+        Contract contract = getContractById(contractId);
+        if (contract.getStatus()!= Contract.ContractStatus.PENDING)
+            throw new IllegalArgumentException("the contract must be a pending contract");
+
+        startContract(contract,true);
     }
 
 
@@ -602,6 +608,8 @@ public class ContractService {
     private Float calculateRate(float oldRate ,int completedJobs , int newRate){
         return (oldRate * completedJobs + newRate) / (completedJobs + 1);
     }
+
+
 }
 
 
