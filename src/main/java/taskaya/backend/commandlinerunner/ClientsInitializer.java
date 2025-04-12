@@ -68,8 +68,8 @@ public class ClientsInitializer {
         client1.setRate(3);
 
         ClientBalance clientBalance1 = client1.getBalance();
-        clientBalance1.setAvailable(10000.0);
-        clientBalance1.setRestricted(700000.0);
+        clientBalance1.setAvailable(100000.0);
+        clientBalance1.setRestricted(7000000.0);
 
         clientRepository.save(client1);
 
@@ -78,8 +78,8 @@ public class ClientsInitializer {
         client2.setRate(2);
 
         ClientBalance clientBalance2 = client2.getBalance();
-        clientBalance2.setAvailable(20000.0);
-        clientBalance2.setRestricted(100000.0);
+        clientBalance2.setAvailable(200000.0);
+        clientBalance2.setRestricted(1000000.0);
 
         clientRepository.save(client2);
 
@@ -87,8 +87,8 @@ public class ClientsInitializer {
         client3.setRate(3.5F);
 
         ClientBalance clientBalance3 = client3.getBalance();
-        clientBalance3.setAvailable(10000.0);
-        clientBalance3.setRestricted(70000.0);
+        clientBalance3.setAvailable(100000.0);
+        clientBalance3.setRestricted(700000.0);
 
         clientRepository.save(client3);
 
