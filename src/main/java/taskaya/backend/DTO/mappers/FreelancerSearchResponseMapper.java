@@ -24,6 +24,7 @@ public class FreelancerSearchResponseMapper {
                 .skills(freelancer.getSkills().stream().map(Skill::getName).toList())
                 .rate(freelancer.getRate())
                 .experienceLevel(freelancer.getExperienceLevel())
+                .avrgHoursPerWeek(freelancer.getFreelancerBusiness().getAvgHoursPerWeek())
                 .pricePerHour(freelancer.getPricePerHour())
                 .profilePicture(freelancer.getProfilePicture())
                 .build();

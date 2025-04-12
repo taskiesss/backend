@@ -24,7 +24,7 @@ public class FreelancerProfileDTO {
     private Double pricePerHour;
     private float rate;
     private List<String> skills;
-    private Double avrgHoursPerWeek;
+    private Integer avrgHoursPerWeek;
     private List<String> languages;
     private List<Education> educations;
     private String linkedIn;

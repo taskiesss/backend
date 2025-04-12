@@ -80,7 +80,7 @@ public class FreelancerService {
     JwtService jwtService;
 
     @Transactional
-    public Freelancer createFreelancer(User user) {
+    public Freelancer   createFreelancer(User user) {
 
         user.setRole(User.Role.FREELANCER);
 

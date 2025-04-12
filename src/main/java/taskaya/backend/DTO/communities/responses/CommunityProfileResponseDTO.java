@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberCommunityProfileDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.enums.ExperienceLevel;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class CommunityProfileResponseDTO {
     String profilePicture;
     String name;
     String title;
+    ExperienceLevel experienceLevel;
+    Integer avgHoursPerWeek;
     String country;
     String coverPhoto;
     double pricePerHour;

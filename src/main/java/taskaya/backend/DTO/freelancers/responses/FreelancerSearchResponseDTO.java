@@ -14,6 +14,7 @@ public class FreelancerSearchResponseDTO {
     String name;
     String title ;
     ExperienceLevel experienceLevel;
+    Integer avrgHoursPerWeek;
     String description;
     List<String>skills;
     float rate ;

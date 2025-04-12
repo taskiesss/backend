@@ -42,6 +42,7 @@ import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
 import taskaya.backend.services.PaymentService;
 import taskaya.backend.services.community.CommunityService;
+import taskaya.backend.services.freelancer.FreelancerBusinessService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
 
@@ -69,7 +70,7 @@ public class ContractService {
     ClientRepository clientRepository ;
 
     @Autowired
-    FreelancerBusinessRepository freelancerBusinessRepository;
+    FreelancerBusinessService freelancerBusinessService;
     @Autowired
     CommunityRepository communityRepository;
 
@@ -574,14 +575,16 @@ public class ContractService {
         clientBusinessRepository.save(clientBusiness);
 
         //update the freelancer or community the community business
-        FreelancerBusiness freelancerBusiness =
-                contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.FREELANCER ?
-                        freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()).getFreelancerBusiness() :
-                        communityService.getCommunityByWorkerEntity(contract.getWorkerEntity()).getFreelancerBusiness();
 
-        freelancerBusiness.setCompletedJobs(freelancerBusiness.getCompletedJobs()+1);
+                if(contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.FREELANCER ){
+                    Freelancer freelancer =freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity());
+                    freelancer.setExperienceLevel(freelancerBusinessService.incrementCompletedJobs(freelancer.getFreelancerBusiness()));
 
-        freelancerBusinessRepository.save(freelancerBusiness);
+                }else {
+                    Community community=communityService.getCommunityByWorkerEntity(contract.getWorkerEntity());
+                    community.setExperienceLevel(freelancerBusinessService.incrementCompletedJobs(community.getFreelancerBusiness()));
+                }
+
 
         contractRepository.save(contract);
     }

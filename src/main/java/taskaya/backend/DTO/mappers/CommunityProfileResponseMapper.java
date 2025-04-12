@@ -16,6 +16,8 @@ public class CommunityProfileResponseMapper {
                 .country(community.getCountry())
                 .coverPhoto(community.getCoverPhoto())
                 .pricePerHour(community.getPricePerHour())
+                .avgHoursPerWeek(community.getFreelancerBusiness().getAvgHoursPerWeek())
+                .experienceLevel(community.getExperienceLevel())
                 .rate(community.getRate())
                 .description(community.getDescription())
                 .communityMembers(CommunityMemberCommunityProfileResponseMapper.toDTOList(community.getCommunityMembers()))

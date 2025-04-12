@@ -15,9 +15,11 @@ import java.util.UUID;
 @Builder
 public class CommunitySearchResponseDTO {
     private UUID id;
+    private String title;
     private String name;
     private String description;
     private ExperienceLevel experienceLevel;
+    Integer avrgHoursPerWeek;
     private List<String> skills;
     private int memberCount;
     private double pricePerHour;

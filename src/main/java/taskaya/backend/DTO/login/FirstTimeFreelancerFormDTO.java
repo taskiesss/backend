@@ -22,5 +22,5 @@ public class FirstTimeFreelancerFormDTO {
     private String professionalSummary;
     private List<Education> education;
     private List<String> languages;
-    private Double hoursPerWeek;
+    private Integer hoursPerWeek;
 }

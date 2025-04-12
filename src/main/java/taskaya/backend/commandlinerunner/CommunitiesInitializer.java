@@ -108,7 +108,7 @@ public class CommunitiesInitializer {
                         "✅ Tailor-made Software Solutions")
                 .experienceLevel(ExperienceLevel.expert)
                 .build();
-        community.getFreelancerBusiness().setAvgHoursPerWeek(300.0);
+        community.getFreelancerBusiness().setAvgHoursPerWeek(300);
 
 //		communityService.save(community);
 //		community.getCommunityMembers().add(CommunityMember.builder().community(community).freelancer(freelancerRepository.findByUser(user).get()).positionName("fullstack").build());
@@ -534,6 +534,7 @@ public class CommunitiesInitializer {
                 .rate(55)
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)
+                .freelancerBusiness(new FreelancerBusiness())
                 .build();
         Freelancer freelancer99 = Freelancer.builder()
                 .name("Jolie")

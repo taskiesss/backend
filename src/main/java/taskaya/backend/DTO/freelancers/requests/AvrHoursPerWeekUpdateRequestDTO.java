@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AvrHoursPerWeekUpdateRequestDTO {
-    Double avrgHoursPerWeek;
+    Integer avrgHoursPerWeek;
 }

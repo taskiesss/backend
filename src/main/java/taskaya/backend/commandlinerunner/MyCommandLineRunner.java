@@ -264,7 +264,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .experienceLevel(exp)
                 .build();
 
-        community.getFreelancerBusiness().setAvgHoursPerWeek(600.0);
+        community.getFreelancerBusiness().setAvgHoursPerWeek(600);
 
         CommunityMember communityMember1 = CommunityMember.builder()
                 .positionPercent(40.1F)

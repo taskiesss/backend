@@ -126,6 +126,9 @@ public class FreelancersInitializer {
         freelancer1.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740135952/freelancers_profile_pictures/q9oe51olxf4ohwm8mlis.jpg");
         freelancer1.setLanguages(new HashSet<>(List.of("english")));
         freelancer1.setPortfolios(portfolios);
+        freelancer1.setLinkedIn("https://www.linkedin.com/public-profile/settings?trk=d_flagship3_profile_self_view_public_profile");
+        freelancer1.setExperienceLevel(ExperienceLevel.intermediate);
+        freelancer1.getFreelancerBusiness().setAvgHoursPerWeek(45);
 
         FreelancerBalance freelancerBalance1 = freelancer1.getBalance();
         freelancerBalance1.setAvailable(10000.0);
@@ -141,10 +144,11 @@ public class FreelancersInitializer {
         freelancer2.setTitle("fullstack developer");
         freelancer2.setCountry("cairo,Egypt");
         freelancer2.setName("mina hany");
+        freelancer2.setExperienceLevel(ExperienceLevel.intermediate);
         freelancer2.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/nf173ownjkrkm24qioi7.jpg");
         freelancer2.setLanguages(new HashSet<>(List.of("english")));
 //		freelancer2.setPortfolios(portfolios);
-
+        freelancer2.getFreelancerBusiness().setAvgHoursPerWeek(45);
         FreelancerBalance freelancerBalance2 = freelancer2.getBalance();
         freelancerBalance2.setAvailable(20000.0);
         freelancerBalance2.setWorkInProgress(4000.0);
@@ -154,12 +158,14 @@ public class FreelancersInitializer {
         freelancer3.setSkills(new HashSet<>(skills3));
         freelancer3.setPricePerHour(70D);
         freelancer3.setRate(2);
+        freelancer3.setExperienceLevel(ExperienceLevel.intermediate);
         freelancer3.setDescription("best freelancer you will deal with ;)");
         freelancer3.setTitle("fullstack developer");
         freelancer3.setCountry("cairo,Egypt");
         freelancer3.setName("lara jreige");
         freelancer3.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1740614562/freelancers_profile_pictures/ugwy7jflz41djmpmn1co.jpg");
         freelancer3.setLanguages(new HashSet<>(List.of("english")));
+        freelancer3.getFreelancerBusiness().setAvgHoursPerWeek(45);
 //		freelancer3.setPortfolios(portfolios);
 
         FreelancerBalance freelancerBalance3 = freelancer3.getBalance();
@@ -428,12 +434,34 @@ public class FreelancersInitializer {
         activeJob.setContract(activeContract);
 
 
+        //create the milestones for the active job
+        Milestone milestone11 = Milestone.builder()
+                .name("5G Network Engineer - Milestone 1")
+                .number(1)
+                .description("Mile1Desc")
+                .estimatedHours(5)
+                .dueDate(new Date(2026-1900, 1, 20, 15, 30, 0))
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .deliverableFiles(List.of(DeliverableFile.builder()
+                        .fileName("first submission")
+                        .filePath(Constants.DELIVERABLE_FILE_PATH)
+                        .build()))
+                .build();
+        Milestone milestone22 = Milestone.builder()
+                .name("5G Network Engineer - Milestone 2")
+                .number(2)
+                .description("Mile2Desc")
+                .estimatedHours(3)
+                .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .build();
+
         Contract deletedContract = Contract.builder()
                 .job(activeJob)
                 .client(client)
                 .status(Contract.ContractStatus.REJECTED)
                 .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-                .milestones(milestones)
+                .milestones(List.of(milestone11,milestone22))
                 .workerEntity(freelancer.getWorkerEntity())
                 .endDate(new Date())
                 .payment(PaymentMethod.PerProject)
