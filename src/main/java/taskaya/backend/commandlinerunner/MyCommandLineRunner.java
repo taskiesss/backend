@@ -140,7 +140,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         Community pabloCommunity = communityRepository.findByCommunityName("Pablo Community").get();
         Milestone milestone = Milestone.builder()
                 .name("milestone11")
-                .number(61)
+                .number(1)
                 .description("description1")
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
@@ -253,13 +253,13 @@ class MyCommandLineRunner implements CommandLineRunner {
         Vote noVote = Vote.builder()
                 .contract(pendingContract)
                 .communityMember(person2)
-                .agreed(null)
+                .agreed(true)
                 .build();
 
         Vote nullVote = Vote.builder()
                 .contract(pendingContract)
                 .communityMember(person3)
-                .agreed(null)
+                .agreed(true)
                 .build();
 
 

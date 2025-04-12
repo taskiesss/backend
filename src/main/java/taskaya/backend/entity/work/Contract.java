@@ -33,6 +33,7 @@ public class Contract {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id") // Foreign key in the ContractContributor table
+    @Builder.Default
     private List<ContractContributor> contractContributors = new LinkedList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

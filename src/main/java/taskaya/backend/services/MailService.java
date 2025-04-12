@@ -153,4 +153,21 @@ public class MailService {
             throw new RuntimeException(e);
         }
     }
+
+    public void sendRejectionMailToClient(String email, Contract contract) {
+        String subject = "Contract Rejection: " + contract.getJob().getTitle();
+        String content = "<html><body>"
+                + "Dear Client,<br><br>"
+                + "We regret to inform you that your contract titled <strong>" + contract.getJob().getTitle() + "</strong>whit  has been rejected.<br><br>"
+                + "If you have any questions or need further details, feel free to reach out.<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        try {
+            sendEmail(email, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

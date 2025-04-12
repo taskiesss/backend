@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.contracts.requests.AcceptOrRejectContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
@@ -152,13 +153,14 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 
-    @PostMapping("/freelancers/contracts/{contractId}/approve-contract:")
+    @PostMapping("/freelancers/contracts/{contractId}/approve-contract")
     @PreAuthorize("@jwtService.isCommunityAdminOrFreelancerForContract(#contractId)")
     public ResponseEntity<?> approveContract(
             @PathVariable String contractId,
-            @RequestBody boolean accepted
+            @RequestBody AcceptOrRejectContractRequestDTO requestDTO
     ){
-        contractService.approveContract(contractId,accepted);
+
+        contractService.acceptOrRejectContract(contractId,requestDTO.isAccepted());
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 }

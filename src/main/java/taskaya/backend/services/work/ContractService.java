@@ -363,8 +363,9 @@ public class ContractService {
 
             Stream<CommunityMember> assignedMembers=community.getCommunityMembers().stream().filter(communityMember -> communityMember.getFreelancer()!=null);
             double totalPercentages = assignedMembers.mapToDouble(CommunityMember::getPositionPercent).sum();
-
-            contract.setContractContributors(
+            //should do this because of orphan removal instead of creating a new list
+            contract.getContractContributors().clear();
+            contract.getContractContributors().addAll(
                     community.getCommunityMembers().stream()
                             .filter(communityMember -> communityMember.getFreelancer()!=null)
                             .map(communityMember ->
@@ -379,6 +380,11 @@ public class ContractService {
         }
         contract.setStatus(Contract.ContractStatus.ACTIVE);
 
+
+        contractRepository.save(contract);
+        jobService.assignJobByContract(contract);
+        rejectOtherContractAfterAcceptingOne(contract);
+
         if (sendEmails){
             List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
             for (Freelancer freelancer : contractFreelancers) {
@@ -389,10 +395,6 @@ public class ContractService {
             mailService.sendEmailForClientForStartingContract(contract.getClient().getUser().getEmail(),
                     contract);
         }
-        contractRepository.save(contract);
-        jobService.assignJobByContract(contract);
-        rejectOtherContractAfterAcceptingOne(contract);
-
         System.out.println("contract just started : "+ contract.getId());
     }
 
@@ -463,13 +465,17 @@ public class ContractService {
 
     }
 
-    public void approveContract(String contractId, boolean accepted) {
+    public void acceptOrRejectContract(String contractId, boolean accepted) {
         Contract contract = getContractById(contractId);
         if (contract.getStatus()!= Contract.ContractStatus.PENDING)
             throw new IllegalArgumentException("the contract must be a pending contract");
 
-        startContract(contract,true);
+        if (accepted)
+            startContract(contract,true);
+        else
+            rejectContract(contract,true);
     }
+
 
 
 
@@ -531,6 +537,13 @@ public class ContractService {
         }
     }
 
+    public void rejectContract(Contract contract , boolean snedEmails)   {
+        if (contract.getStatus()!= Contract.ContractStatus.PENDING)
+            throw new IllegalArgumentException("the contract must be a pending contract");
+        contract.setStatus(Contract.ContractStatus.REJECTED);
+        mailService.sendRejectionMailToClient(contract.getClient().getUser().getEmail() , contract);
+        contractRepository.save(contract);
+    }
     public void rejectOtherContractAfterAcceptingOne(Contract acceptedContract){
         //find contracts  for this job and status is pending
         List<Contract> contracts = contractRepository
