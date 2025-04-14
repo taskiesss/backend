@@ -9,6 +9,7 @@ import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.freelancer.Freelancer;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,4 +30,5 @@ public interface CommunityMemberRepository extends JpaRepository<CommunityMember
     Optional<CommunityMember> findByIdAndCommunity(Long id, Community community);
     Optional<CommunityMember> findByIdAndCommunityUuid(Long memberId, UUID communityId);
 
+    List<CommunityMember> findByFreelancer(Freelancer freelancer);
 }

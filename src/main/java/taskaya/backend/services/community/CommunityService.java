@@ -266,12 +266,12 @@ public class CommunityService {
     }
 
     @Transactional
-    @PreAuthorize("@jwtService.isCommunityAdmin(#id)")
     public void updateHeaderSection(String id, HeaderSectionUpdateRequestDTO requestDTO){
 
         if(requestDTO.getPricePerHour() == null
                 ||requestDTO.getPricePerHour() < 0
-                ||requestDTO.getCountry()==null
+                ||requestDTO.getAvgHoursPerWeek() == null
+                ||requestDTO.getAvgHoursPerWeek() < 0
                 ||requestDTO.getJobTitle() ==null
                 ||requestDTO.getFirstName()==null)
             throw new RuntimeException("All fields are required");
@@ -282,7 +282,7 @@ public class CommunityService {
 
         community.setCommunityName(requestDTO.getFirstName());
         community.setPricePerHour(requestDTO.getPricePerHour());
-        community.setCountry(requestDTO.getCountry());
+        community.getFreelancerBusiness().setAvgHoursPerWeek(requestDTO.getAvgHoursPerWeek());
         community.setTitle(requestDTO.getJobTitle());
 
         communityRepository.save(community);

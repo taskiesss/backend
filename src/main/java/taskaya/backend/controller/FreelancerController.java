@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.*;
+import taskaya.backend.DTO.freelancers.responses.FreelancerCommunitiesResponseDTO;
 import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
@@ -165,4 +166,10 @@ public class FreelancerController {
         freelancerService.updateAvrgHoursPerWeek(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Avr.HoursPerWeek Updated!").build());
     }
+
+    @GetMapping("/freelancers/my-communities")
+    public ResponseEntity<FreelancerCommunitiesResponseDTO> getMyCommunities(){
+        return ResponseEntity.ok(freelancerService.getMyCommunities());
+    }
+
 }

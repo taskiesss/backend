@@ -93,6 +93,7 @@ public class CommunityController {
     }
 
     @PatchMapping("/communities/{id}/header-section")
+    @PreAuthorize("@jwtService.isCommunityAdmin(#id)")
     public ResponseEntity<?> updateHeaderSection(
             @PathVariable String id,
             @RequestBody HeaderSectionUpdateRequestDTO requestDTO){

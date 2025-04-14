@@ -4,11 +4,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import taskaya.backend.DTO.freelancers.requests.*;
-import taskaya.backend.DTO.freelancers.responses.FreelancerOwnedCommunitiesResponseDTO;
-import taskaya.backend.DTO.freelancers.responses.FreelancerProfileDTO;
+import taskaya.backend.DTO.freelancers.responses.*;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -20,13 +20,13 @@ import taskaya.backend.DTO.login.FirstTimeFreelancerFormDTO;
 import taskaya.backend.DTO.mappers.FreelancerOwnedCommunitiesResponseMapper;
 import taskaya.backend.DTO.mappers.FreelancerProfileMapper;
 import taskaya.backend.DTO.mappers.FreelancerSearchResponseMapper;
-import taskaya.backend.DTO.freelancers.responses.FreelancerSearchResponseDTO;
 import taskaya.backend.DTO.freelancers.requests.FreenlancerSearchRequestDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
+import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -43,6 +43,7 @@ import taskaya.backend.exceptions.login.FirstTimeFreelancerFormException;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
+import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 
@@ -51,6 +52,7 @@ import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.specifications.FreelancerSpecification;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -75,6 +77,9 @@ public class FreelancerService {
 
     @Autowired
     JobRepository jobRepository;
+
+    @Autowired
+    CommunityMemberRepository communityMemberRepository;
 
     @Autowired
     JwtService jwtService;
@@ -271,16 +276,16 @@ public class FreelancerService {
 
         if (requestDTO.getPricePerHour() == null
                 || requestDTO.getPricePerHour() < 0
-                || requestDTO.getCountry() == null
+                || requestDTO.getAvgHoursPerWeek() == null
+                || requestDTO.getAvgHoursPerWeek() < 0
                 || requestDTO.getJobTitle() == null
-                || requestDTO.getLastName() == null
                 || requestDTO.getFirstName() == null)
             throw new RuntimeException("All fields are required");
 
         Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setName(requestDTO.getFirstName() + " " + requestDTO.getLastName());
-        freelancer.setPricePerHour(requestDTO.getPricePerHour());
-        freelancer.setCountry(requestDTO.getCountry());
+        freelancer.setName(requestDTO.getFirstName() );
+        freelancer.setPricePerHour(Double.valueOf(requestDTO.getPricePerHour()));
+        freelancer.getFreelancerBusiness().setAvgHoursPerWeek(requestDTO.getAvgHoursPerWeek());
         freelancer.setTitle(requestDTO.getJobTitle());
 
         freelancerRepository.save(freelancer);
@@ -293,7 +298,7 @@ public class FreelancerService {
         freelancerRepository.save(freelancer);
     }
 
-    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id, org.springframework.data.domain.Pageable pageable) {
+    public Page<FreelancerPortfolio> getFreelancerPortfolios(String id, Pageable pageable) {
 
         Freelancer freelancer = getFreelancerById(id);
         List<FreelancerPortfolio> portfolios = freelancer.getPortfolios();
@@ -450,6 +455,35 @@ public class FreelancerService {
     }
 
 
+    public FreelancerCommunitiesResponseDTO getMyCommunities() {
+        Freelancer freelancer = getFreelancerFromJWT();
+        List <CommunityMember> myCommunityMembers = communityMemberRepository.findByFreelancer(freelancer);
+
+        FreelancerCommunitiesResponseDTO responseDTO = FreelancerCommunitiesResponseDTO.builder()
+                        .adminOf(new ArrayList<>())
+                        .memberOf(new ArrayList<>())
+                        .build();
+
+
+        for(CommunityMember member : myCommunityMembers){
+            Community community = member.getCommunity();
+
+            FreelancerIsMemberOrAdminOfResponseDTO details = FreelancerIsMemberOrAdminOfResponseDTO.builder()
+                    .communityId(community.getUuid().toString())
+                    .name(community.getCommunityName())
+                    .profilePicture(community.getProfilePicture())
+                    .communityTitle(community.getTitle())
+                    .build();
+
+            if(community.getAdmin() == freelancer){
+                responseDTO.getAdminOf().add(details);
+            }
+            else{
+                responseDTO.getMemberOf().add(details);
+            }
+        }
+        return responseDTO;
+    }
 }
 
 
