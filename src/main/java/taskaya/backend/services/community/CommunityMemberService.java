@@ -121,13 +121,16 @@ public class CommunityMemberService {
             }
         }
 
-        int totalPercent = existingMembers.stream()
+        if (!isTotalPercentagesValid(existingMembers)) {
+            throw new RuntimeException("Total financial percentage of all positions must equal 100%");
+        }
+    }
+
+    public boolean isTotalPercentagesValid(List<CommunityMember> communityMembers) {
+        int totalPercent = communityMembers.stream()
                 .mapToInt(member -> (int) member.getPositionPercent())
                 .sum();
-
-        if (totalPercent != 100) {
-            throw new RuntimeException("Total financial percentage of all positions must equal 100%. Found: " + totalPercent + "%");
-        }
+        return totalPercent == 100;
     }
 
 }

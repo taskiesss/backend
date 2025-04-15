@@ -13,6 +13,7 @@ import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.communityMember.requests.CommunityMemberUpdateRequestDTO;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberSettingsResponseDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
+import taskaya.backend.DTO.communities.requests.CommunityCreateRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
 import taskaya.backend.DTO.communities.responses.*;
@@ -182,5 +183,13 @@ public class CommunityController {
                                                     @RequestBody List<CommunityMemberUpdateRequestDTO> membersDTOs){
         communityMemberService.updateCommunityMembers(communityId, membersDTOs);
         return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
+    }
+
+    @PostMapping("/freelancers/communities/create-community")
+    public ResponseEntity<?> createCommunity(
+            @RequestBody CommunityCreateRequestDTO requestDTO
+    )  {
+
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.createCommunity(requestDTO));
     }
 }

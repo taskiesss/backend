@@ -11,17 +11,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberCommunityProfileDTO;
-import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
-import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
+import taskaya.backend.DTO.communities.requests.*;
 import taskaya.backend.DTO.communities.responses.*;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.mappers.*;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
-import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
@@ -29,6 +28,7 @@ import taskaya.backend.entity.community.JoinRequest;
 import taskaya.backend.entity.community.Vote;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.freelancer.FreelancerBusiness;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
@@ -514,6 +514,81 @@ public class CommunityService {
     public Community getCommunityByWorkerEntity (WorkerEntity workerEntity){
         return communityRepository.findByWorkerEntity(workerEntity)
                 .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+    }
+
+    public CreateCommunityResponseDTO createCommunity(CommunityCreateRequestDTO requestDTO) {
+        if (requestDTO.getSkills()== null){
+            requestDTO.setSkills(new LinkedList<>());
+        }
+        if (requestDTO.getCommunityPositions() == null){
+            requestDTO.setCommunityPositions(new LinkedList<>());
+        }
+        if(requestDTO.getCommunityName()==null || requestDTO.getCommunityName().isEmpty()
+                || requestDTO.getTitle()==null || requestDTO.getTitle().isEmpty()
+                || requestDTO.getDescription()==null || requestDTO.getDescription().isEmpty()
+                || requestDTO.getPricePerHour() == null || requestDTO.getPricePerHour() < 0
+                || requestDTO.getAvrgHoursPerWeek() == null || requestDTO.getAvrgHoursPerWeek() < 0
+                || requestDTO.getAdminRole() == null|| requestDTO.getAdminRole().getPositionName() == null || requestDTO.getAdminRole().getPositionName().isEmpty()
+                || requestDTO.getAdminRole().getPercentage() == null || requestDTO.getAdminRole().getPercentage() < 0
+        ){
+            throw new RuntimeException("All fields are required");
+        }
+        Community community = Community.builder()
+                .title(requestDTO.getTitle())
+                .communityName(requestDTO.getCommunityName())
+                .admin(freelancerService.getFreelancerFromJWT())
+                .pricePerHour(requestDTO.getPricePerHour())
+                .description(requestDTO.getDescription())
+                .skills(requestDTO.getSkills().stream().map(skill-> Skill.builder().name(skill).build()).collect(Collectors.toSet()))
+                .freelancerBusiness(FreelancerBusiness.builder().avgHoursPerWeek(requestDTO.getAvrgHoursPerWeek()).completedJobs(0).build())
+                .isFull(requestDTO.getCommunityPositions().isEmpty()) //if empty ,only the admin then is full
+                .profilePicture(Constants.COMMUNITY_FIRST_PROFILE_PICTURE)
+                .coverPhoto(Constants.FIRST_COVER_PICTURE)
+                .workerEntity(
+                        WorkerEntity.builder()
+                                .type(WorkerEntity.WorkerType.COMMUNITY)
+                                .build()
+                )
+                .country("Cairo, Egypt")
+                .build();
+
+        community.getCommunityMembers().add(
+                CommunityMember.builder()
+                        .community(community)
+                        .positionName(requestDTO.getAdminRole().getPositionName())
+                        .positionPercent(requestDTO.getAdminRole().getPercentage())
+                        .description(requestDTO.getAdminRole().getDescription())
+                        .freelancer(community.getAdmin())
+                        .build()
+        );
+
+        for (MemberForCreateCommunityDTO member : requestDTO.getCommunityPositions()) {
+            if ( member.getPositionName()==null || member.getPositionName().isEmpty()
+                    || member.getPercentage() == null || member.getPercentage() < 0) {
+                throw new RuntimeException("percentage and position name are required");
+            }
+            community.getCommunityMembers().add(
+                    CommunityMember.builder()
+                            .community(community)
+                            .positionName(member.getPositionName())
+                            .positionPercent(member.getPercentage())
+                            .description(member.getDescription())
+                            .build()
+            );
+        }
+
+        community.setStatus(Community.CommunityStatus.AVAILABLE);
+
+        if (!communityMemberService.isTotalPercentagesValid(community.getCommunityMembers())){
+            throw new RuntimeException("Total percentages must be equal to 100%");
+        }
+        communityRepository.save(community);
+
+
+        return CreateCommunityResponseDTO.builder()
+                .communityID(community.getUuid().toString()).build();
+
+
     }
 }
 

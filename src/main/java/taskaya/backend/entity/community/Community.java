@@ -80,6 +80,7 @@ public class Community {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private ExperienceLevel experienceLevel = ExperienceLevel.entry_level;
 
 
