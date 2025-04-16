@@ -2,6 +2,7 @@ package taskaya.backend.commandlinerunner;
 
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.config.Constants;
@@ -13,6 +14,8 @@ import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.community.JoinRequest;
 import taskaya.backend.entity.community.Vote;
+import taskaya.backend.entity.community.posts.Post;
+import taskaya.backend.entity.community.posts.PostComment;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
@@ -24,14 +27,13 @@ import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
-import taskaya.backend.repository.community.CommunityJoinRequestRepository;
-import taskaya.backend.repository.community.CommunityRepository;
-import taskaya.backend.repository.community.CommunityVoteRepository;
+import taskaya.backend.repository.community.*;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.community.CommunityMemberService;
+import taskaya.backend.services.community.CommunityPostService;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.work.ContractService;
 
@@ -72,6 +74,11 @@ public class CommunitiesInitializer {
     @Autowired
     private CommunityVoteRepository communityVoteRepository;
 
+    @Autowired
+    private CommunityPostRepository communityPostRepository;
+
+    @Autowired
+    private CommunityPostCommentRepository communityPostCommentRepository;
 
     public void communityWithAdmin(){
         User user = userRepository.findByUsername("freelancer01").get();
@@ -386,9 +393,6 @@ public class CommunitiesInitializer {
                 .milestones(listmilestone)
                 .build();
 
-
-
-
         CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
         System.out.println("person1 :" + person1.getFreelancer().getName());
         CommunityMember person2 = pabloCommunity.getCommunityMembers().get(1);
@@ -432,8 +436,6 @@ public class CommunitiesInitializer {
         activeJob.setStatus(Job.JobStatus.IN_PROGRESS);
         activeJob.setAssignedTo(pabloCommunity.getWorkerEntity());
         jobRepository.save(activeJob);
-
-
 
         //creating milestones for active contract and the first milestone status will be in progress
         //milestone 1
@@ -503,11 +505,7 @@ public class CommunitiesInitializer {
     }
 
 
-
-
     public void communityJoinRequests(){
-
-
         Community pabloCommunity = communityRepository.findByCommunityName("Pablo Community").get();
 
         User user88 = User.builder()
@@ -585,5 +583,47 @@ public class CommunitiesInitializer {
         communityJoinRequestRepository.save(joinRequest1);
         communityJoinRequestRepository.save(joinRequest2);
         System.out.println("Jolie id:" + freelancer99.getId());
+    }
+
+    public void communityPost(){
+        Community community = communityRepository.findByCommunityName("Pablo Community").get();
+        Freelancer freelancer02 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get();
+        Freelancer freelancer01 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").get()).get();
+
+        Post post1 = Post.builder()
+                .communityId(community.getUuid().toString())
+                .content("Hello everyone, welcome to our community! Let's connect and share ideas.")
+                .title("Welcome Post!")
+                .ownerId(freelancer02.getId().toString())
+                .createdAt(new Date())
+                .build();
+
+        Post post2 = Post.builder()
+                .communityId(community.getUuid().toString())
+                .title("New Project!")
+                .content("Exciting news! We have a new project coming up. Stay tuned for details.")
+                .ownerId(freelancer01.getId().toString())
+                .createdAt(new Date())
+                .build();
+
+        communityPostRepository.save(post1);
+        communityPostRepository.save(post2);
+    }
+
+    public void communityPostComment(){
+        Community community = communityRepository.findByCommunityName("Pablo Community").get();
+        List<Post> posts = communityPostRepository.findByCommunityId(community.getUuid().toString());
+        Freelancer freelancer03 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").get()).get();
+
+        for (Post post : posts) {
+            PostComment comment = PostComment.builder()
+                    .postId(post.getId())
+                    .content("This is a great start! I'm excited!!")
+                    .ownerId(freelancer03.getId().toString())
+                    .createdAt(new Date())
+                    .build();
+
+            communityPostCommentRepository.save(comment);
+        }
     }
 }

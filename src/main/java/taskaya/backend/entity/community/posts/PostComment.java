@@ -5,38 +5,27 @@ import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Document(collection = "post")
+@Document(collection = "postcomment")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Post {
+public class PostComment {
 
     @Id
     private String id;
 
-    @Field(name = "community_id")
-    private String community_id;
-
     @Field(name = "owner_id")
     private String owner_id;
 
-    @Field(name = "title")
-    private String title;
+    @Field(name = "post_id")
+    private String post_id;
 
     @Field(name = "content")
     private String content;
-
-    @Field(name = "comment_id")
-    private List<String> comment_id = new ArrayList<>();
-
-    @Field(name = "liker_id")
-    private List<String> liker_id = new ArrayList<>();
 
     @Field(name = "created_at")
     private Date created_at = new Date();
