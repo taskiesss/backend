@@ -21,10 +21,10 @@ public class Post {
     private String id;
 
     @Field(name = "community_id")
-    private String community_id;
+    private String communityId;
 
     @Field(name = "owner_id")
-    private String owner_id;
+    private String ownerId;
 
     @Field(name = "title")
     private String title;
@@ -33,11 +33,11 @@ public class Post {
     private String content;
 
     @Field(name = "comment_id")
-    private List<String> comment_id = new ArrayList<>();
+    private List<String> commentId = new ArrayList<>();
 
     @Field(name = "liker_id")
-    private List<String> liker_id = new ArrayList<>();
+    private List<String> likerId = new ArrayList<>();
 
     @Field(name = "created_at")
-    private Date created_at = new Date();
+    private Date createdAt = new Date();
 }

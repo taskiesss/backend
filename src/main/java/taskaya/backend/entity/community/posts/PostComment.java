@@ -19,14 +19,14 @@ public class PostComment {
     private String id;
 
     @Field(name = "owner_id")
-    private String owner_id;
+    private String ownerId;
 
     @Field(name = "post_id")
-    private String post_id;
+    private String postId;
 
     @Field(name = "content")
     private String content;
 
     @Field(name = "created_at")
-    private Date created_at = new Date();
+    private Date createdAt = new Date();
 }

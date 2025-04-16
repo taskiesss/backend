@@ -22,6 +22,7 @@ import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.services.community.CommunityMemberService;
+import taskaya.backend.services.community.CommunityPostService;
 import taskaya.backend.services.community.CommunityService;
 
 import java.io.IOException;
@@ -36,27 +37,30 @@ public class CommunityController {
     @Autowired
     CommunityMemberService communityMemberService;
 
+    @Autowired
+    CommunityPostService communityPostService;
+
     @PostMapping
-    public Community getCommunity(@RequestParam String commName){
+    public Community getCommunity(@RequestParam String commName) {
         return communityService.getCommunityByName(commName);
     }
 
     @PostMapping("/communities/search")
-    public ResponseEntity<Page<CommunitySearchResponseDTO> > searchCommunity(
+    public ResponseEntity<Page<CommunitySearchResponseDTO>> searchCommunity(
             @RequestBody CommunitySearchRequestDTO requestDTO) {
         return ResponseEntity.ok(communityService.searchCommunities(requestDTO));
     }
 
 
     @GetMapping("/communities/{communityId}/profile")
-    public ResponseEntity<?> getCommunityProfile(@PathVariable String communityId){
+    public ResponseEntity<?> getCommunityProfile(@PathVariable String communityId) {
         return ResponseEntity.ok(communityService.getCommunityProfile(communityId));
     }
 
     @GetMapping("/communities/{id}/workdone")
     public ResponseEntity<Page<WorkerEntityWorkdoneResponseDTO>> communityWorkdone(
             @PathVariable String id, @RequestParam int page, @RequestParam int size
-    ){
+    ) {
         return ResponseEntity.ok(communityService.getCommunityWorkdone(id, page, size));
     }
 
@@ -79,9 +83,9 @@ public class CommunityController {
     @PatchMapping("/communities/{id}/skills")
     public ResponseEntity<?> updateSkills(
             @PathVariable String id,
-            @RequestBody SkillsUpdateRequestDTO skills){
+            @RequestBody SkillsUpdateRequestDTO skills) {
         communityService.updateSkills(id, skills);
-        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Skills updated successfully.").build(),HttpStatus.OK);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Skills updated successfully.").build(), HttpStatus.OK);
     }
 
     @PatchMapping("/communities/{id}/description")
@@ -95,27 +99,27 @@ public class CommunityController {
     @PatchMapping("/communities/{id}/header-section")
     public ResponseEntity<?> updateHeaderSection(
             @PathVariable String id,
-            @RequestBody HeaderSectionUpdateRequestDTO requestDTO){
+            @RequestBody HeaderSectionUpdateRequestDTO requestDTO) {
         communityService.updateHeaderSection(id, requestDTO);
-        return new ResponseEntity<>(SimpleResponseDTO.builder().message("header updated successfully.").build(),HttpStatus.OK);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("header updated successfully.").build(), HttpStatus.OK);
     }
 
     @GetMapping("/freelancers/communities/{communityId}/joinrequests")
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
-    public ResponseEntity<Page<CommunityJoinReqResponseDTO>> joinRequests (
+    public ResponseEntity<Page<CommunityJoinReqResponseDTO>> joinRequests(
             @PathVariable String communityId,
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size){
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(communityService.getJoinRequests(communityId, page, size));
 
     }
 
     @GetMapping("/freelancers/communities/{communityId}/offers")
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
-    public ResponseEntity<Page<CommunityOfferResponseDTO>> offers (
+    public ResponseEntity<Page<CommunityOfferResponseDTO>> offers(
             @PathVariable String communityId,
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size){
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(communityService.getOffers(communityId, page, size));
 
     }
@@ -127,7 +131,7 @@ public class CommunityController {
             @RequestBody AcceptToJoinRequestDTO request
     ) throws MessagingException {
         communityService.acceptToJoin(communityId, request);
-        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Freelancer request processed successfully.").build(),HttpStatus.OK);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Freelancer request processed successfully.").build(), HttpStatus.OK);
     }
 
     @PostMapping("/freelancers/communities/{communityId}/vote")
@@ -135,9 +139,9 @@ public class CommunityController {
     public ResponseEntity<?> vote(
             @PathVariable String communityId,
             @RequestBody VoteRequestDTO request
-    ){
+    ) {
         communityService.vote(communityId, request);
-        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Vote recorded successfully.").build(),HttpStatus.OK);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("Vote recorded successfully.").build(), HttpStatus.OK);
     }
 
     @GetMapping("/freelancers/communities/{communityId}/votes/{contractId}")
@@ -145,18 +149,18 @@ public class CommunityController {
     public ResponseEntity<CommunityVotesDetailsResponseDTO> getVotesDetails(
             @PathVariable String communityId,
             @PathVariable String contractId
-    ){
-        return ResponseEntity.ok(communityService.getVotesDetails(communityId,contractId));
+    ) {
+        return ResponseEntity.ok(communityService.getVotesDetails(communityId, contractId));
     }
 
     @GetMapping("/freelancers/communities/{communityId}/available-positions")
     @PreAuthorize("@jwtService.isNotCommunityMember(#communityId)")
-    public ResponseEntity<Page<CommunityAvailablePositionsResponseDTO>>getAvailablePositions(
+    public ResponseEntity<Page<CommunityAvailablePositionsResponseDTO>> getAvailablePositions(
             @PathVariable String communityId,
-            @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size
-    ){
-        return ResponseEntity.ok(communityService.getAvailablePositions(communityId,page,size));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(communityService.getAvailablePositions(communityId, page, size));
     }
 
     @PostMapping("/freelancers/communities/{communityId}/join-request/{positionId}")
@@ -164,22 +168,29 @@ public class CommunityController {
     public ResponseEntity<?> requestToJoin(
             @PathVariable String communityId,
             @PathVariable long positionId
-    ){
+    ) {
         communityService.requestToJoin(communityId, positionId);
-        return new ResponseEntity<>(SimpleResponseDTO.builder().message("accepted.").build(),HttpStatus.OK);
+        return new ResponseEntity<>(SimpleResponseDTO.builder().message("accepted.").build(), HttpStatus.OK);
     }
 
     @GetMapping("/freelancers/communities/{communityId}/roles-and-positions")
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
-    public ResponseEntity<CommunityMemberSettingsResponseDTO> getMembersPositionAndRole(@PathVariable String communityId){
+    public ResponseEntity<CommunityMemberSettingsResponseDTO> getMembersPositionAndRole(@PathVariable String communityId) {
         return ResponseEntity.ok(communityMemberService.getMembersSettingsPosition(communityId));
     }
 
     @PostMapping("/freelancers/communities/{communityId}/update-positions")
     @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
     public ResponseEntity<?> updateCommunityMembers(@PathVariable String communityId,
-                                                    @RequestBody List<CommunityMemberUpdateRequestDTO> membersDTOs){
+                                                    @RequestBody List<CommunityMemberUpdateRequestDTO> membersDTOs) {
         communityMemberService.updateCommunityMembers(communityId, membersDTOs);
         return ResponseEntity.ok(SimpleResponseDTO.builder().message("true").build());
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/posts")
+    public ResponseEntity<Page<CommunityPostResponseDTO>> getCommunityPosts(@PathVariable String communityId,
+                                                                            @RequestParam(defaultValue = "0") int page,
+                                                                            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(communityPostService.getCommunityPosts(communityId, page, size));
     }
 }
