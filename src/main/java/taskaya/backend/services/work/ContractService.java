@@ -42,6 +42,7 @@ import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
 import taskaya.backend.services.PaymentService;
 import taskaya.backend.services.community.CommunityService;
+import taskaya.backend.services.freelancer.FreelancerBalanceService;
 import taskaya.backend.services.freelancer.FreelancerBusinessService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ContractSpecification;
@@ -98,6 +99,9 @@ public class ContractService {
     @Autowired
     JobService jobService;
 
+    @Autowired
+    FreelancerBalanceService freelancerBalanceService;
+
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -137,13 +141,7 @@ public class ContractService {
 
 
 
-    public static Double getContractBudget(Contract contract){
-        double totalBudget = 0D;
-        for (Milestone milestone : contract.getMilestones()){
-            totalBudget+=getMilestoneBudget(milestone,contract);
-        }
-        return totalBudget;
-    }
+
 
     public static Milestone getActiveMilestone (Contract contract){
         contract.getMilestones().sort(Comparator.comparing(Milestone::getNumber));
@@ -356,6 +354,7 @@ public class ContractService {
 
 
 
+    @Transactional
     public void startContract(Contract contract ,boolean sendEmails) {
 
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY){
@@ -385,9 +384,10 @@ public class ContractService {
         contractRepository.save(contract);
         jobService.assignJobByContract(contract);
         rejectOtherContractAfterAcceptingOne(contract);
+        List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
 
+        updateFreelancerWorkInProgressFromContract(contract, contractFreelancers);
         if (sendEmails){
-            List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
             for (Freelancer freelancer : contractFreelancers) {
                 mailService.sendEmailForFreelancerForStartingContract(freelancer.getUser().getEmail(),
                         contract);
@@ -482,6 +482,15 @@ public class ContractService {
 
 
     //helper functions
+
+
+    public static Double getContractBudget(Contract contract){
+        double totalBudget = 0D;
+        for (Milestone milestone : contract.getMilestones()){
+            totalBudget+=getMilestoneBudget(milestone,contract);
+        }
+        return totalBudget;
+    }
 
     private Boolean setIsUserCommunityAddmin(Contract contract ,Community community){
 
@@ -623,6 +632,23 @@ public class ContractService {
 
     private Float calculateRate(float oldRate ,int completedJobs , int newRate){
         return (oldRate * completedJobs + newRate) / (completedJobs + 1);
+    }
+
+    private void updateFreelancerWorkInProgressFromContract(Contract contract ,List<Freelancer> contractFreelancers ){
+        double contractBudget = getContractBudget(contract);
+        if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER) {
+            freelancerBalanceService.updateFreelancerworkInProgress(
+                    contractFreelancers.getFirst(),
+                    contractBudget
+            );
+        } else {
+            for (ContractContributor contributor : contract.getContractContributors()) {
+                freelancerBalanceService.updateFreelancerworkInProgress(
+                        contributor.getFreelancer(),
+                        contractBudget * contributor.getPercentage()
+                );
+            }
+        }
     }
 
 
