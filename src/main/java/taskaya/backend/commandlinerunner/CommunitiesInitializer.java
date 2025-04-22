@@ -633,6 +633,18 @@ public class CommunitiesInitializer {
         posts.get(0).getCommentId().add(comment1.getId());
         communityPostRepository.save(posts.get(0));
 
+        for(int i=2; i<13;i++){
+            PostComment comment = PostComment.builder()
+                    .postId(posts.get(0).getId())
+                    .content("This is comment number "+i+" !!")
+                    .ownerId(freelancer03.getId().toString())
+                    .createdAt(new Date())
+                    .build();
+            communityPostCommentRepository.save(comment);
+            posts.get(0).getCommentId().add(comment.getId());
+            communityPostRepository.save(posts.get(0));
+        }
+
         PostComment comment2 = PostComment.builder()
                 .postId(posts.get(1).getId())
                 .content("Let's go for it!")
