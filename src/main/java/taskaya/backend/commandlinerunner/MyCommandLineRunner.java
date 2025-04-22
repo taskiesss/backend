@@ -144,7 +144,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         freelancersInitializer.freelancerWorkInProgressSeed();
         mileStoneRequestReview();
         communitiesInitializer.communityPost();
-        communitiesInitializer.communityPostComment();
+        communitiesInitializer.communityPostLikesAndComments();
     }
 
 

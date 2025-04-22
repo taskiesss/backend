@@ -19,14 +19,17 @@ import taskaya.backend.DTO.communities.responses.*;
 import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.HeaderSectionUpdateRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
+import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.services.community.CommunityMemberService;
+import taskaya.backend.services.community.CommunityPostCommentService;
 import taskaya.backend.services.community.CommunityPostService;
 import taskaya.backend.services.community.CommunityService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -39,6 +42,9 @@ public class CommunityController {
 
     @Autowired
     CommunityPostService communityPostService;
+
+    @Autowired
+    CommunityPostCommentService communityPostCommentService;
 
     @PostMapping
     public Community getCommunity(@RequestParam String commName) {
@@ -192,5 +198,20 @@ public class CommunityController {
                                                                             @RequestParam(defaultValue = "0") int page,
                                                                             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(communityPostService.getCommunityPosts(communityId, page, size));
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/post/{postId}/post-comments")
+    public ResponseEntity<Page<CommunityPostCommentResponseDTO>> getCommunityPostComments(@PathVariable String communityId,
+                                                                               @PathVariable String postId,
+                                                                               @RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(communityPostCommentService.getCommunityPostComments(communityId, postId, page, size));
+    }
+
+    @GetMapping("/freelancers/communities/{communityId}/post/{postId}/likes")
+    public ResponseEntity<Map<String, List<NameAndPictureResponseDTO>>> getCommunityPostComments(@PathVariable String communityId,
+                                                                                    @PathVariable String postId) {
+        List<NameAndPictureResponseDTO> likes = communityPostService.getCommunityPostLikes(communityId, postId);
+        return ResponseEntity.ok(Map.of("likes", likes));
     }
 }

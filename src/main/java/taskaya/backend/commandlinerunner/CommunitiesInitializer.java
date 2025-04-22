@@ -610,20 +610,38 @@ public class CommunitiesInitializer {
         communityPostRepository.save(post2);
     }
 
-    public void communityPostComment(){
+    public void communityPostLikesAndComments(){
         Community community = communityRepository.findByCommunityName("Pablo Community").get();
         List<Post> posts = communityPostRepository.findByCommunityId(community.getUuid().toString());
+        Freelancer freelancer02 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer02").get()).get();
+        Freelancer freelancer01 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").get()).get();
         Freelancer freelancer03 = freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").get()).get();
 
-        for (Post post : posts) {
-            PostComment comment = PostComment.builder()
-                    .postId(post.getId())
-                    .content("This is a great start! I'm excited!!")
-                    .ownerId(freelancer03.getId().toString())
-                    .createdAt(new Date())
-                    .build();
+        posts.get(0).getLikerId().add(freelancer01.getId().toString());
+        posts.get(0).getLikerId().add(freelancer03.getId().toString());
 
-            communityPostCommentRepository.save(comment);
-        }
+        posts.get(1).getLikerId().add(freelancer02.getId().toString());
+        posts.get(1).getLikerId().add(freelancer03.getId().toString());
+
+        PostComment comment1 = PostComment.builder()
+                .postId(posts.get(0).getId())
+                .content("This is a great start! I'm excited!!")
+                .ownerId(freelancer03.getId().toString())
+                .createdAt(new Date())
+                .build();
+        communityPostCommentRepository.save(comment1);
+        posts.get(0).getCommentId().add(comment1.getId());
+        communityPostRepository.save(posts.get(0));
+
+        PostComment comment2 = PostComment.builder()
+                .postId(posts.get(1).getId())
+                .content("Let's go for it!")
+                .ownerId(freelancer03.getId().toString())
+                .createdAt(new Date())
+                .build();
+        communityPostCommentRepository.save(comment2);
+        posts.get(1).getCommentId().add(comment2.getId());
+        communityPostRepository.save(posts.get(1));
     }
+
 }
