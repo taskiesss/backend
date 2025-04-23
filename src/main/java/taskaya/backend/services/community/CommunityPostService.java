@@ -123,7 +123,7 @@ public class CommunityPostService {
     public void deleteCommunityPostComment(String communityId, String postId,String commentId){
         communityPostCommentService.deletePostComment(communityId, commentId);
 
-        Post post = commentId == null ? null : communityPostRepository.findById(postId)
+        Post post = communityPostRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found!"));
         post.getCommentId().remove(commentId);
         communityPostRepository.save(post);
