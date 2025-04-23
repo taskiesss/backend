@@ -108,4 +108,24 @@ public class CommunityPostService {
         }
         communityPostRepository.save(post);
     }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public void deleteCommunityPost(String communityId, String postId){
+        Post post = communityPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found!"));
+        communityPostRepository.delete(post);
+        communityPostCommentService.deleteAllPostComments(communityId, postId);
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public void deleteCommunityPostComment(String communityId, String postId,String commentId){
+        communityPostCommentService.deletePostComment(communityId, commentId);
+
+        Post post = commentId == null ? null : communityPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found!"));
+        post.getCommentId().remove(commentId);
+        communityPostRepository.save(post);
+    }
 }

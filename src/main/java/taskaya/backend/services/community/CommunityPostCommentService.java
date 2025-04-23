@@ -63,4 +63,23 @@ public class CommunityPostCommentService {
         communityPostCommentRepository.save(comment);
         return comment.getId();
     }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public void deleteAllPostComments(String communityId, String postId){
+        List<PostComment> comments = communityPostCommentRepository.findByPostId(postId);
+        for(PostComment comment:comments){
+            communityPostCommentRepository.delete(comment);
+        }
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityAdmin(#communityId)")
+    public void deletePostComment(String communityId, String commentId){
+        communityPostCommentRepository.delete(
+                communityPostCommentRepository.findById(commentId)
+                        .orElseThrow(() -> new RuntimeException("Comment not found!"))
+        );
+    }
+
 }

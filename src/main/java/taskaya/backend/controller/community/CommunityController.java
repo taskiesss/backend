@@ -239,4 +239,19 @@ public class CommunityController {
         communityPostService.createCommunityPostLike(communityId, postId, liked);
         return ResponseEntity.ok(SimpleResponseDTO.builder().message("Post Liked successfully.").build());
     }
+
+    @DeleteMapping("/freelancers/communities/{communityId}/post/{postId}")
+    public ResponseEntity<?> deleteCommunityPost(@PathVariable String communityId,
+                                                 @PathVariable String postId){
+        communityPostService.deleteCommunityPost(communityId, postId);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("Post Deleted successfully.").build());
+    }
+
+    @DeleteMapping("/freelancers/communities/{communityId}/post/{postId}/comment/{commentId}")
+    public ResponseEntity<?> deleteCommunityPostComment(@PathVariable String communityId,
+                                                 @PathVariable String postId,
+                                                 @PathVariable String commentId){
+        communityPostService.deleteCommunityPostComment(communityId, postId,commentId);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("Post Comment Deleted successfully.").build());
+    }
 }
