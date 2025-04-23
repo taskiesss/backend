@@ -2,6 +2,7 @@ package taskaya.backend.DTO.communities.requests;
 
 import lombok.Builder;
 import lombok.Data;
+import taskaya.backend.entity.Skill;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class CommunityCreateRequestDTO {
     private String description;
     private Float pricePerHour;
     private Integer avrgHoursPerWeek;
-    private List<String> skills;
+    private List<Skill> skills;
     private MemberForCreateCommunityDTO adminRole;
     private List<MemberForCreateCommunityDTO> communityPositions;
 }

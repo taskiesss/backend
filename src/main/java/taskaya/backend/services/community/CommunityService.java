@@ -33,6 +33,7 @@ import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.notFound.NotFoundException;
+import taskaya.backend.repository.SkillRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityJoinRequestRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
@@ -91,6 +92,9 @@ public class CommunityService {
 
     @Autowired
     VoteService voteService;
+
+    @Autowired
+    SkillRepository skillRepository;
 
     //di lazem ne3melaha autowire bel setter  MAHADESH YE8AIARHA
     private CommunityMemberService communityMemberService;
@@ -516,6 +520,7 @@ public class CommunityService {
                 .orElseThrow(()-> new NotFoundException("Community Not Found!"));
     }
 
+    @Transactional
     public CreateCommunityResponseDTO createCommunity(CommunityCreateRequestDTO requestDTO) {
         if (requestDTO.getSkills()== null){
             requestDTO.setSkills(new LinkedList<>());
@@ -533,13 +538,16 @@ public class CommunityService {
         ){
             throw new RuntimeException("All fields are required");
         }
+
+        List<Skill> skills = skillRepository.saveAll(requestDTO.getSkills());
+
         Community community = Community.builder()
                 .title(requestDTO.getTitle())
                 .communityName(requestDTO.getCommunityName())
                 .admin(freelancerService.getFreelancerFromJWT())
                 .pricePerHour(requestDTO.getPricePerHour())
                 .description(requestDTO.getDescription())
-                .skills(requestDTO.getSkills().stream().map(skill-> Skill.builder().name(skill).build()).collect(Collectors.toSet()))
+                .skills(new HashSet<>(skills))
                 .freelancerBusiness(FreelancerBusiness.builder().avgHoursPerWeek(requestDTO.getAvrgHoursPerWeek()).completedJobs(0).build())
                 .isFull(requestDTO.getCommunityPositions().isEmpty()) //if empty ,only the admin then is full
                 .profilePicture(Constants.COMMUNITY_FIRST_PROFILE_PICTURE)

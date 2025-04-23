@@ -192,6 +192,15 @@ public class FreelancersInitializer {
 
         freelancerRepository.save(freelancer4);
 
+        User firsttime = User.builder()
+                .email("firsttime@gmail.com")
+                .role(User.Role.FREELANCER)
+                .username("freelancer05")
+                .password(new BCryptPasswordEncoder().encode("Freelancer5@123"))
+                .build();
+
+        freelancerService.createFreelancer(firsttime);
+
     }
 
 
