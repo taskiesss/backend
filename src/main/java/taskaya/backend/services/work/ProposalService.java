@@ -16,10 +16,7 @@ import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
-import taskaya.backend.entity.work.Job;
-import taskaya.backend.entity.work.Milestone;
-import taskaya.backend.entity.work.Proposal;
-import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.entity.work.*;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
@@ -176,5 +173,21 @@ public class ProposalService {
         Page <Proposal> proposalsPage = proposalRepository.findByWorkerEntity(freelancer.getWorkerEntity(),pageable);
 
         return MyProposalsPageResponseMapper.toDTOPage(proposalsPage);
+    }
+
+    public void rejectOtherProposalsAfterStartingContract (Job job , Contract contract ) {
+        Proposal proposal = proposalRepository.findByContract(contract)
+                .orElseThrow(()->new RuntimeException("No Proposal found for this contract!"));
+        List<Proposal> proposals = proposalRepository.findByJob(job);
+
+        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+
+        proposals.stream().filter(proposal1 -> proposal1.getId()!= proposal.getId()
+                        && proposal1.getStatus()== Proposal.ProposalStatus.PENDING)
+                .forEach(proposal1 -> {
+                    proposal1.setStatus(Proposal.ProposalStatus.DECLINED);
+                });
+        proposalRepository.saveAll(proposals);
+
     }
 }

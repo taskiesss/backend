@@ -203,15 +203,6 @@ public class CommunitiesInitializer {
                 .costPerHour(20D)
                 .endDate(new Date())
                 .build();
-        jobRepository.save(job);
-        contractService.startContract(contract,false);
-
-        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
-        job.setContract(contract);
-//        contractService.endContract(contract);
-        contractService.approveMilestone(contract.getId().toString(),"2",false);
-        jobRepository.save(job);
-
         Proposal proposal1= Proposal.builder()
                 .costPerHour(30D)
                 .date(new Date())
@@ -224,6 +215,18 @@ public class CommunitiesInitializer {
                 .workerEntity(community.getWorkerEntity())
                 .coverLetter("please accept me")
                 .build();
+        jobRepository.save(job);
+        proposalRepository.save(proposal1);
+        contractRepository.save(contract);
+        contractService.startContract(contract,false);
+
+        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        job.setContract(contract);
+//        contractService.endContract(contract);
+        contractService.approveMilestone(contract.getId().toString(),"2",false);
+        jobRepository.save(job);
+
+
         Double paymentAmount = 420 * 50.0;
 
 
@@ -232,7 +235,6 @@ public class CommunitiesInitializer {
 
 
         jobRepository.save(job);
-        proposalRepository.save(proposal1);
         communityRepository.save(community);
         contractRepository.save(contract);
 
@@ -331,13 +333,6 @@ public class CommunitiesInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(10D)
                 .build();
-        jobRepository.save(job2);
-        contractService.startContract(contract2,false);
-        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
-        job2.setContract(contract2);
-        contractService.approveMilestone(contract2.getId().toString(),"2",false);
-        jobRepository.save(job2);
-
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
                 .date(new Date())
@@ -350,10 +345,18 @@ public class CommunitiesInitializer {
                 .workerEntity(community.getWorkerEntity())
                 .coverLetter("please accept me")
                 .build();
+        jobRepository.save(job2);
+        proposalRepository.save(proposal2);
+        contractRepository.save(contract2);
+        contractService.startContract(contract2,false);
+        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        job2.setContract(contract2);
+        contractService.approveMilestone(contract2.getId().toString(),"2",false);
+        jobRepository.save(job2);
+
 
         communityRepository.save(community);
         jobRepository.save(job2);
-        proposalRepository.save(proposal2);
         contractRepository.save(contract2);
 
     }
@@ -387,6 +390,19 @@ public class CommunitiesInitializer {
                 .build();
 
 
+        Proposal proposal = Proposal.builder()
+                .costPerHour(45.77)
+                .date(new Date())
+                .milestones(listmilestone)
+                .contract(pendingContract)
+                .client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
+                .status(Proposal.ProposalStatus.HIRED)
+                .job(jobRepository.findByTitle("job1").get())
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(pabloCommunity.getWorkerEntity())
+                .coverLetter("please accept me")
+                .build();
+        proposalRepository.save(proposal);
 
 
         CommunityMember person1 = pabloCommunity.getCommunityMembers().get(0);
@@ -481,9 +497,10 @@ public class CommunitiesInitializer {
                 .build();
 
         ArrayList<Milestone> listmilestone2 = new ArrayList<>(List.of(milestone1, milestone2));
+        Client client02 =clientRepository.findByUser(userRepository.findByUsername("client02").get()).get();
 
         Contract activeContract = Contract.builder()
-                .client(clientRepository.findByUser(userRepository.findByUsername("client02").get()).get())
+                .client(client02)
                 .job(activeJob)
                 .workerEntity(pabloCommunity.getWorkerEntity())
                 .costPerHour(20d)
@@ -494,7 +511,19 @@ public class CommunitiesInitializer {
 
         activeJob.setContract(activeContract);
         jobRepository.save(activeJob);
-
+        Proposal proposal = Proposal.builder()
+                .costPerHour(20d)
+                .date(new Date())
+                .milestones(listmilestone2)
+                .contract(activeContract)
+                .client(client02)
+                .status(Proposal.ProposalStatus.HIRED)
+                .job(activeJob)
+                .payment(PaymentMethod.PerMilestones)
+                .workerEntity(pabloCommunity.getWorkerEntity())
+                .coverLetter("please accept me")
+                .build();
+        proposalRepository.save(proposal);
         contractRepository.save(activeContract);
         contractService.startContract(activeContract, false);
         System.out.println("club contract Active contract id: " + activeContract.getId());

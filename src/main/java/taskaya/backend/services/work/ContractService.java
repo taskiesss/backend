@@ -102,6 +102,8 @@ public class ContractService {
     @Autowired
     FreelancerBalanceService freelancerBalanceService;
 
+    @Autowired
+    ProposalService proposalService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -384,6 +386,8 @@ public class ContractService {
         contractRepository.save(contract);
         jobService.assignJobByContract(contract);
         rejectOtherContractAfterAcceptingOne(contract);
+        proposalService.rejectOtherProposalsAfterStartingContract(contract.getJob(), contract);
+
         List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
 
         updateFreelancerWorkInProgressFromContract(contract, contractFreelancers);

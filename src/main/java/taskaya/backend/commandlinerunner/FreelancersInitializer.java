@@ -280,12 +280,6 @@ public class FreelancersInitializer {
                 .costPerHour(55.55)
                 .payment(PaymentMethod.PerMilestones)
                 .build();
-        job.setContract(contract);
-        jobRepository.save(job);
-        contractService.startContract(contract,false);
-        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
-        contractService.approveMilestone(contract.getId().toString(),"3",false);
-
 
         Proposal proposal1= Proposal.builder()
                 .costPerHour(30D)
@@ -300,10 +294,20 @@ public class FreelancersInitializer {
                 .coverLetter("please accept me")
                 .build();
 
+        job.setContract(contract);
+        jobRepository.save(job);
+        proposalRepository.save(proposal1);
+        contractService.startContract(contract,false);
+        milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        contractService.approveMilestone(contract.getId().toString(),"3",false);
+
+
+
+
+
 
 
         jobRepository.save(job);
-        proposalRepository.save(proposal1);
         freelancerRepository.save(freelancer);
         contractRepository.save(contract);
 
@@ -368,13 +372,6 @@ public class FreelancersInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(20d)
                 .build();
-        job2.setContract(contract2);
-        jobRepository.save(job2);
-        contractService.startContract(contract2,false);
-        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
-        contractService.approveMilestone(contract2.getId().toString(),"2",false);
-
-
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
                 .date(new Date())
@@ -388,10 +385,18 @@ public class FreelancersInitializer {
                 .coverLetter("please accept me")
                 .build();
 
+        job2.setContract(contract2);
+        jobRepository.save(job2);
+        proposalRepository.save(proposal2);
+        contractService.startContract(contract2,false);
+        milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
+        contractService.approveMilestone(contract2.getId().toString(),"2",false);
+
+
+
 
         freelancerRepository.save(freelancer);
         jobRepository.save(job2);
-        proposalRepository.save(proposal2);
         contractRepository.save(contract2);
 
     }
@@ -440,6 +445,19 @@ public class FreelancersInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(55.559)
                 .build();
+        Proposal proposal = Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(milestones)
+                .contract(activeContract)
+                .client(client)
+                .status(Proposal.ProposalStatus.HIRED)
+                .job(activeJob)
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(freelancer.getWorkerEntity())
+                .coverLetter("please accept me")
+                .build();
+        proposalRepository.save(proposal);
         activeJob.setContract(activeContract);
 
 
