@@ -1,5 +1,6 @@
 package taskaya.backend.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
+import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.freelancer.Freelancer;
@@ -22,6 +24,7 @@ import taskaya.backend.entity.work.ContractContributor;
 import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.client.ClientBalanceRepository;
+import taskaya.backend.repository.client.ClientBusinessRepository;
 import taskaya.backend.repository.freelancer.FreelancerBalanceRepository;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
@@ -43,6 +46,8 @@ public class PaymentService {
     private FreelancerService freelancerService;
 
     @Autowired
+    private ClientBusinessRepository clientBusinessRepository;
+    @Autowired
     ClientBalanceRepository clientBalanceRepository;
     @Autowired
     private FreelancerBalanceRepository freelancerBalanceRepository;
@@ -58,6 +63,7 @@ public class PaymentService {
     }
 
 
+    @Transactional
     public double payForCommunityContract(Contract contract , List<Milestone> milestones) {
 
         Community community = communityService.getCommunityByWorkerEntity(contract.getWorkerEntity());
@@ -76,8 +82,12 @@ public class PaymentService {
         ClientBalance clientBalance = client.getBalance();
         clientBalance.setRestricted(clientBalance.getRestricted() - totalValue);
 
+        ClientBusiness clientBusiness = client.getClientBusiness();
+        clientBusiness.setTotalSpent(totalValue+clientBusiness.getTotalSpent());
+
         paymentRepository.save(clientPayment);
         clientBalanceRepository.save(clientBalance);
+        clientBusinessRepository.save(clientBusiness);
 
 
         //transfer to freelancers
@@ -136,9 +146,13 @@ public class PaymentService {
 
         ClientBalance clientBalance = client.getBalance();
         clientBalance.setRestricted(clientBalance.getRestricted() - totalValue);
+        ClientBusiness clientBusiness = client.getClientBusiness();
+        clientBusiness.setTotalSpent(totalValue+clientBusiness.getTotalSpent());
+
 
         paymentRepository.save(payment);
         clientBalanceRepository.save(clientBalance);
+        clientBusinessRepository.save(clientBusiness);
 
         FreelancerBalance freelancerBalance = freelancer.getBalance();
         freelancerBalance.setAvailable(
