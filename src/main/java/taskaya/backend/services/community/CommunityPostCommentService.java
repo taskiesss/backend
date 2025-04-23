@@ -1,5 +1,6 @@
 package taskaya.backend.services.community;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,12 +12,14 @@ import taskaya.backend.DTO.communities.responses.CommunityPostCommentResponseDTO
 import taskaya.backend.DTO.communities.responses.CommunityPostResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityPostCommentResponseMapper;
 import taskaya.backend.DTO.mappers.CommunityPostResponseMapper;
+import taskaya.backend.entity.community.posts.Post;
 import taskaya.backend.entity.community.posts.PostComment;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.repository.community.CommunityPostCommentRepository;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,5 +49,18 @@ public class CommunityPostCommentService {
         List<CommunityPostCommentResponseDTO> paginatedList = listDTOs.subList(start, end);
 
         return new PageImpl<>(paginatedList, pageable, listDTOs.size());
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public String createPostComment(String communityId, String postId, String content){
+        PostComment comment = PostComment.builder()
+                .postId(postId)
+                .content(content)
+                .createdAt(new Date())
+                .ownerId(freelancerService.getFreelancerFromJWT().getId().toString())
+                .build();
+        communityPostCommentRepository.save(comment);
+        return comment.getId();
     }
 }

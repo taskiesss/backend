@@ -13,6 +13,7 @@ import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.communities.communityMember.requests.CommunityMemberUpdateRequestDTO;
 import taskaya.backend.DTO.communities.communityMember.responses.CommunityMemberSettingsResponseDTO;
 import taskaya.backend.DTO.communities.requests.AcceptToJoinRequestDTO;
+import taskaya.backend.DTO.communities.requests.CommunityPostRequestDTO;
 import taskaya.backend.DTO.communities.requests.CommunitySearchRequestDTO;
 import taskaya.backend.DTO.communities.requests.VoteRequestDTO;
 import taskaya.backend.DTO.communities.responses.*;
@@ -213,5 +214,29 @@ public class CommunityController {
                                                                                     @PathVariable String postId) {
         List<NameAndPictureResponseDTO> likes = communityPostService.getCommunityPostLikes(communityId, postId);
         return ResponseEntity.ok(Map.of("likes", likes));
+    }
+
+    @PostMapping("/freelancers/communities/{communityId}/post")
+    public ResponseEntity<?> createCommunityPost(@PathVariable String communityId,
+                                                 @RequestBody CommunityPostRequestDTO requestDTO) {
+        communityPostService.createCommunityPost(communityId, requestDTO);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("Post created successfully.").build());
+    }
+
+    @PostMapping("/freelancers/communities/{communityId}/post/{postId}/comment")
+    public ResponseEntity<?> createCommunityPostComment(@PathVariable String communityId,
+                                                        @PathVariable String postId,
+                                                        @RequestBody Map<String, String> request) {
+        String content = request.get("content");
+        communityPostService.createCommunityPostComment(communityId, postId, content);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("Comment created successfully.").build());
+    }
+
+    @PostMapping("/freelancers/communities/{communityId}/post/{postId}/likes/{liked}")
+    public ResponseEntity<?> createCommunityPost(@PathVariable String communityId,
+                                                 @PathVariable String postId,
+                                                 @PathVariable boolean liked) {
+        communityPostService.createCommunityPostLike(communityId, postId, liked);
+        return ResponseEntity.ok(SimpleResponseDTO.builder().message("Post Liked successfully.").build());
     }
 }

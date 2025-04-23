@@ -1,9 +1,11 @@
 package taskaya.backend.services.community;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.communities.requests.CommunityPostRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityPostResponseDTO;
 import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityPostResponseMapper;
@@ -12,10 +14,7 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.repository.community.CommunityPostRepository;
 import taskaya.backend.services.freelancer.FreelancerService;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CommunityPostService {
@@ -24,6 +23,9 @@ public class CommunityPostService {
 
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    CommunityPostCommentService communityPostCommentService;
 
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
     public Page<CommunityPostResponseDTO> getCommunityPosts(String communityId, int page, int size) {
@@ -66,5 +68,44 @@ public class CommunityPostService {
             likes.add(like);
         }
         return likes;
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public void createCommunityPost(String communityId, CommunityPostRequestDTO requestDTO){
+        Post post = Post.builder()
+                .title(requestDTO.getPostTitle())
+                .content(requestDTO.getPostContent())
+                .communityId(communityId)
+                .ownerId(freelancerService.getFreelancerFromJWT().getId().toString())
+                .createdAt(new Date())
+                .build();
+        communityPostRepository.save(post);
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public void createCommunityPostComment(String communityId, String postId, String content){
+        Post post = communityPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found!"));
+
+        String commentId = communityPostCommentService.createPostComment(communityId, postId, content);
+        post.getCommentId().add(commentId);
+        communityPostRepository.save(post);
+    }
+
+    @Transactional
+    @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
+    public void createCommunityPostLike(String communityId, String postId, boolean like){
+        Post post = communityPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found!"));
+
+        String userId = freelancerService.getFreelancerFromJWT().getId().toString();
+        if(like && !post.getLikerId().contains(userId)){
+            post.getLikerId().add(userId);
+        } else if(!like){
+            post.getLikerId().remove(userId);
+        }
+        communityPostRepository.save(post);
     }
 }
