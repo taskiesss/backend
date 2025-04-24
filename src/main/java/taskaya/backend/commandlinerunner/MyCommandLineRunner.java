@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
@@ -119,9 +120,15 @@ class MyCommandLineRunner implements CommandLineRunner {
     @Autowired
     ContractService contractService;
 
+    @Autowired
+    MongoTemplate mongoTemplate;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+        mongoTemplate.dropCollection("post");
+        mongoTemplate.dropCollection("postcomment");
+
         skillSeed();
         freelancersInitializer.freelancerSeed();
         clientsInitializer.clientSeed();
@@ -136,6 +143,8 @@ class MyCommandLineRunner implements CommandLineRunner {
         communitiesInitializer.communityWorkdoneSeed();
         freelancersInitializer.freelancerWorkInProgressSeed();
         mileStoneRequestReview();
+        communitiesInitializer.communityPost();
+        communitiesInitializer.communityPostLikesAndComments();
     }
 
 
