@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
+import taskaya.backend.DTO.proposals.responses.ProposalDetailsResponseDTO;
 import taskaya.backend.services.work.ProposalService;
 
 import java.io.DataInput;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
 @RestController
@@ -39,4 +41,12 @@ public class ProposalController {
     public  ResponseEntity<?>getFreelancerProposals ( @RequestParam int page, @RequestParam int size){
         return ResponseEntity.ok(proposalService.getMyProposals(page,size));
     }
+
+    @GetMapping("/clients/proposals/{proposalId}")
+    public ResponseEntity<ProposalDetailsResponseDTO>getProposalDetails(
+            @PathVariable String proposalId
+    ) throws AccessDeniedException {
+        return ResponseEntity.ok(proposalService.getProposalDetails(proposalId));
+    }
+
 }

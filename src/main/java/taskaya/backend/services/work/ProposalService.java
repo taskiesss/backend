@@ -12,20 +12,25 @@ import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
 import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
+import taskaya.backend.DTO.proposals.responses.ProposalDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
+import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.*;
+import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +67,9 @@ public class ProposalService {
 
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    ClientService clientService;
 
     @Transactional
     public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException, IOException {
@@ -189,5 +197,51 @@ public class ProposalService {
                 });
         proposalRepository.saveAll(proposals);
 
+    }
+    public ProposalDetailsResponseDTO getProposalDetails(String proposalId) throws AccessDeniedException {
+        Client client = clientService.getClientFromJWT();
+        Proposal proposal = proposalRepository.findById(UUID.fromString(proposalId))
+                .orElseThrow(()-> new NotFoundException("Proposal not found!"));
+        if(proposal.getClient() != client){
+            throw new AccessDeniedException("security failed");
+        }
+        if(proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
+            Freelancer freelancer = freelancerRepository.findByWorkerEntity(proposal.getWorkerEntity()).get();
+
+            return ProposalDetailsResponseDTO.builder()
+                    .proposalId(proposalId)
+                    .jobName(proposal.getJob().getTitle())
+                    .freelancerName(freelancer.getName())
+                    .freelancerId(freelancer.getId().toString())
+                    .profilePicture(freelancer.getProfilePicture())
+                    .isCommunity(Boolean.FALSE)
+                    .coverLetter(proposal.getCoverLetter())
+                    .pricePerHour(proposal.getCostPerHour())
+                    .paymentMethod(proposal.getPayment())
+                    .attachment(proposal.getAttachment())
+                    .date(proposal.getDate())
+                    .status(proposal.getStatus())
+                    .build();
+        } else if (proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
+            Community community = communityRepository.findByWorkerEntity(proposal.getWorkerEntity()).get();
+
+            return ProposalDetailsResponseDTO.builder()
+                    .proposalId(proposalId)
+                    .jobName(proposal.getJob().getTitle())
+                    .freelancerName(community.getCommunityName())
+                    .freelancerId(community.getUuid().toString())
+                    .profilePicture(community.getProfilePicture())
+                    .isCommunity(Boolean.TRUE)
+                    .coverLetter(proposal.getCoverLetter())
+                    .pricePerHour(proposal.getCostPerHour())
+                    .paymentMethod(proposal.getPayment())
+                    .attachment(proposal.getAttachment())
+                    .date(proposal.getDate())
+                    .status(proposal.getStatus())
+                    .build();
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
     }
 }
