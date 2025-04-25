@@ -19,6 +19,7 @@ import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
@@ -26,6 +27,7 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.services.work.ContractService;
 
@@ -47,6 +49,8 @@ public class ContractController {
     FreelancerService freelancerService;
     @Autowired
     CommunityRepository communityRepository;
+    @Autowired
+    ClientService clientService;
 
     @PostMapping("/freelancers/my-contracts")
     public ResponseEntity<?> getMyContracts (@RequestBody MyContractsPageRequestDTO requestDTO){
@@ -163,4 +167,12 @@ public class ContractController {
         contractService.acceptOrRejectContract(contractId,requestDTO.isAccepted());
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
+
+    @PostMapping("/clients/my-contracts")
+    public ResponseEntity<?> getClientsMyContracts (@RequestBody MyContractsPageRequestDTO requestDTO){
+        Client client = clientService.getClientFromJWT();
+        Page<MyContractsPageResponseDTO> result= contractService.searchContracts(requestDTO,null,client.getId());
+        return  ResponseEntity.ok(result);
+    }
+
 }

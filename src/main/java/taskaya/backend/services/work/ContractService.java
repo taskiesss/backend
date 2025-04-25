@@ -133,7 +133,12 @@ public class ContractService {
         }
         Page<Contract> contractPage = contractRepository.findAll(specification, pageable);
 
-        return MyContractsPageResponseMapper.toDTOPage(contractPage);
+        Page<MyContractsPageResponseDTO>dtoPage =  MyContractsPageResponseMapper.toDTOPage(contractPage);
+
+        if (jwtService.getUserFromToken().getRole() == User.Role.CLIENT){
+           setFreelancerNameAndFreelancerIdForContractsSearchDTO(dtoPage, contractPage);
+        }
+        return dtoPage;
     }
 
 
@@ -655,6 +660,25 @@ public class ContractService {
         }
     }
 
+    public void setFreelancerNameAndFreelancerIdForContractsSearchDTO(Page<MyContractsPageResponseDTO> dtoPage, Page<Contract> contractPage) {
+        for (int i = 0 ;i< contractPage.getContent().size() ;i++){
+            Contract contract = contractPage.getContent().get(i);
+            MyContractsPageResponseDTO dto = dtoPage.getContent().get(i);
+            if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY){
+                Community community = communityService.getCommunityByWorkerEntity(contract.getWorkerEntity());
+                dto.setFreelancerName(community.getCommunityName());
+                dto.setFreelancerID(community.getUuid());
+                dto.setIsCommunity(true);
+
+
+            }else {
+                Freelancer freelancer = freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity());
+                dto.setFreelancerName(freelancer.getName());
+                dto.setFreelancerID(freelancer.getId());
+                dto.setIsCommunity(false);
+            }
+        }
+    }
 
 }
 

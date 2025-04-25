@@ -37,6 +37,7 @@ public class MyContractsPageResponseMapper {
                 .budget(ContractService.getContractBudget(contract))
                 .activeMilestone(activeMiletone==null?null: activeMiletone.getName())
                 .clientRateForFreelancer(contract.getClientRatingForFreelancer())
+                .freelancerRateForClient(contract.getFreelancerRatingForClient())
                 .startDate(contract.getStartDate())
                 .dueDate(contract.getDueDate())
                 .endDate(contract.getEndDate())

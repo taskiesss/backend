@@ -3,6 +3,7 @@ package taskaya.backend.repository.work;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProposalRepository extends JpaRepository<Proposal, UUID> {
+public interface ProposalRepository extends JpaRepository<Proposal, UUID>, JpaSpecificationExecutor<Proposal> {
     Page<Proposal> findByWorkerEntity(WorkerEntity workerEntity, Pageable pageable);
     List<Proposal> findByWorkerEntityInAndStatusAndJob(List<WorkerEntity> workerEntities, Proposal.ProposalStatus proposalStatus, Job job);
 
