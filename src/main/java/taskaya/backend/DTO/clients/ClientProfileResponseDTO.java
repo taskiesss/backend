@@ -21,7 +21,6 @@ public class ClientProfileResponseDTO {
     private List<String> languages;
     private String description;
     private String profilePicture;
-    private String coverPhoto;
     private Integer completedJobs;
     private double totalSpent;
 }

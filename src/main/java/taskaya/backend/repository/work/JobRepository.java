@@ -22,8 +22,7 @@ public interface JobRepository extends JpaRepository<Job, UUID>, JpaSpecificatio
 //    Page<Job> findAllByAssignedToIsNull(Specification<Job> spec, Pageable pageable);
     Optional<Job> findByTitle(String title);
     List<Job> findByAssignedToAndStatus(WorkerEntity assignedTo, Job.JobStatus status);
-
-
+    List<Job> findByClientAndStatus(Client client, Job.JobStatus jobStatus);
 }
 
 

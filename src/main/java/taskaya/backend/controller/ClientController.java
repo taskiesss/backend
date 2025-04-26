@@ -1,11 +1,11 @@
 package taskaya.backend.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
+import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
+import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.services.client.ClientService;
 
 @RestController
@@ -20,9 +20,18 @@ public class ClientController {
     }
 
     @GetMapping("/api/clients/{id}")
-    public ResponseEntity<ClientProfileResponseDTO> getClientProfile (
+    public ResponseEntity<ClientProfileResponseDTO> clientProfile (
             @PathVariable String id
     ){
         return ResponseEntity.ok(clientService.getClientProfile(id));
+    }
+
+    @GetMapping("/api/clients/{id}/workdone")
+    public ResponseEntity<Page<ClientWorkDoneResponseDTO>> clientWorkDone(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(clientService.getClientWrokDone(id, page, size));
     }
 }
