@@ -91,6 +91,9 @@ public class ClientsInitializer {
         clientBalance3.setRestricted(700000.0);
 
         clientRepository.save(client3);
+        System.out.println("Client 3 's id :" + client3.getId());
+        System.out.println("Client 2 's id :" + client2.getId());
+        System.out.println("Client 1 's id :" + client1.getId());
 
     }
 }

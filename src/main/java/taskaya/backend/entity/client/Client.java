@@ -9,6 +9,7 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.chat.MsgBox;
 import taskaya.backend.entity.freelancer.Freelancer;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -43,8 +44,10 @@ public class Client {
     @Column(length = Constants.MAX_DESCRIPTION_SIZE)
     private String description;
 
+    @ElementCollection
+    @CollectionTable(name = "client_languages", joinColumns = @JoinColumn(name = "client_id"))
     @Column(name = "language")
-    private String language;
+    private Set<String> languages = new HashSet<>();
 
     @Column(name = "country")
     private String country;

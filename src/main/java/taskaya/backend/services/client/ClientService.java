@@ -3,8 +3,10 @@ package taskaya.backend.services.client;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
@@ -12,6 +14,10 @@ import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientRepository;
+
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
@@ -43,4 +49,38 @@ public class ClientService {
     }
 
 
+    public ClientProfileResponseDTO getClientProfile(String id) {
+        if(Objects.equals(id, "my-profile")){
+            Client client = getClientFromJWT();
+            return ClientProfileResponseDTO.builder()
+                    .uuid(client.getId().toString())
+                    .name(client.getName())
+                    .username(client.getUser().getUsername())
+                    .country(client.getCountry())
+                    .rate(client.getRate())
+                    .skills(client.getSkills().stream().map(Skill::toString).collect(Collectors.toList()))
+                    .languages(client.getLanguages().stream().toList())
+                    .description(client.getDescription())
+                    .profilePicture(client.getProfilePicture())
+                    .completedJobs(client.getClientBusiness().getCompletedJobs())
+                    .totalSpent(client.getClientBusiness().getTotalSpent())
+                    .build();
+        }else {
+            Client client = clientRepository.findById(UUID.fromString(id))
+                    .orElseThrow(()-> new NotFoundException("client not found"));
+            return ClientProfileResponseDTO.builder()
+                    .uuid(client.getId().toString())
+                    .name(client.getName())
+                    .username(client.getUser().getUsername())
+                    .country(client.getCountry())
+                    .rate(client.getRate())
+                    .skills(client.getSkills().stream().map(Skill::toString).collect(Collectors.toList()))
+                    .languages(client.getLanguages().stream().toList())
+                    .description(client.getDescription())
+                    .profilePicture(client.getProfilePicture())
+                    .completedJobs(client.getClientBusiness().getCompletedJobs())
+                    .totalSpent(client.getClientBusiness().getTotalSpent())
+                    .build();
+        }
+    }
 }
