@@ -55,7 +55,7 @@ public class Proposal {
     private Contract contract;
 
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "proposal_id")
     private List<Milestone> milestones = new ArrayList<>();
 

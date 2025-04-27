@@ -291,12 +291,13 @@ public class FreelancersInitializer {
                 .job(job)
                 .payment(PaymentMethod.PerMilestones)
                 .workerEntity(freelancer.getWorkerEntity())
-                .coverLetter("please accept me")
+                .coverLetter("please accept meeee!")
                 .build();
 
         job.setContract(contract);
         jobRepository.save(job);
         proposalRepository.save(proposal1);
+        System.out.println("proposal1 ID: "+proposal1.getId());
         contractService.startContract(contract,false);
         milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         contractService.approveMilestone(contract.getId().toString(),"3",false);
@@ -375,7 +376,7 @@ public class FreelancersInitializer {
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
                 .date(new Date())
-                .milestones(milestones)
+                .milestones(milestones2)
                 .contract(contract2)
                 .client(client)
                 .status(Proposal.ProposalStatus.HIRED)

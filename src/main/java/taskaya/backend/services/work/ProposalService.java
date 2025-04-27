@@ -4,17 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
-import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
-import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
+import taskaya.backend.DTO.mappers.MilestonesDetailsMapper;
 import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
+import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.DTO.proposals.requests.SearchMyProposalsRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.responses.SearchMyProposalsResponseDTO;
@@ -24,6 +21,7 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.*;
+import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
@@ -35,10 +33,7 @@ import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.ProposalSpecification;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProposalService {
@@ -252,5 +247,24 @@ public class ProposalService {
                 dto.setCommunity(false);
             }
         }
+    }
+
+    public Page<MilestonesDetailsResponseDTO> getProposalMilestones(String id, int page, int size) {
+        Proposal proposal = getProposalById(id);
+
+        List<Milestone> milestones = proposal.getMilestones();
+        milestones.sort(Comparator.comparing(Milestone::getDueDate));
+
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), milestones.size());
+        List<Milestone> pagedList = milestones.subList(start, end);
+        return MilestonesDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
+
+    }
+
+    private Proposal getProposalById(String proposalId){
+        return proposalRepository.findById(UUID.fromString(proposalId))
+                .orElseThrow(()-> new NotFoundException("No proposal Found!"));
     }
 }

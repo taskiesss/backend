@@ -14,10 +14,10 @@ import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
 import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
 import taskaya.backend.DTO.mappers.ContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MilestoneSubmissionsMapper;
-import taskaya.backend.DTO.mappers.MilestonesContractDetailsMapper;
+import taskaya.backend.DTO.mappers.MilestonesDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
-import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
@@ -27,14 +27,11 @@ import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
-import taskaya.backend.entity.freelancer.Freelancer;
-import taskaya.backend.entity.freelancer.FreelancerBusiness;
-import taskaya.backend.entity.work.*;
+import taskaya.backend.entity.freelancer.Freelancer;import taskaya.backend.entity.work.*;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientBusinessRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.community.CommunityRepository;
-import taskaya.backend.repository.freelancer.FreelancerBusinessRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.MilestoneRepository;
@@ -202,7 +199,7 @@ public class ContractService {
     }
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#id)")
-    public Page<MilestonesContractDetailsResponseDTO> getContractMilestones(String id, int page, int size){
+    public Page<MilestonesDetailsResponseDTO> getContractMilestones(String id, int page, int size){
         Contract contract = getContractById(id);
 
         List<Milestone> milestones = contract.getMilestones();
@@ -212,7 +209,7 @@ public class ContractService {
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), milestones.size());
         List<Milestone> pagedList = milestones.subList(start, end);
-        return MilestonesContractDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
+        return MilestonesDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
     }
 
     @PreAuthorize("@jwtService.contractDetailsAuth(#contractId)")

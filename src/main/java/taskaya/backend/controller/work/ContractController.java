@@ -17,7 +17,8 @@ import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
 import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
-import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+
+import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
@@ -68,7 +69,7 @@ public class ContractController {
 
     @GetMapping("/api/contracts/{id}/milestones")
     public ResponseEntity<?> getContractMilestones (@PathVariable String id, @RequestParam int page, @RequestParam int size){
-        Page<MilestonesContractDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
+        Page<MilestonesDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
         return  ResponseEntity.ok(responseDTOPage);
     }
 
