@@ -16,6 +16,7 @@ import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.Proposal;
 import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
@@ -23,6 +24,8 @@ import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
+import taskaya.backend.repository.work.ProposalRepository;
+import taskaya.backend.services.community.CommunityMemberService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.security.Key;
@@ -52,6 +55,9 @@ public class JwtService {
 
     @Autowired
     ContractRepository contractRepository;
+
+    @Autowired
+    ProposalRepository proposalRepository;
 
     public String extractUsername(String token) {
         return extractClaim(token , Claims-> Claims.getSubject()) ;
@@ -138,18 +144,18 @@ public class JwtService {
     }
 
     public boolean isClient(){
-        return clientRepository.existsById(getUserFromToken().getId());
+        return getUserFromToken().getRole() == User.Role.CLIENT;
     }
 
     public boolean isFreelancer(){
-        return freelancerRepository.existsById(getUserFromToken().getId());
+        return getUserFromToken().getRole() == User.Role.FREELANCER;
     }
 
     public boolean contractDetailsAuth(String contractId){
-        Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
         if(isClient()){
             return isClientContractOwner(contractId);
         }else{
+            Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
             User user = getUserFromToken();
             WorkerEntity contractWorkerEntity = contract.getWorkerEntity();
             if(contractWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
@@ -164,12 +170,40 @@ public class JwtService {
             }
         }
     }
+    public boolean ProposalDetailsAuth(String proposalId){
+
+        if(isClient()){
+            return isClientProposalOwner(proposalId);
+        }else{
+            Proposal proposal = proposalRepository.findById(UUID.fromString(proposalId)).orElseThrow();
+
+            User user = getUserFromToken();
+            WorkerEntity proposalWorkerEntity = proposal.getWorkerEntity();
+            if(proposalWorkerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
+                Freelancer freelancer = freelancerRepository.findByUser(user)
+                        .orElseThrow(()->new AccessDeniedException("security failed"));
+                return proposalWorkerEntity.getId().equals(freelancer.getWorkerEntity().getId());
+            }
+            else{
+                Community community = communityRepository.findByWorkerEntity(proposalWorkerEntity)
+                        .orElseThrow(()->new AccessDeniedException("security failed"));
+                return isCommunityMember(community.getUuid().toString());
+            }
+        }
+    }
 
     public boolean isClientContractOwner(String contractId){
         Contract contract = contractRepository.findById(UUID.fromString(contractId)).orElseThrow();
             UUID clientId = clientRepository.findByUser(getUserFromToken())
                     .orElseThrow(() -> new AccessDeniedException("security failed")).getId();
             return clientId.equals(contract.getClient().getId());
+    }
+
+    public boolean isClientProposalOwner(String proposalId){
+        Proposal proposal = proposalRepository.findById(UUID.fromString(proposalId)).orElseThrow();
+        UUID clientId = clientRepository.findByUser(getUserFromToken())
+                .orElseThrow(() -> new AccessDeniedException("security failed")).getId();
+        return clientId.equals(proposal.getClient().getId());
     }
 
 

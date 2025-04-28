@@ -1,6 +1,5 @@
 package taskaya.backend.services.work;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,8 @@ import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
 import taskaya.backend.DTO.mappers.MilestonesDetailsMapper;
 import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
-import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestDTO;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestMapper;
 import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.DTO.proposals.requests.SearchMyProposalsRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
@@ -131,19 +131,7 @@ public class ProposalService {
 
 
         // create milestones list, copy milestones from DTO
-        List<Milestone> myMilestoneList = new ArrayList<>();
-        for (MilestoneSubmitProposalRequestDTO milestone : requestDTO.getMilestones()) {
-            Milestone myMilestone = Milestone.builder()
-                    .name(milestone.getTitle())
-                    .description(milestone.getDescription())
-                    .dueDate(milestone.getDueDate())
-                    .number(milestone.getMilestoneNumber())
-                    .estimatedHours(milestone.getExpectedHours())
-                    .status(Milestone.MilestoneStatus.NOT_STARTED)
-                    .build();
-
-            myMilestoneList.add(myMilestone);
-        }
+        List<Milestone> myMilestoneList = MilestoneSubmitRequestMapper.toMilestoneList(requestDTO.getMilestones());
 
         Job job = jobService.findById(jobId);
         // create proposal, copy data from DTO
@@ -188,7 +176,7 @@ public class ProposalService {
                 .orElseThrow(()->new RuntimeException("No Proposal found for this contract!"));
         List<Proposal> proposals = proposalRepository.findByJob(job);
 
-        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+        proposal.setStatus(Proposal.ProposalStatus.HIRED);
 
         proposals.stream().filter(proposal1 -> proposal1.getId()!= proposal.getId()
                         && proposal1.getStatus()== Proposal.ProposalStatus.PENDING)
@@ -263,8 +251,15 @@ public class ProposalService {
 
     }
 
-    private Proposal getProposalById(String proposalId){
+    public Proposal getProposalById(String proposalId){
         return proposalRepository.findById(UUID.fromString(proposalId))
                 .orElseThrow(()-> new NotFoundException("No proposal Found!"));
+    }
+
+
+    public void hireProposalAndRejectAllOthersAfterStartingContract(Proposal proposal, Contract contract) {
+        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+        proposalRepository.save(proposal);
+        rejectOtherProposalsAfterStartingContract(proposal.getJob(), contract);
     }
 }

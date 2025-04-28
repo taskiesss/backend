@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import taskaya.backend.DTO.contracts.requests.CreateContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
@@ -16,11 +17,13 @@ import taskaya.backend.DTO.mappers.ContractDetailsMapper;
 import taskaya.backend.DTO.mappers.MilestoneSubmissionsMapper;
 import taskaya.backend.DTO.mappers.MilestonesDetailsMapper;
 import taskaya.backend.DTO.mappers.MyContractsPageResponseMapper;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestMapper;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
 import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.client.ClientBalance;
 import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
@@ -35,9 +38,11 @@ import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.MilestoneRepository;
+import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
 import taskaya.backend.services.PaymentService;
+import taskaya.backend.services.client.ClientBalanceService;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerBalanceService;
 import taskaya.backend.services.freelancer.FreelancerBusinessService;
@@ -101,6 +106,12 @@ public class ContractService {
 
     @Autowired
     ProposalService proposalService;
+
+    @Autowired
+    ProposalRepository proposalRepository;
+
+    @Autowired
+    ClientBalanceService clientBalanceService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -355,7 +366,48 @@ public class ContractService {
         }
     }
 
+    @Transactional
+    public void createContract(String proposalId, CreateContractRequestDTO requestDTO) {
+        Proposal proposal = proposalService.getProposalById(proposalId);
+        if (proposal.getStatus() != Proposal.ProposalStatus.PENDING) {
+            throw new IllegalArgumentException("Bad request - Proposal status must be Pending");
+        }
+        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+        proposalRepository.save(proposal);
+        if (proposal.getJob().getAssignedTo()!= null){
+            throw new IllegalArgumentException("Bad request - this job is already assigned ");
+        }
 
+        Contract contract = Contract.builder()
+                .job(proposal.getJob())
+                .workerEntity(proposal.getWorkerEntity())
+                .client(proposal.getClient())
+                .build();
+
+        contract.setCostPerHour(requestDTO.getCostPerHour());
+        contract.setPayment(requestDTO.getPayment());
+
+        if (requestDTO.getMilestones() == null || requestDTO.getMilestones().isEmpty()) {
+            throw new IllegalArgumentException("Bad request - Milestones cannot be empty");
+        }
+        contract.setMilestones(MilestoneSubmitRequestMapper.toMilestoneList(requestDTO.getMilestones()));
+        contract.setStartDate(requestDTO.getStartDate());
+        contract.setDescription(requestDTO.getDescription());
+
+        contract.setStatus(Contract.ContractStatus.PENDING);
+        contract.setSentDate(new Date());
+
+        if (contract.getStartDate().before(contract.getSentDate()))
+            throw new IllegalArgumentException("Bad request - Start date must be after sent date");
+
+        double totalBudget = getContractBudget(contract);
+        clientBalanceService.updateRestricted(contract.getClient(),
+                totalBudget);
+
+        clientBalanceService.updateAvailable(contract.getClient(),-totalBudget);
+
+        contractRepository.save(contract);
+    }
 
 
     @Transactional
@@ -404,6 +456,8 @@ public class ContractService {
         }
         System.out.println("contract just started : "+ contract.getId());
     }
+
+
 
     public void approveMilestone (String contractId, String milestoneIndex , boolean sendEmails )  {
         int milestoneIndexx = Integer.parseInt(milestoneIndex);
@@ -553,11 +607,19 @@ public class ContractService {
         }
     }
 
-    public void rejectContract(Contract contract , boolean snedEmails)   {
+    public void rejectContract(Contract contract , boolean sendEmails)   {
         if (contract.getStatus()!= Contract.ContractStatus.PENDING)
             throw new IllegalArgumentException("the contract must be a pending contract");
         contract.setStatus(Contract.ContractStatus.REJECTED);
-        mailService.sendRejectionMailToClient(contract.getClient().getUser().getEmail() , contract);
+
+        double totalBudget = getContractBudget(contract);
+        clientBalanceService.updateRestricted(contract.getClient(),
+                -totalBudget);
+
+        clientBalanceService.updateAvailable(contract.getClient(),totalBudget);
+        if (sendEmails) {
+            mailService.sendRejectionMailToClient(contract.getClient().getUser().getEmail(), contract);
+        }
         contractRepository.save(contract);
     }
     public void rejectOtherContractAfterAcceptingOne(Contract acceptedContract){
@@ -566,12 +628,14 @@ public class ContractService {
                 .findAllByStatusAndJob(Contract.ContractStatus.PENDING, acceptedContract.getJob());
         for (Contract contract : contracts) {
 //            if (!contract.getId().equals(acceptedContract.getId())) {   //not needed because we guarantee that the accepted contract is inProgress
-                contract.setStatus(Contract.ContractStatus.REJECTED);
+                rejectContract(contract,false);
                 contractRepository.save(contract);
 //            }
         }
 
     }
+
+
 
     public void endContract(Contract contract){
 

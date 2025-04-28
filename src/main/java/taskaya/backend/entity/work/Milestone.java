@@ -67,4 +67,11 @@ public class Milestone {
         PENDING_REVIEW,
         APPROVED
     }
+
+    public void setEstimatedHours(Integer estimatedHours) {
+        if (estimatedHours < 0) {
+            throw new IllegalArgumentException("Estimated hours cannot be negative");
+        }
+        this.estimatedHours = estimatedHours;
+    }
 }

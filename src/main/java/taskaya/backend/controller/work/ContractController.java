@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.contracts.requests.AcceptOrRejectContractRequestDTO;
+import taskaya.backend.DTO.contracts.requests.CreateContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
@@ -175,5 +176,17 @@ public class ContractController {
         Page<MyContractsPageResponseDTO> result= contractService.searchContracts(requestDTO,null,client.getId());
         return  ResponseEntity.ok(result);
     }
+
+    @PostMapping("/clients/{proposalId}/create-contract")
+    @PreAuthorize("@jwtService.isClientProposalOwner(#proposalId)")
+    public ResponseEntity<?> createContract(
+            @PathVariable String proposalId,
+            @RequestBody CreateContractRequestDTO requestDTO
+    ){
+        contractService.createContract(proposalId,requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
+    }
+
+
 
 }
