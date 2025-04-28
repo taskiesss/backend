@@ -99,38 +99,22 @@ public class ClientService {
 
         if (search == null || search.isEmpty()) {
             jobs = jobRepository.findAllByClient(client);
-            jobs.sort(Comparator.comparing(Job::getTitle).reversed());
-
-            //map to DTO list
-            DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
-
-            //List to Page
-            Pageable pageable = PageRequest.of(page, size);
-
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), DTOs.size());
-
-            List<ClientPostedJobsResponseDTO> paginatedList = DTOs.subList(start, end);
-
-            return new PageImpl<>(paginatedList, pageable, DTOs.size());
-
         } else {
             jobs = jobRepository.findByClientAndTitleContainingIgnoreCase(client, search);
-            jobs.sort(Comparator.comparing(Job::getTitle).reversed());
-
-            //map to DTO list
-            DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
-
-            //List to Page
-            Pageable pageable = PageRequest.of(page, size);
-
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), DTOs.size());
-
-            List<ClientPostedJobsResponseDTO> paginatedList = DTOs.subList(start, end);
-
-            return new PageImpl<>(paginatedList, pageable, DTOs.size());
         }
+        jobs.sort(Comparator.comparing(Job::getTitle).reversed());
 
+        //map to DTO list
+        DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
+
+        //List to Page
+        Pageable pageable = PageRequest.of(page, size);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), DTOs.size());
+
+        List<ClientPostedJobsResponseDTO> paginatedList = DTOs.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, DTOs.size());
     }
 }
