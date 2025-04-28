@@ -183,21 +183,22 @@ public class ContractService {
             freelancerId = freelancer.getId().toString();
         }else {
             Community community = communityRepository.findByWorkerEntity(contract.getWorkerEntity())
-                    .orElseThrow(()-> new NotFoundException("Community Not Found!"));
+                    .orElseThrow(() -> new NotFoundException("Community Not Found!"));
             freelancerName = community.getCommunityName();
             freelancerPicture = community.getProfilePicture();
             freelancerId = community.getUuid().toString();
-            isUserCommunityAdmin = setIsUserCommunityAddmin(contract,community);
 
-            Freelancer currentFreelancer = freelancerService.getFreelancerFromJWT();
-            if(contract.getStatus().equals(Contract.ContractStatus.ACTIVE) || contract.getStatus().equals(Contract.ContractStatus.ENDED))
-            {
-                ContractContributor contributor = contract.getContractContributors().stream()
-                        .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Contributor not found for current freelancer"));
+            isUserCommunityAdmin = setIsUserCommunityAddmin(contract, community);
+            if (jwtService.isFreelancer()) {
+                Freelancer currentFreelancer = freelancerService.getFreelancerFromJWT();
+                if (contract.getStatus().equals(Contract.ContractStatus.ACTIVE) || contract.getStatus().equals(Contract.ContractStatus.ENDED)) {
+                    ContractContributor contributor = contract.getContractContributors().stream()
+                            .filter(cc -> cc.getFreelancer() != null && currentFreelancer.getId().equals(cc.getFreelancer().getId()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Contributor not found for current freelancer"));
 
-                memberPercentage = (double) contributor.getPercentage();
+                    memberPercentage = (double) contributor.getPercentage();
+                }
             }
         }
 
