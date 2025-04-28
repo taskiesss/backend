@@ -2,32 +2,26 @@ package taskaya.backend.services.client;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
+import taskaya.backend.DTO.mappers.ClientPostedJobsResponseMapper;
+import taskaya.backend.DTO.mappers.ClientProfileResponseMapper;
 import taskaya.backend.DTO.mappers.ClientWorkDoneResponseMapper;
-import taskaya.backend.DTO.mappers.WorkerEntityWorkdoneResponseMapper;
-import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.config.security.JwtService;
-import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
 import taskaya.backend.entity.client.ClientBusiness;
-import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
-import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.work.JobRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
@@ -64,39 +58,15 @@ public class ClientService {
     public ClientProfileResponseDTO getClientProfile(String id) {
         if(Objects.equals(id, "my-profile")){
             Client client = getClientFromJWT();
-            return ClientProfileResponseDTO.builder()
-                    .uuid(client.getId().toString())
-                    .name(client.getName())
-                    .username(client.getUser().getUsername())
-                    .country(client.getCountry())
-                    .rate(client.getRate())
-                    .skills(client.getSkills().stream().map(Skill::toString).collect(Collectors.toList()))
-                    .languages(client.getLanguages().stream().toList())
-                    .description(client.getDescription())
-                    .profilePicture(client.getProfilePicture())
-                    .completedJobs(client.getClientBusiness().getCompletedJobs())
-                    .totalSpent(client.getClientBusiness().getTotalSpent())
-                    .build();
+            return ClientProfileResponseMapper.toDTO(client);
         }else {
             Client client = clientRepository.findById(UUID.fromString(id))
                     .orElseThrow(()-> new NotFoundException("client not found"));
-            return ClientProfileResponseDTO.builder()
-                    .uuid(client.getId().toString())
-                    .name(client.getName())
-                    .username(client.getUser().getUsername())
-                    .country(client.getCountry())
-                    .rate(client.getRate())
-                    .skills(client.getSkills().stream().map(Skill::toString).collect(Collectors.toList()))
-                    .languages(client.getLanguages().stream().toList())
-                    .description(client.getDescription())
-                    .profilePicture(client.getProfilePicture())
-                    .completedJobs(client.getClientBusiness().getCompletedJobs())
-                    .totalSpent(client.getClientBusiness().getTotalSpent())
-                    .build();
+            return ClientProfileResponseMapper.toDTO(client);
         }
     }
 
-    public Page<ClientWorkDoneResponseDTO> getClientWrokDone(String id, int page, int size) {
+    public Page<ClientWorkDoneResponseDTO> getClientWorkDone(String id, int page, int size) {
         List<ClientWorkDoneResponseDTO> listDTO = new ArrayList<>();
 
         //get client
@@ -118,5 +88,49 @@ public class ClientService {
         List<ClientWorkDoneResponseDTO> paginatedList = listDTO.subList(start, end);
 
         return new PageImpl<>(paginatedList, pageable, listDTO.size());
+    }
+
+    public Page<ClientPostedJobsResponseDTO> getPostedJobs(int page, int size, String search) {
+
+        List<ClientPostedJobsResponseDTO> DTOs = new ArrayList<>();
+
+        Client client = getClientFromJWT();
+        List<Job> jobs;
+
+        if ((search == null || search.isEmpty()) || search.equals("null")) {
+            jobs = jobRepository.findAllByClient(client);
+            jobs.sort(Comparator.comparing(Job::getTitle).reversed());
+
+            //map to DTO list
+            DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
+
+            //List to Page
+            Pageable pageable = PageRequest.of(page, size);
+
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), DTOs.size());
+
+            List<ClientPostedJobsResponseDTO> paginatedList = DTOs.subList(start, end);
+
+            return new PageImpl<>(paginatedList, pageable, DTOs.size());
+
+        } else {
+            jobs = jobRepository.findByClientAndTitleContainingIgnoreCase(client, search);
+            jobs.sort(Comparator.comparing(Job::getTitle).reversed());
+
+            //map to DTO list
+            DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
+
+            //List to Page
+            Pageable pageable = PageRequest.of(page, size);
+
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), DTOs.size());
+
+            List<ClientPostedJobsResponseDTO> paginatedList = DTOs.subList(start, end);
+
+            return new PageImpl<>(paginatedList, pageable, DTOs.size());
+        }
+
     }
 }

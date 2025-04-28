@@ -23,6 +23,8 @@ public interface JobRepository extends JpaRepository<Job, UUID>, JpaSpecificatio
     Optional<Job> findByTitle(String title);
     List<Job> findByAssignedToAndStatus(WorkerEntity assignedTo, Job.JobStatus status);
     List<Job> findByClientAndStatus(Client client, Job.JobStatus jobStatus);
+    List<Job> findAllByClient(Client client);
+    List<Job> findByClientAndTitleContainingIgnoreCase(Client client, String search);
 }
 
 

@@ -3,6 +3,7 @@ package taskaya.backend.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
@@ -32,6 +33,15 @@ public class ClientController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return ResponseEntity.ok(clientService.getClientWrokDone(id, page, size));
+        return ResponseEntity.ok(clientService.getClientWorkDone(id, page, size));
+    }
+
+    @GetMapping("/clients/my-jobs")
+    public ResponseEntity<Page<ClientPostedJobsResponseDTO>> clientPostedJobs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "null") String search
+    ){
+        return ResponseEntity.ok(clientService.getPostedJobs(page,size,search));
     }
 }

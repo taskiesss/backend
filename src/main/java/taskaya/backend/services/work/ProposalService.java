@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
 import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
+import taskaya.backend.DTO.mappers.ProposalDetailsResponseMapper;
 import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.responses.ProposalDetailsResponseDTO;
@@ -208,37 +209,10 @@ public class ProposalService {
         if(proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
             Freelancer freelancer = freelancerRepository.findByWorkerEntity(proposal.getWorkerEntity()).get();
 
-            return ProposalDetailsResponseDTO.builder()
-                    .proposalId(proposalId)
-                    .jobName(proposal.getJob().getTitle())
-                    .freelancerName(freelancer.getName())
-                    .freelancerId(freelancer.getId().toString())
-                    .profilePicture(freelancer.getProfilePicture())
-                    .isCommunity(Boolean.FALSE)
-                    .coverLetter(proposal.getCoverLetter())
-                    .pricePerHour(proposal.getCostPerHour())
-                    .paymentMethod(proposal.getPayment())
-                    .attachment(proposal.getAttachment())
-                    .date(proposal.getDate())
-                    .status(proposal.getStatus())
-                    .build();
+            return ProposalDetailsResponseMapper.toDTO(proposal,freelancer);
         } else if (proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
             Community community = communityRepository.findByWorkerEntity(proposal.getWorkerEntity()).get();
-
-            return ProposalDetailsResponseDTO.builder()
-                    .proposalId(proposalId)
-                    .jobName(proposal.getJob().getTitle())
-                    .freelancerName(community.getCommunityName())
-                    .freelancerId(community.getUuid().toString())
-                    .profilePicture(community.getProfilePicture())
-                    .isCommunity(Boolean.TRUE)
-                    .coverLetter(proposal.getCoverLetter())
-                    .pricePerHour(proposal.getCostPerHour())
-                    .paymentMethod(proposal.getPayment())
-                    .attachment(proposal.getAttachment())
-                    .date(proposal.getDate())
-                    .status(proposal.getStatus())
-                    .build();
+            return ProposalDetailsResponseMapper.toDTO(proposal,community);
         }
         else{
             throw new IllegalArgumentException();

@@ -1,5 +1,6 @@
 package taskaya.backend.DTO.mappers;
 
+import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.Milestone;
@@ -7,6 +8,7 @@ import taskaya.backend.entity.work.Milestone;
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
 public class ClientWorkDoneResponseMapper {
     public static ClientWorkDoneResponseDTO toDTO(Job job ){
         List<Milestone> milestones = job.getContract().getMilestones();
