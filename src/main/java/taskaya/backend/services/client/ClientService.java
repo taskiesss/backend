@@ -89,7 +89,6 @@ public class ClientService {
 
         return new PageImpl<>(paginatedList, pageable, listDTO.size());
     }
-
     public Page<ClientPostedJobsResponseDTO> getPostedJobs(int page, int size, String search) {
 
         List<ClientPostedJobsResponseDTO> DTOs = new ArrayList<>();
