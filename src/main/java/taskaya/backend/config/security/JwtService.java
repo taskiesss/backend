@@ -170,7 +170,7 @@ public class JwtService {
             }
         }
     }
-    public boolean ProposalDetailsAuth(String proposalId){
+    public boolean proposalDetailsAuth(String proposalId){
 
         if(isClient()){
             return isClientProposalOwner(proposalId);
@@ -202,7 +202,7 @@ public class JwtService {
     public boolean isClientProposalOwner(String proposalId){
         Proposal proposal = proposalRepository.findById(UUID.fromString(proposalId)).orElseThrow();
         UUID clientId = clientRepository.findByUser(getUserFromToken())
-                .orElseThrow(() -> new AccessDeniedException("security failed")).getId();
+                .orElseThrow(() -> new AccessDeniedException("client Not found")).getId();
         return clientId.equals(proposal.getClient().getId());
     }
 

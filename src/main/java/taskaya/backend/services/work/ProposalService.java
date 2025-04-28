@@ -197,13 +197,10 @@ public class ProposalService {
         proposalRepository.saveAll(proposals);
 
     }
-    public ProposalDetailsResponseDTO getProposalDetails(String proposalId) throws AccessDeniedException {
-        Client client = clientService.getClientFromJWT();
+    public ProposalDetailsResponseDTO getProposalDetails(String proposalId)   {
         Proposal proposal = proposalRepository.findById(UUID.fromString(proposalId))
                 .orElseThrow(()-> new NotFoundException("Proposal not found!"));
-        if(proposal.getClient() != client){
-            throw new AccessDeniedException("security failed");
-        }
+
         if(proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER){
             Freelancer freelancer = freelancerRepository.findByWorkerEntity(proposal.getWorkerEntity()).get();
 

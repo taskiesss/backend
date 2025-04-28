@@ -57,10 +57,10 @@ public class ProposalController {
     }
 
     @GetMapping("/clients/proposals/{proposalId}")
-    @PreAuthorize("ProposalDetailsAuth(#proposalId)")
+    @PreAuthorize("@jwtService.proposalDetailsAuth(#proposalId)")
     public ResponseEntity<ProposalDetailsResponseDTO>getProposalDetails(
             @PathVariable String proposalId
-    ) throws AccessDeniedException {
+    )  {
         return ResponseEntity.ok(proposalService.getProposalDetails(proposalId));
     }
 
@@ -80,7 +80,7 @@ public class ProposalController {
     }
 
     @GetMapping("/api/proposals/{id}/milestones")
-    @PreAuthorize("ProposalDetailsAuth(#id)")
+    @PreAuthorize("@jwtService.proposalDetailsAuth(#id)")
     public ResponseEntity<?> getProposalMilestones (@PathVariable String id,
                                                     @RequestParam(defaultValue = "0")  int page,
                                                     @RequestParam(defaultValue = "5")  int size){
