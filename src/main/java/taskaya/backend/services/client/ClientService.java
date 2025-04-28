@@ -97,7 +97,7 @@ public class ClientService {
         Client client = getClientFromJWT();
         List<Job> jobs;
 
-        if ((search == null || search.isEmpty()) || search.equals("null")) {
+        if (search == null || search.isEmpty()) {
             jobs = jobRepository.findAllByClient(client);
             jobs.sort(Comparator.comparing(Job::getTitle).reversed());
 

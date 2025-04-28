@@ -40,7 +40,7 @@ public class ClientController {
     public ResponseEntity<Page<ClientPostedJobsResponseDTO>> clientPostedJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "null") String search
+            @RequestParam String search
     ){
         return ResponseEntity.ok(clientService.getPostedJobs(page,size,search));
     }
