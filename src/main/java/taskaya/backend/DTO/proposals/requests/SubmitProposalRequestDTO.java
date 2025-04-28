@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
-import taskaya.backend.entity.enums.PaymentMethod;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestDTO;
 import taskaya.backend.entity.enums.PaymentMethod;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class SubmitProposalRequestDTO {
     String candidateId;
     double pricePerHour;
     PaymentMethod freelancerPayment;
-    List<MilestoneSubmitProposalRequestDTO> milestones;
+    List<MilestoneSubmitRequestDTO> milestones;
     String coverLetter;
     MultipartFile attachment;
 }

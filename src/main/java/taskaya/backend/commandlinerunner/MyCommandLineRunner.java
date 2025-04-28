@@ -7,24 +7,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
-import taskaya.backend.config.Constants;
-import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
-import taskaya.backend.entity.community.JoinRequest;
-import taskaya.backend.entity.community.Vote;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
 import taskaya.backend.entity.freelancer.Freelancer;
-import taskaya.backend.entity.freelancer.FreelancerBalance;
-import taskaya.backend.entity.freelancer.FreelancerBusiness;
-import taskaya.backend.entity.freelancer.FreelancerPortfolio;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.SkillRepository;
@@ -145,6 +138,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         mileStoneRequestReview();
         communitiesInitializer.communityPost();
         communitiesInitializer.communityPostLikesAndComments();
+        freelancersInitializer.freelancerPendingProposalSeed();
     }
 
 
@@ -172,7 +166,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .orElseThrow(()->new RuntimeException("Job Not Found!"));
 
 
-        MilestoneSubmitProposalRequestDTO myMilestone1 = MilestoneSubmitProposalRequestDTO.builder()
+        MilestoneSubmitRequestDTO myMilestone1 = MilestoneSubmitRequestDTO.builder()
                 .title("Milestone 1")
                 .description("This is the First Milestone")
                 .dueDate(new Date())
@@ -180,7 +174,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .milestoneNumber(1)
                 .build();
 
-        MilestoneSubmitProposalRequestDTO myMilestone2 = MilestoneSubmitProposalRequestDTO.builder()
+        MilestoneSubmitRequestDTO myMilestone2 = MilestoneSubmitRequestDTO.builder()
                 .title("Milestone 2")
                 .description("This is the Second Milestone")
                 .dueDate(new Date())
@@ -188,7 +182,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .milestoneNumber(2)
                 .build();
 
-        List<MilestoneSubmitProposalRequestDTO> milestoneList = new ArrayList<>(Arrays.asList(myMilestone1,myMilestone2));
+        List<MilestoneSubmitRequestDTO> milestoneList = new ArrayList<>(Arrays.asList(myMilestone1,myMilestone2));
 
         User user = User.builder()
                 .email("markosama@gmail.com")

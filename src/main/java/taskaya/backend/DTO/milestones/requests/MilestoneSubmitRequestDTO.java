@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MilestoneSubmitProposalRequestDTO {
+public class MilestoneSubmitRequestDTO {
     String title;
     String description;
     Date dueDate;

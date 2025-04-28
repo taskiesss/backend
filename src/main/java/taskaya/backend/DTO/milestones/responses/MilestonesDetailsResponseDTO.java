@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MilestonesContractDetailsResponseDTO {
+public class MilestonesDetailsResponseDTO {
     String title;
     String description;
     Integer expectedHours;

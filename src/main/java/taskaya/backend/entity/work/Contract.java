@@ -3,6 +3,7 @@ package taskaya.backend.entity.work;
 
 import jakarta.persistence.*;
 import lombok.*;
+import taskaya.backend.config.Constants;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.PaymentMethod;
@@ -40,7 +41,7 @@ public class Contract {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client; // Associated Client
 
-    @Column(name = "description", length = 1000)
+    @Column(name = "description", length = Constants.MAX_DESCRIPTION_SIZE)
     private String description; // Contract description
 
     @Column(name = "cost_per_hour", nullable = false)
@@ -91,12 +92,20 @@ public class Contract {
     private void getDueDateFromMilestones (){
         if (milestones.isEmpty())
             throw new RuntimeException("needs at least 1 milestone");
-        Date result =milestones.get(0).getDueDate();
+        Date result =milestones.getFirst().getDueDate();
         for (Milestone milestone :milestones){
             if (milestone.getDueDate().after(result))
                 result=milestone.getDueDate();
         }
         dueDate = result;
+    }
+
+
+    public void setCostPerHour(Double costPerHour) {
+        if (costPerHour<=0)
+            throw new IllegalArgumentException("cost per hour should be greater than 0");
+
+        this.costPerHour = costPerHour;
     }
 
     public void setStatus(ContractStatus status){

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
-import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Milestone;

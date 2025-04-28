@@ -348,7 +348,7 @@ public class CommunitiesInitializer {
                 .build();
         jobRepository.save(job2);
         proposalRepository.save(proposal2);
-        System.out.println(STR."Proposal id: \{proposal2.getId()}");
+        System.out.println("community hired proposal : "+proposal2.getId());
         contractRepository.save(contract2);
         contractService.startContract(contract2,false);
         milestones2.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);

@@ -3,17 +3,20 @@ package taskaya.backend.services.work;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.commons.responses.MyProposalsPageResponseDTO;
+import taskaya.backend.DTO.mappers.MilestonesDetailsMapper;
 import taskaya.backend.DTO.mappers.MyProposalsPageResponseMapper;
 import taskaya.backend.DTO.mappers.ProposalDetailsResponseMapper;
-import taskaya.backend.DTO.milestones.requests.MilestoneSubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.requests.SubmitProposalRequestDTO;
 import taskaya.backend.DTO.proposals.responses.ProposalDetailsResponseDTO;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestMapper;
+import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
+import taskaya.backend.DTO.proposals.requests.SearchMyProposalsRequestDTO;
+import taskaya.backend.DTO.proposals.responses.SearchMyProposalsResponseDTO;
+import taskaya.backend.DTO.proposals.responses.SearchMyProposalsResponseMapper;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
@@ -28,7 +31,9 @@ import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
 import taskaya.backend.services.client.ClientService;
+import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.specifications.ProposalSpecification;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -36,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProposalService {
@@ -43,8 +49,12 @@ public class ProposalService {
     private ProposalRepository proposalRepository;
 
     @Autowired
+    private JwtService jwtService;
+    @Autowired
     private JobService jobService;
 
+    @Autowired
+    private CommunityService communityService;
     @Autowired
     private WorkerEntityService workerEntityService;
 
@@ -132,19 +142,7 @@ public class ProposalService {
 
 
         // create milestones list, copy milestones from DTO
-        List<Milestone> myMilestoneList = new ArrayList<>();
-        for (MilestoneSubmitProposalRequestDTO milestone : requestDTO.getMilestones()) {
-            Milestone myMilestone = Milestone.builder()
-                    .name(milestone.getTitle())
-                    .description(milestone.getDescription())
-                    .dueDate(milestone.getDueDate())
-                    .number(milestone.getMilestoneNumber())
-                    .estimatedHours(milestone.getExpectedHours())
-                    .status(Milestone.MilestoneStatus.NOT_STARTED)
-                    .build();
-
-            myMilestoneList.add(myMilestone);
-        }
+        List<Milestone> myMilestoneList = MilestoneSubmitRequestMapper.toMilestoneList(requestDTO.getMilestones());
 
         Job job = jobService.findById(jobId);
         // create proposal, copy data from DTO
@@ -189,7 +187,7 @@ public class ProposalService {
                 .orElseThrow(()->new RuntimeException("No Proposal found for this contract!"));
         List<Proposal> proposals = proposalRepository.findByJob(job);
 
-        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+        proposal.setStatus(Proposal.ProposalStatus.HIRED);
 
         proposals.stream().filter(proposal1 -> proposal1.getId()!= proposal.getId()
                         && proposal1.getStatus()== Proposal.ProposalStatus.PENDING)
@@ -217,5 +215,81 @@ public class ProposalService {
         else{
             throw new IllegalArgumentException();
         }
+    }
+
+    public Page<SearchMyProposalsResponseDTO>searchProposals(SearchMyProposalsRequestDTO requestDTO,
+                                                           UUID workerEntityId,UUID clientId){
+        Sort sort = Sort.by(Sort.Order.desc("date"));
+        Pageable pageable = PageRequest.of(requestDTO.getPage(), requestDTO.getSize(), sort);
+
+
+        Specification<Proposal> specification = ProposalSpecification.searchProposal(
+                requestDTO.getSearch(),
+                requestDTO.getStatus(),
+                workerEntityId,
+                clientId,
+                requestDTO.getJobId()!=null?UUID.fromString(requestDTO.getJobId()):null
+        );
+
+
+        Page<Proposal> proposalsPage = proposalRepository.findAll(specification, pageable);
+
+        Page<SearchMyProposalsResponseDTO>dtoPage =  SearchMyProposalsResponseMapper.toDTOPage(proposalsPage);
+
+        if (jwtService.getUserFromToken().getRole() == User.Role.CLIENT){
+            setFreelancerNameAndFreelancerIdForProposalsDTO(dtoPage, proposalsPage);
+        }
+        return dtoPage;
+
+    }
+
+
+
+
+    public void setFreelancerNameAndFreelancerIdForProposalsDTO(Page<SearchMyProposalsResponseDTO> dtoPage, Page<Proposal> proposalPage) {
+        for (int i = 0; i < proposalPage.getContent().size(); i++) {
+            Proposal proposal = proposalPage.getContent().get(i);
+            SearchMyProposalsResponseDTO dto = dtoPage.getContent().get(i);
+            if (proposal.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
+                Community community = communityService.getCommunityByWorkerEntity(proposal.getWorkerEntity());
+                dto.setFreelancerName(community.getCommunityName());
+                dto.setFreelancerId(community.getUuid().toString());
+                dto.setProfilePicture(community.getProfilePicture());
+                dto.setCommunity(true);
+
+            } else {
+                Freelancer freelancer = freelancerService.getFreelancerByWorkerEntity(proposal.getWorkerEntity());
+                dto.setFreelancerName(freelancer.getName());
+                dto.setFreelancerId(freelancer.getId().toString());
+                dto.setProfilePicture(freelancer.getProfilePicture());
+                dto.setCommunity(false);
+            }
+        }
+    }
+
+    public Page<MilestonesDetailsResponseDTO> getProposalMilestones(String id, int page, int size) {
+        Proposal proposal = getProposalById(id);
+
+        List<Milestone> milestones = proposal.getMilestones();
+        milestones.sort(Comparator.comparing(Milestone::getDueDate));
+
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), milestones.size());
+        List<Milestone> pagedList = milestones.subList(start, end);
+        return MilestonesDetailsMapper.toPageDTO(new PageImpl<>(pagedList, pageable, milestones.size()));
+
+    }
+
+    public Proposal getProposalById(String proposalId){
+        return proposalRepository.findById(UUID.fromString(proposalId))
+                .orElseThrow(()-> new NotFoundException("No proposal Found!"));
+    }
+
+
+    public void hireProposalAndRejectAllOthersAfterStartingContract(Proposal proposal, Contract contract) {
+        proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
+        proposalRepository.save(proposal);
+        rejectOtherProposalsAfterStartingContract(proposal.getJob(), contract);
     }
 }

@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
-import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.work.Contract;
 

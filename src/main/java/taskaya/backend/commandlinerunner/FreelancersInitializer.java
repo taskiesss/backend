@@ -291,16 +291,16 @@ public class FreelancersInitializer {
                 .job(job)
                 .payment(PaymentMethod.PerMilestones)
                 .workerEntity(freelancer.getWorkerEntity())
-                .coverLetter("please accept me")
+                .coverLetter("please accept meeee!")
                 .build();
 
         job.setContract(contract);
         jobRepository.save(job);
         proposalRepository.save(proposal1);
+        System.out.println("proposal1 ID hired : "+proposal1.getId());
         contractService.startContract(contract,false);
         milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
         contractService.approveMilestone(contract.getId().toString(),"3",false);
-
 
 
 
@@ -375,7 +375,7 @@ public class FreelancersInitializer {
         Proposal proposal2= Proposal.builder()
                 .costPerHour(30D)
                 .date(new Date())
-                .milestones(milestones)
+                .milestones(milestones2)
                 .contract(contract2)
                 .client(client)
                 .status(Proposal.ProposalStatus.HIRED)
@@ -499,4 +499,70 @@ public class FreelancersInitializer {
         contractRepository.save(deletedContract);
 
     }
+
+    public void freelancerPendingProposalSeed (){
+        Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
+        Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
+
+        Job job = Job.builder()
+                .title("healthcare website development")
+                .client(client)
+                .experienceLevel(ExperienceLevel.intermediate)
+                .projectLength(ProjectLength._3_to_6_months)
+                .status(Job.JobStatus.NOT_ASSIGNED)
+                .description("this is the first job")
+                .pricePerHour(40)
+                .endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .build();
+
+        jobRepository.save(job);
+
+        List<Milestone> milestones =new ArrayList<>( List.of(
+                Milestone.builder()
+                        .name("Contract1 - mile1")
+                        .number(1)
+                        .description("Mile1Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+
+                Milestone.builder()
+                        .name("Contract1 - mile2")
+                        .number(2)
+                        .description("Mile2Desc")
+                        .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                        .estimatedHours(3)
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+                Milestone.builder()
+                        .name("Contract1 - mile2")
+                        .number(3)
+                        .description("Mile3Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
+                        .build()
+
+        ));
+
+        Proposal proposal1= Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(milestones)
+                .contract(null)
+                .job(job)
+                .client(client)
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(freelancer.getWorkerEntity())
+                .status(Proposal.ProposalStatus.PENDING)
+                .coverLetter("pending proposal")
+                .build();
+
+
+        proposalRepository.save(proposal1);
+        System.out.println("proposal1 ID pending : "+proposal1.getId());
+
+    }
+
 }

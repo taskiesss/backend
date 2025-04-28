@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.contracts.requests.AcceptOrRejectContractRequestDTO;
+import taskaya.backend.DTO.contracts.requests.CreateContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
 import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
 import taskaya.backend.DTO.milestones.responses.MilestoneSubmissionResponseDTO;
-import taskaya.backend.DTO.milestones.responses.MilestonesContractDetailsResponseDTO;
+
+import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
+import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
@@ -26,6 +29,7 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.services.work.ContractService;
 
@@ -47,6 +51,8 @@ public class ContractController {
     FreelancerService freelancerService;
     @Autowired
     CommunityRepository communityRepository;
+    @Autowired
+    ClientService clientService;
 
     @PostMapping("/freelancers/my-contracts")
     public ResponseEntity<?> getMyContracts (@RequestBody MyContractsPageRequestDTO requestDTO){
@@ -64,7 +70,7 @@ public class ContractController {
 
     @GetMapping("/api/contracts/{id}/milestones")
     public ResponseEntity<?> getContractMilestones (@PathVariable String id, @RequestParam int page, @RequestParam int size){
-        Page<MilestonesContractDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
+        Page<MilestonesDetailsResponseDTO> responseDTOPage = contractService.getContractMilestones(id,page,size);
         return  ResponseEntity.ok(responseDTOPage);
     }
 
@@ -163,4 +169,24 @@ public class ContractController {
         contractService.acceptOrRejectContract(contractId,requestDTO.isAccepted());
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
+
+    @PostMapping("/clients/my-contracts")
+    public ResponseEntity<?> getClientsMyContracts (@RequestBody MyContractsPageRequestDTO requestDTO){
+        Client client = clientService.getClientFromJWT();
+        Page<MyContractsPageResponseDTO> result= contractService.searchContracts(requestDTO,null,client.getId());
+        return  ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/clients/{proposalId}/create-contract")
+    @PreAuthorize("@jwtService.isClientProposalOwner(#proposalId)")
+    public ResponseEntity<?> createContract(
+            @PathVariable String proposalId,
+            @RequestBody CreateContractRequestDTO requestDTO
+    ){
+        contractService.createContract(proposalId,requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
+    }
+
+
+
 }
