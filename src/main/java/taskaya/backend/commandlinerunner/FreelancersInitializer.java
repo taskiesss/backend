@@ -3,6 +3,8 @@ package taskaya.backend.commandlinerunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import taskaya.backend.DTO.contracts.requests.CreateContractRequestDTO;
+import taskaya.backend.DTO.milestones.requests.MilestoneSubmitRequestDTO;
 import taskaya.backend.config.Constants;
 import taskaya.backend.entity.Payment;
 import taskaya.backend.entity.Skill;
@@ -673,6 +675,24 @@ public class FreelancersInitializer {
                 .build();
         proposalRepository.saveAll(List.of(proposal1,proposal2,proposal3));
 
+        contractService.createContract(proposal1.getId().toString(),
+                CreateContractRequestDTO.builder()
+                        .costPerHour(30)
+                        .payment(PaymentMethod.PerProject)
+                        .description("sacasc")
+                        .milestones(
+                                List.of(
+                                        MilestoneSubmitRequestDTO.builder()
+                                                .description("casc")
+                                                .dueDate(new Date(2026-1900, 1, 20, 15, 30, 0))
+                                                .expectedHours(300)
+                                                .milestoneNumber(1)
+                                                .title("camc")
+                                                .build())
+                        )
+                        .startDate(new Date(2026-1900, 1, 5, 15, 30, 0))
+                        .build()
+                ,false);
         System.out.println("proposal1 ID pending : "+proposal1.getId());
 
     }
