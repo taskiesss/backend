@@ -252,6 +252,7 @@ public class ProposalService {
                 dto.setFreelancerName(community.getCommunityName());
                 dto.setFreelancerId(community.getUuid().toString());
                 dto.setProfilePicture(community.getProfilePicture());
+                dto.setFreelancerTitle(community.getTitle());
                 dto.setCommunity(true);
 
             } else {
@@ -259,6 +260,7 @@ public class ProposalService {
                 dto.setFreelancerName(freelancer.getName());
                 dto.setFreelancerId(freelancer.getId().toString());
                 dto.setProfilePicture(freelancer.getProfilePicture());
+                dto.setFreelancerTitle(freelancer.getTitle());
                 dto.setCommunity(false);
             }
         }

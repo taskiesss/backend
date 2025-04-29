@@ -20,6 +20,7 @@ public class SearchMyProposalsResponseDTO {
     private String freelancerName;
     private String freelancerId;
     private String profilePicture;
+    private String freelancerTitle;
     private String jobName;
     private String jobId;
     private boolean isCommunity;

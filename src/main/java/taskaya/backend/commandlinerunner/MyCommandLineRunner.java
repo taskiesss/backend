@@ -129,6 +129,8 @@ class MyCommandLineRunner implements CommandLineRunner {
         communitiesInitializer.communityWithAdmin();
         seedCommunityAndCommunityMember();
 //		proposalSeed();
+        freelancersInitializer.freelancerPendingProposalSeed();
+
         freelancersInitializer.freelancerWorkdoneWithPaymentseed();
         communitiesInitializer.communityWithContractPendingAndVotes();
         communitiesInitializer.communityWithActiveJob();
@@ -138,7 +140,6 @@ class MyCommandLineRunner implements CommandLineRunner {
         mileStoneRequestReview();
         communitiesInitializer.communityPost();
         communitiesInitializer.communityPostLikesAndComments();
-        freelancersInitializer.freelancerPendingProposalSeed();
     }
 
 

@@ -56,7 +56,7 @@ public class ProposalController {
         return ResponseEntity.ok(proposalService.getMyProposals(page,size));
     }
 
-    @GetMapping("/clients/proposals/{proposalId}")
+    @GetMapping("/api/proposals/{proposalId}")
     @PreAuthorize("@jwtService.proposalDetailsAuth(#proposalId)")
     public ResponseEntity<ProposalDetailsResponseDTO>getProposalDetails(
             @PathVariable String proposalId

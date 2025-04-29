@@ -294,9 +294,22 @@ public class FreelancersInitializer {
                 .coverLetter("please accept meeee!")
                 .build();
 
+        Proposal Declined= Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(new ArrayList<>(List.of(Milestone.builder().name("mileee").number(1).description("demo").estimatedHours(34).status(Milestone.MilestoneStatus.NOT_STARTED).dueDate(new Date()).build())))
+                .client(client)
+                .status(Proposal.ProposalStatus.PENDING)
+                .job(job)
+                .payment(PaymentMethod.PerMilestones)
+                .workerEntity(freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer02").orElseThrow().getId()).orElseThrow().getWorkerEntity())
+                .coverLetter("please accept meeee!")
+                .build();
+
         job.setContract(contract);
         jobRepository.save(job);
         proposalRepository.save(proposal1);
+        proposalRepository.save(Declined);
         System.out.println("proposal1 ID hired : "+proposal1.getId());
         contractService.startContract(contract,false);
         milestones.getFirst().setStatus(Milestone.MilestoneStatus.APPROVED);
@@ -315,6 +328,7 @@ public class FreelancersInitializer {
 //		System.out.println("Community Contract 1, milestone 1 ID: "+contract.getMilestones().get(0).getId());
 
 
+        freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer03").orElseThrow().getId()).orElseThrow();
         Job job2 = Job.builder()
                 .title("club website development")
                 .client(client)
@@ -505,12 +519,20 @@ public class FreelancersInitializer {
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
 
         Job job = Job.builder()
-                .title("healthcare website development")
+                .title("Freelancer Platform Developer ")
                 .client(client)
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
                 .status(Job.JobStatus.NOT_ASSIGNED)
-                .description("this is the first job")
+                .description("Job Description:\n" +
+                        "\n" +
+                        "We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
+                        "\n" +
+                        "Responsibilities:\n" +
+                        "Design, develop, and maintain both front-end and back-end systems for the healthcare platform.\n" +
+                        "Build intuitive, user-friendly, and responsive user interfaces using modern web technologies.\n" +
+                        "Develop and manage RESTful APIs to support the platform’s functionality.\n" +
+                        "Integrate third-party services, such as payment gateways, email systems, and healthcare data APIs.\n" )
                 .pricePerHour(40)
                 .endedAt(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                 .build();
