@@ -582,7 +582,97 @@ public class FreelancersInitializer {
                 .build();
 
 
-        proposalRepository.save(proposal1);
+
+
+        freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer03").orElseThrow().getId()).orElseThrow();
+
+        List<Milestone> milestones2 =new ArrayList<>( List.of(
+                Milestone.builder()
+                        .name("prop2 - mile1")
+                        .number(1)
+                        .description("Mile1Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+
+                Milestone.builder()
+                        .name("prop2 - mile2")
+                        .number(2)
+                        .description("Mile2Desc")
+                        .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                        .estimatedHours(3)
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+                Milestone.builder()
+                        .name("prop2 - mile2")
+                        .number(3)
+                        .description("Mile3Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
+                        .build()
+
+        ));
+
+        Proposal proposal2= Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(milestones2)
+                .contract(null)
+                .job(job)
+                .client(client)
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(freelancer.getWorkerEntity())
+                .status(Proposal.ProposalStatus.PENDING)
+                .coverLetter("pending proposal")
+                .build();
+
+        freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer02").orElseThrow().getId()).orElseThrow();
+
+        List<Milestone> milestones3 =new ArrayList<>( List.of(
+                Milestone.builder()
+                        .name("prop2 - mile1")
+                        .number(1)
+                        .description("Mile1Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+
+                Milestone.builder()
+                        .name("prop2 - mile2")
+                        .number(2)
+                        .description("Mile2Desc")
+                        .dueDate(new Date(2027-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                        .estimatedHours(3)
+                        .status(Milestone.MilestoneStatus.APPROVED)
+                        .build(),
+                Milestone.builder()
+                        .name("prop2 - mile2")
+                        .number(3)
+                        .description("Mile3Desc")
+                        .estimatedHours(5)
+                        .dueDate( new Date(2026-1900, 1, 20, 15, 30, 0))
+                        .status(Milestone.MilestoneStatus.PENDING_REVIEW)
+                        .build()
+
+        ));
+
+        Proposal proposal3= Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(milestones2)
+                .contract(null)
+                .job(job)
+                .client(client)
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(freelancer.getWorkerEntity())
+                .status(Proposal.ProposalStatus.DECLINED)
+                .coverLetter("pending proposal")
+                .build();
+        proposalRepository.saveAll(List.of(proposal1,proposal2,proposal3));
+
         System.out.println("proposal1 ID pending : "+proposal1.getId());
 
     }
