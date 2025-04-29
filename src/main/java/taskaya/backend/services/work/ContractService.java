@@ -368,7 +368,7 @@ public class ContractService {
     }
 
     @Transactional
-    public void createContract(String proposalId, CreateContractRequestDTO requestDTO) {
+    public void createContract(String proposalId, CreateContractRequestDTO requestDTO, boolean sendEmails) {
         Proposal proposal = proposalService.getProposalById(proposalId);
         if (proposal.getStatus() != Proposal.ProposalStatus.PENDING) {
             throw new IllegalArgumentException("Bad request - Proposal status must be Pending");
@@ -408,6 +408,14 @@ public class ContractService {
         clientBalanceService.updateAvailable(contract.getClient(),-totalBudget);
 
         contractRepository.save(contract);
+
+        List<Freelancer> freelancers = getFreelancersFromContract(contract);
+        if (sendEmails){
+            for (Freelancer freelancer : freelancers) {
+                mailService.sendEmailForFreelancerForCreatingContract(freelancer.getUser().getEmail(),
+                        contract.getJob());
+            }
+        }
     }
 
 

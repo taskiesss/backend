@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.Job;
 import taskaya.backend.entity.work.WorkerEntity;
 
 @Service
@@ -170,4 +171,23 @@ public class MailService {
             throw new RuntimeException(e);
         }
     }
+
+    public void sendEmailForFreelancerForCreatingContract(String email, Job job) {
+        String subject = "New Job Offer: " + job.getTitle();
+        String content = "<html><body>"
+                + "Dear Freelancer,<br><br>"
+                + "Congratulations! You have received a new offer for the job titled <strong>" + job.getTitle() + "</strong>.<br><br>"
+                + "Please review the offer details and take the necessary steps to proceed.<br><br>"
+                + "We wish you success and a productive collaboration!<br><br>"
+                + "Best regards,<br>"
+                + "<strong>Taskaya Team</strong>"
+                + "</body></html>";
+
+        try {
+            sendEmail(email, subject, content);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

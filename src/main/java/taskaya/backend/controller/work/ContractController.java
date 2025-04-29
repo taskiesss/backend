@@ -183,7 +183,7 @@ public class ContractController {
             @PathVariable String proposalId,
             @RequestBody CreateContractRequestDTO requestDTO
     ){
-        contractService.createContract(proposalId,requestDTO);
+        contractService.createContract(proposalId,requestDTO,true);
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 
