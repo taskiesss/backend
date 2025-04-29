@@ -27,4 +27,5 @@ public class ProposalDetailsResponseDTO {
     private String attachment;
     private Date date;
     private Proposal.ProposalStatus status;
+    private Integer totalHours;
 }

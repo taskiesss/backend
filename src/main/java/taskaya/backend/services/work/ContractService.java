@@ -374,7 +374,6 @@ public class ContractService {
             throw new IllegalArgumentException("Bad request - Proposal status must be Pending");
         }
         proposal.setStatus(Proposal.ProposalStatus.ACCEPTED);
-        proposalRepository.save(proposal);
         if (proposal.getJob().getAssignedTo()!= null){
             throw new IllegalArgumentException("Bad request - this job is already assigned ");
         }
@@ -408,7 +407,8 @@ public class ContractService {
         clientBalanceService.updateAvailable(contract.getClient(),-totalBudget);
 
         contractRepository.save(contract);
-
+        proposal.setContract(contract);
+        proposalRepository.save(proposal);
         List<Freelancer> freelancers = getFreelancersFromContract(contract);
         if (sendEmails){
             for (Freelancer freelancer : freelancers) {
