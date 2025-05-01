@@ -23,7 +23,6 @@ import taskaya.backend.DTO.milestones.responses.MilestonesDetailsResponseDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
-import taskaya.backend.entity.client.ClientBalance;
 import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
@@ -345,7 +344,7 @@ public class ContractService {
             if(workerEntity.getType() == WorkerEntity.WorkerType.FREELANCER){
                 Freelancer freelancer = freelancerRepository.findByWorkerEntity(workerEntity)
                         .orElseThrow(()-> new RuntimeException("Freelancer Not Found!"));
-                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail()
+                mailService.sendNotificationMailToClientforReviewRequestAsync(client.getUser().getEmail()
                         , client.getName()
                         , freelancer.getName()
                         , contract.getJob().getTitle()
@@ -354,7 +353,7 @@ public class ContractService {
             else{
                 Community community = communityRepository.findByWorkerEntity(workerEntity)
                         .orElseThrow(()-> new RuntimeException("Community Not Found!"));
-                mailService.sendNotificationMailToClientforReviewRequest(client.getUser().getEmail()
+                mailService.sendNotificationMailToClientforReviewRequestAsync(client.getUser().getEmail()
                         , client.getName()
                         ,community.getCommunityName()
                         ,contract.getJob().getTitle()
@@ -411,12 +410,10 @@ public class ContractService {
         proposalRepository.save(proposal);
         List<Freelancer> freelancers = getFreelancersFromContract(contract);
         if (sendEmails){
-            for (Freelancer freelancer : freelancers) {
-                mailService.sendEmailForFreelancerForCreatingContract(freelancer.getUser().getEmail(),
-                        contract.getJob());
-            }
+            mailService.sendEmailsForFreelancerForNewOffer(contract,freelancers);
         }
     }
+
 
 
     @Transactional
@@ -455,16 +452,11 @@ public class ContractService {
 
         updateFreelancerWorkInProgressFromContract(contract, contractFreelancers);
         if (sendEmails){
-            for (Freelancer freelancer : contractFreelancers) {
-                mailService.sendEmailForFreelancerForStartingContract(freelancer.getUser().getEmail(),
-                        contract);
-            }
-
-            mailService.sendEmailForClientForStartingContract(contract.getClient().getUser().getEmail(),
-                    contract);
+           mailService.sendEmailsForStartingContract(contract, contractFreelancers);
         }
         System.out.println("contract just started : "+ contract.getId());
     }
+
 
 
 
@@ -508,14 +500,13 @@ public class ContractService {
 
         if (sendEmails){
         List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
-        for (Freelancer freelancer : contractFreelancers) {
-            mailService.sendMailToFreelancerAfterClientApproval(freelancer.getUser().getEmail(),
-                    freelancer.getUser().getUsername(), contract.getJob().getTitle(), milestone.getName());
-            }
+        mailService.sendEmailsTofreelancersAfterApprovalAsync(contractFreelancers,contract,milestone);
+
         }
         milestoneRepository.save(milestone);
 
     }
+
 
     public void rateContract(String contractId, int rate) {
         if (rate<1 || rate>5){
@@ -608,9 +599,18 @@ public class ContractService {
     public List<Freelancer>getFreelancersFromContract(Contract contract){
 
         if(contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY){
-            return contract.getContractContributors().stream()
-                    .map(ContractContributor::getFreelancer)
-                    .toList();
+
+            if (contract.getStatus()!= Contract.ContractStatus.PENDING) {
+                return contract.getContractContributors().stream()
+                        .map(ContractContributor::getFreelancer)
+                        .toList();
+            }else {
+                return communityService.getCommunityByWorkerEntity(contract.getWorkerEntity())
+                        .getCommunityMembers().stream()
+                        .filter(communityMember -> communityMember.getFreelancer()!=null)
+                        .map(CommunityMember::getFreelancer)
+                        .toList();
+            }
         }else {
             return List.of(freelancerService.getFreelancerByWorkerEntity(contract.getWorkerEntity()));
         }
@@ -627,7 +627,7 @@ public class ContractService {
 
         clientBalanceService.updateAvailable(contract.getClient(),totalBudget);
         if (sendEmails) {
-            mailService.sendRejectionMailToClient(contract.getClient().getUser().getEmail(), contract);
+            mailService.sendRejectionMailToClientAsync(contract.getClient().getUser().getEmail(), contract);
         }
         contractRepository.save(contract);
     }

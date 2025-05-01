@@ -167,7 +167,7 @@ public class ProposalService {
 
         String jobTitle = jobService.findById(jobId).getTitle();
 
-        mailService.sendProposalToClient(clientEmail, workerName, jobTitle);
+        mailService.sendProposalToClientAsync(clientEmail, workerName, jobTitle);
 
     }
 

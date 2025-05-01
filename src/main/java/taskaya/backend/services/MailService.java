@@ -5,10 +5,15 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Job;
+import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.WorkerEntity;
+
+import java.util.List;
 
 @Service
 public class MailService {
@@ -61,6 +66,11 @@ public class MailService {
         }
     }
 
+    @Async
+    public void sendProposalToClientAsync(String to , String from, String jobTitle) {
+        sendProposalToClient(to, from, jobTitle);
+    }
+
     public void sendAcceptanceToFreelance(String to, String freelancerName, String communityName) {
         String subject = "Welcome to " + communityName;
         String content = "<html><body>"
@@ -77,6 +87,11 @@ public class MailService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Async
+    public void sendAcceptanceToFreelanceAsync(String to, String freelancerName, String communityName) {
+        sendAcceptanceToFreelance(to, freelancerName, communityName);
     }
 
     public void sendNotificationMailToClientforReviewRequest(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName)  {
@@ -98,6 +113,11 @@ public class MailService {
         }
     }
 
+
+    @Async
+    public void sendNotificationMailToClientforReviewRequestAsync(String to, String clientName, String freelancerOrCommunityName, String jobTitle, String milestoneName)  {
+        sendNotificationMailToClientforReviewRequest(to, clientName, freelancerOrCommunityName, jobTitle, milestoneName);
+    }
 
     public void sendMailToFreelancerAfterClientApproval(String to, String freelancerName, String jobTitle, String milestoneName)  {
         String subject = "Milestone Approved: " + milestoneName + " - " + jobTitle;
@@ -172,6 +192,11 @@ public class MailService {
         }
     }
 
+    @Async
+    public void sendRejectionMailToClientAsync(String email, Contract contract) {
+        sendRejectionMailToClient(email, contract);
+    }
+
     public void sendEmailForFreelancerForCreatingContract(String email, Job job) {
         String subject = "New Job Offer: " + job.getTitle();
         String content = "<html><body>"
@@ -190,4 +215,32 @@ public class MailService {
         }
     }
 
+
+    @Async
+    public void sendEmailsTofreelancersAfterApprovalAsync(List<Freelancer> contractFreelancers , Contract contract , Milestone milestone) {
+        for (Freelancer freelancer : contractFreelancers) {
+            sendMailToFreelancerAfterClientApproval(freelancer.getUser().getEmail(),
+                    freelancer.getUser().getUsername(), contract.getJob().getTitle(), milestone.getName());
+        }
+    }
+
+
+    @Async
+    public void sendEmailsForFreelancerForNewOffer(Contract contract, List<Freelancer> freelancers) {
+        for (Freelancer freelancer : freelancers) {
+            sendEmailForFreelancerForCreatingContract(freelancer.getUser().getEmail(),
+                    contract.getJob());
+        }
+    }
+
+    @Async
+    public void sendEmailsForStartingContract(Contract contract ,List<Freelancer>freelancers ){
+        for (Freelancer freelancer : freelancers) {
+            sendEmailForFreelancerForStartingContract(freelancer.getUser().getEmail(),
+                    contract);
+        }
+
+        sendEmailForClientForStartingContract(contract.getClient().getUser().getEmail(),
+                contract);
+    }
 }

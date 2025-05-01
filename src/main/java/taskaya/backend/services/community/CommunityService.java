@@ -379,7 +379,7 @@ public class CommunityService {
             communityJoinRequestRepository.deleteByPosition(communityMember);
 
             //send acceptance mail to freelancer
-            mailService.sendAcceptanceToFreelance(freelancer.getUser().getEmail(), freelancer.getName(), community.getCommunityName());
+            mailService.sendAcceptanceToFreelanceAsync(freelancer.getUser().getEmail(), freelancer.getName(), community.getCommunityName());
 
         } else if (request.getChoice().equals("reject")) {
             CommunityMember communityMember = communityMemberRepository
