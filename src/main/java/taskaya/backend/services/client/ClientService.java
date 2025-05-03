@@ -31,6 +31,9 @@ public class ClientService {
     private JwtService jwtService;
     @Autowired
     private JobRepository jobRepository;
+    @Autowired
+    private ClientPostedJobsResponseMapper clientPostedJobsResponseMapper;
+
 
     @Transactional
     public Client createClient(User user){
@@ -104,7 +107,7 @@ public class ClientService {
         jobs.sort(Comparator.comparing(Job::getTitle).reversed());
 
         //map to DTO list
-        DTOs = ClientPostedJobsResponseMapper.toDTOList(jobs);
+        DTOs = clientPostedJobsResponseMapper.toDTOList(jobs);
 
         //List to Page
         Pageable pageable = PageRequest.of(page, size);

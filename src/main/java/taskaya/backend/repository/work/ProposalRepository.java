@@ -21,4 +21,5 @@ public interface ProposalRepository extends JpaRepository<Proposal, UUID>, JpaSp
 
     List<Proposal> findByJob(Job job);
     Optional<Proposal> findByContract(Contract contract);
+    int countByJob(Job job);
 }
