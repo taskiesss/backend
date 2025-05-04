@@ -43,6 +43,7 @@ import taskaya.backend.services.MailService;
 import taskaya.backend.services.PaymentService;
 import taskaya.backend.services.client.ClientBalanceService;
 import taskaya.backend.services.community.CommunityService;
+import taskaya.backend.services.community.VoteService;
 import taskaya.backend.services.freelancer.FreelancerBalanceService;
 import taskaya.backend.services.freelancer.FreelancerBusinessService;
 import taskaya.backend.services.freelancer.FreelancerService;
@@ -111,6 +112,9 @@ public class ContractService {
 
     @Autowired
     ClientBalanceService clientBalanceService;
+
+    @Autowired
+    VoteService voteService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -408,6 +412,12 @@ public class ContractService {
         contractRepository.save(contract);
         proposal.setContract(contract);
         proposalRepository.save(proposal);
+
+        if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
+            Community community = communityRepository.findByWorkerEntity(contract.getWorkerEntity())
+                    .orElseThrow(() -> new NotFoundException("Community Not Found!"));
+            voteService.createVotesForNewContract(contract, community.getCommunityMembers());
+        }
         List<Freelancer> freelancers = getFreelancersFromContract(contract);
         if (sendEmails){
             mailService.sendEmailsForFreelancerForNewOffer(contract,freelancers);

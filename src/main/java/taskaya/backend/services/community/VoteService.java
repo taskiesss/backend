@@ -51,4 +51,22 @@ public class VoteService {
         return votes.stream().allMatch(vote -> vote.getAgreed()!=null && vote.getAgreed());
     }
 
+
+    public void createVotesForNewContract(Contract contract, List<CommunityMember> communityMembers){
+        if (contract.getStatus() != Contract.ContractStatus.PENDING){
+            throw new IllegalArgumentException("contract is not pending");
+        }
+        List<Vote>votes = new LinkedList<>();
+
+        for (CommunityMember communityMember : communityMembers){
+            if (communityMember.getFreelancer()!=null) {
+                votes.add(Vote.builder()
+                        .agreed(null)
+                        .communityMember(communityMember)
+                        .contract(contract)
+                        .build());
+            }
+        }
+        communityVoteRepository.saveAll(votes);
+    }
 }
