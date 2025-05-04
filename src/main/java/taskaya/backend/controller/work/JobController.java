@@ -24,7 +24,7 @@ public class JobController {
         return ResponseEntity.ok(jobs);
     }
 
-    @GetMapping("freelancers/jobs/{id}")
+    @GetMapping("api/jobs/{id}")
     public ResponseEntity<JobDetailsResponseDTO> getJobDetails(@PathVariable String id){
         JobDetailsResponseDTO jobDetailsResponseDTO = jobService.getJobDetails(id);
         return ResponseEntity.ok(jobDetailsResponseDTO);
