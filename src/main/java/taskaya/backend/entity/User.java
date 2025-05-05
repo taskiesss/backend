@@ -6,10 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -35,6 +33,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+
+    @Column(name = "new_notification", nullable = false)
+    @Builder.Default
+    private Integer newNotifications = 0;
 
     // UserDetails methods
     @Override

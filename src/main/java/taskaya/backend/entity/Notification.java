@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import taskaya.backend.entity.enums.NotificationDest;
 
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -36,4 +37,8 @@ public class Notification {
 
     @Column(name = "route_id", nullable = false)
     String routeId;
+
+    @Column(name = "date", nullable = false)
+    @Builder.Default
+    private Date date = new Date();
 }
