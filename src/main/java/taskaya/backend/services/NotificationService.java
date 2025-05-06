@@ -7,8 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import taskaya.backend.DTO.mappers.NotificationWebSocketMapper;
+import taskaya.backend.DTO.mappers.NotificationResponseMapper;
+import taskaya.backend.DTO.notifications.NotificationResponseDTO;
 import taskaya.backend.DTO.notifications.NotificationWebSocketDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.Notification;
@@ -53,26 +55,32 @@ public class NotificationService {
         user.setNewNotifications(user.getNewNotifications()+1);
         userRepository.save(user);
 
-        NotificationWebSocketDTO notificationDTO = NotificationWebSocketMapper.toDTO(notification);
-        messagingTemplate.convertAndSend("/notifications/" + user.getId(), notificationDTO);
+        NotificationResponseDTO notificationDTO = NotificationResponseMapper.toDTO(notification);
+
+        NotificationWebSocketDTO notificationWebSocketDTO = NotificationWebSocketDTO.builder()
+                .notification(notificationDTO)
+                .newNotificationsCount(user.getNewNotifications())
+                .build();
+
+        messagingTemplate.convertAndSend("/notifications/" + user.getId(), notificationWebSocketDTO);
     }
 
     @Transactional
-    public Page<NotificationWebSocketDTO> getUserNotifications(String userId, int page, int size) {
+    public Page<NotificationResponseDTO> getUserNotifications(int page, int size) {
         Sort sort = Sort.by(Sort.Order.desc("date"));
         Pageable pageable = PageRequest.of(page, size, sort);
 
         //set the new notifications count to 0, as user opens the notifications
-        User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = jwtService.getUserFromToken();
         user.setNewNotifications(0);
         userRepository.save(user);
 
         Page<Notification> notificationPage = notificationRepository.findByUser(user,pageable);
-        return NotificationWebSocketMapper.toDTOPage(notificationPage);
+        return NotificationResponseMapper.toDTOPage(notificationPage);
     }
 
     @Transactional
+    @PreAuthorize("@jwtService.isNotificationOwner(#notificationId)")
     public void markAsRead(String notificationId) {
         notificationRepository.findById(UUID.fromString(notificationId)).ifPresent(notification -> {
             notification.setRead(true);

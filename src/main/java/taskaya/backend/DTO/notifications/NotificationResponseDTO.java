@@ -6,7 +6,10 @@ import taskaya.backend.entity.enums.NotificationDest;
 
 @Data
 @Builder
-public class NotificationWebSocketDTO {
-    NotificationResponseDTO notification;
-    Integer newNotificationsCount ;
+public class NotificationResponseDTO {
+    String notificationId;
+    String content;
+    boolean isRead;
+    NotificationDest type;
+    String routeId;
 }

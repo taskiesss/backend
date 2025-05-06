@@ -18,6 +18,7 @@ import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Proposal;
 import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.repository.NotificationRepository;
 import taskaya.backend.repository.UserRepository;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.community.CommunityMemberRepository;
@@ -58,6 +59,9 @@ public class JwtService {
 
     @Autowired
     ProposalRepository proposalRepository;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     public String extractUsername(String token) {
         return extractClaim(token , Claims-> Claims.getSubject()) ;
@@ -239,6 +243,13 @@ public class JwtService {
             return isCommunityAdmin(community.getUuid().toString());
         }
 
+    }
+
+    public boolean isNotificationOwner(String notificationId){
+        User user = getUserFromToken();
+        return user.getId().equals(
+                notificationRepository.findById(UUID.fromString(notificationId))
+                .orElseThrow(()->new AccessDeniedException("Notification not found!")).getUser().getId());
     }
 
 }

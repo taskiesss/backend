@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.notifications.NotificationResponseDTO;
 import taskaya.backend.DTO.notifications.NotificationWebSocketDTO;
 import taskaya.backend.services.NotificationService;
 
@@ -15,11 +16,10 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
-    @GetMapping("/api/notifications/{userId}")
-    public ResponseEntity<Page<NotificationWebSocketDTO>> getUserNotifications(@PathVariable String userId,
-                                                                               @RequestParam int page,
-                                                                               @RequestParam int size) {
-        return ResponseEntity.ok(notificationService.getUserNotifications(userId, page, size));
+    @GetMapping("/api/notifications")
+    public ResponseEntity<Page<NotificationResponseDTO>> getUserNotifications(@RequestParam int page,
+                                                                              @RequestParam int size) {
+        return ResponseEntity.ok(notificationService.getUserNotifications(page, size));
     }
 
 
