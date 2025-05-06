@@ -27,6 +27,7 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User user;
+
     @Column(name = "is_read", nullable = false)
     @Builder.Default
     boolean isRead= false;

@@ -7,6 +7,7 @@ import taskaya.backend.entity.enums.NotificationDest;
 @Data
 @Builder
 public class NotificationWebSocketDTO {
+    String notificationId;
     String content;
     boolean isRead;
     NotificationDest type;
