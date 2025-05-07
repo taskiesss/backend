@@ -4,7 +4,7 @@ public enum NotificationDest {
 
     PROPOSAL, //{send prop to client ,acceptance , rejection}
 
-    CONTRACT, //{new offer for freelancers , acceptance(client and freelancer) , rejection(client) ,milestone review req to client ,send milestone approval to freelancer  }
+    CONTRACT, //{new offer for freelancers ✅, acceptance(client and freelancers) , rejection(client) ,milestone review req to client ,send milestone approval to freelancer  }
 
     COMMUNITY_PROFILE, //{to freelancer after join acceptance }
 
