@@ -3,7 +3,9 @@ package taskaya.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.login.NameAndPictureNavBarResponseDTO;
 import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
+import taskaya.backend.DTO.mappers.NameAndPictureNavBarResponseMapper;
 import taskaya.backend.DTO.payments.requests.PaymentSearchRequestDTO;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.services.PaymentService;
@@ -23,7 +25,7 @@ public class UserController {
     JwtService jwtService;
 
     @GetMapping("/name-and-picture")
-    public ResponseEntity<NameAndPictureResponseDTO> getNameAndPicture() {
+    public ResponseEntity<NameAndPictureNavBarResponseDTO> getNameAndPicture() {
         return ResponseEntity.ok(userService.nameAndPicture());
     }
 

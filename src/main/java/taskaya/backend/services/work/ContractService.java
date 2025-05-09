@@ -40,6 +40,7 @@ import taskaya.backend.repository.work.MilestoneRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.NotificationService;
 import taskaya.backend.services.PaymentService;
 import taskaya.backend.services.client.ClientBalanceService;
 import taskaya.backend.services.community.CommunityService;
@@ -115,6 +116,9 @@ public class ContractService {
 
     @Autowired
     VoteService voteService;
+
+    @Autowired
+    NotificationService notificationService;
 
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
@@ -421,7 +425,12 @@ public class ContractService {
         List<Freelancer> freelancers = getFreelancersFromContract(contract);
         if (sendEmails){
             mailService.sendEmailsForFreelancerForNewOffer(contract,freelancers);
+            for (Freelancer freelancer:freelancers){
+                notificationService.newContractNotification(contract.getJob().getTitle(),freelancer.getUser(),contract.getId().toString());
+            }
         }
+
+
     }
 
 

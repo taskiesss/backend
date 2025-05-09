@@ -2,7 +2,9 @@ package taskaya.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import taskaya.backend.DTO.login.NameAndPictureNavBarResponseDTO;
 import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
+import taskaya.backend.DTO.mappers.NameAndPictureNavBarResponseMapper;
 import taskaya.backend.DTO.mappers.NameAndPictureResponseMapper;
 import taskaya.backend.DTO.payments.responses.NameAndTotalBalanceMapper;
 import taskaya.backend.DTO.payments.responses.NameAndTotalBalanceResponseDTO;
@@ -25,18 +27,18 @@ public class UserService {
     ClientRepository clientRepository;
     @Autowired
     JwtService jwtService;
-    public NameAndPictureResponseDTO nameAndPicture(){
+    public NameAndPictureNavBarResponseDTO nameAndPicture(){
         String username = JwtService.getAuthenticatedUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()->new RuntimeException("Username not found!"));
-        if(user.getRole() == User.Role.FREELANCER || user.getRole() == User.Role.ADMIN ){
+        if(user.getRole() == User.Role.FREELANCER  ){
             Freelancer freelancer = freelancerRepository.findByUser(user)
                     .orElseThrow(()->new RuntimeException("User not found!"));
-            return NameAndPictureResponseMapper.toDTO(freelancer);
+            return NameAndPictureNavBarResponseMapper.toDTO(freelancer, user.getNewNotifications());
         } else if (user.getRole() == User.Role.CLIENT) {
             Client client = clientRepository.findByUser(user)
                     .orElseThrow(()->new RuntimeException("User not found!"));
-            return NameAndPictureResponseMapper.toDTO(client);
+            return NameAndPictureNavBarResponseMapper.toDTO(client, user.getNewNotifications());
         }
         else {
             throw new RuntimeException("Role undefined.");

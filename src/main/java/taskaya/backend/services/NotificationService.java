@@ -19,7 +19,9 @@ import taskaya.backend.entity.enums.NotificationDest;
 import taskaya.backend.repository.NotificationRepository;
 import taskaya.backend.repository.UserRepository;
 
+import java.text.MessageFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,6 +39,15 @@ public class NotificationService {
     @Autowired
     private JwtService jwtService;
 
+//    // Notifications strings
+    public static final String NEW_CONTRACT_NOTIFICATION= "You have a new contract offer for Job {0}! Review the details and respond to secure the opportunity.";
+
+
+    //notification functions
+    public void newContractNotification(String jobTitle , User user , String contractId){
+        String content = MessageFormat.format(NEW_CONTRACT_NOTIFICATION, jobTitle);
+        createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
+    }
 
     @Transactional
     public void createAndSendNotification(String content, User user, NotificationDest type, String routeId) {
