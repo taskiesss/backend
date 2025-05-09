@@ -26,6 +26,7 @@ import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBusiness;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.enums.NotificationDest;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
@@ -366,6 +367,11 @@ public class ContractService {
                         ,community.getCommunityName()
                         ,contract.getJob().getTitle()
                         ,getMilestoneByIndex(contract,milestoneIndex).getName());
+                notificationService.milestoneReviewRequestClientNotification(
+                        milestone.getName(),
+                        contract.getJob().getTitle(),
+                        client.getUser(),
+                        contract.getId().toString());
             }
 
 
@@ -425,8 +431,11 @@ public class ContractService {
         List<Freelancer> freelancers = getFreelancersFromContract(contract);
         if (sendEmails){
             mailService.sendEmailsForFreelancerForNewOffer(contract,freelancers);
+            NotificationDest destination = contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.COMMUNITY? NotificationDest.CONTRACT_COMMUNITY:NotificationDest.CONTRACT;
             for (Freelancer freelancer:freelancers){
-                notificationService.newContractNotification(contract.getJob().getTitle(),freelancer.getUser(),contract.getId().toString());
+                notificationService.newContractNotification(contract.getJob().getTitle(),freelancer.getUser(),
+                        destination,
+                        contract.getId().toString());
             }
         }
 
@@ -472,6 +481,15 @@ public class ContractService {
         updateFreelancerWorkInProgressFromContract(contract, contractFreelancers);
         if (sendEmails){
            mailService.sendEmailsForStartingContract(contract, contractFreelancers);
+           notificationService.contractStartedClientNotification(contract.getJob().getTitle(),
+                   contract.getClient().getUser(), contract.getId().toString());
+
+            NotificationDest destination = contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.COMMUNITY? NotificationDest.CONTRACT_COMMUNITY:NotificationDest.CONTRACT;
+            for (Freelancer freelancer:contractFreelancers){
+                notificationService.contractStartedFreelancerNotification(contract.getJob().getTitle(),freelancer.getUser(),
+                        destination,
+                        contract.getId().toString());
+            }
         }
         System.out.println("contract just started : "+ contract.getId());
     }
@@ -519,7 +537,17 @@ public class ContractService {
 
         if (sendEmails){
         List<Freelancer> contractFreelancers = getFreelancersFromContract(contract);
+
         mailService.sendEmailsTofreelancersAfterApprovalAsync(contractFreelancers,contract,milestone);
+        NotificationDest destination = contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.COMMUNITY? NotificationDest.CONTRACT_COMMUNITY:NotificationDest.CONTRACT;
+
+        for (Freelancer freelancer:contractFreelancers){
+            notificationService.milestoneApprovalFreelancerNotification(
+                    milestone.getName(),
+                    contract.getJob().getTitle(),
+                    freelancer.getUser(),
+                    contract.getId().toString());
+          }
 
         }
         milestoneRepository.save(milestone);
@@ -561,8 +589,6 @@ public class ContractService {
 
 
     //helper functions
-
-
     public static Double getContractBudget(Contract contract){
         double totalBudget = 0D;
         for (Milestone milestone : contract.getMilestones()){
@@ -647,6 +673,7 @@ public class ContractService {
         clientBalanceService.updateAvailable(contract.getClient(),totalBudget);
         if (sendEmails) {
             mailService.sendRejectionMailToClientAsync(contract.getClient().getUser().getEmail(), contract);
+            notificationService.contractRejectedClientNotification(contract.getJob().getTitle(),contract.getClient().getUser(),contract.getId().toString());
         }
         contractRepository.save(contract);
     }

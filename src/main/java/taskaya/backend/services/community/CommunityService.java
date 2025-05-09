@@ -44,6 +44,7 @@ import taskaya.backend.repository.work.ContractRepository;
 import taskaya.backend.repository.work.JobRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.NotificationService;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.specifications.CommunitySpecification;
 
@@ -94,6 +95,9 @@ public class CommunityService {
 
     @Autowired
     SkillRepository skillRepository;
+
+    @Autowired
+    NotificationService notificationService;
 
     //di lazem ne3melaha autowire bel setter  MAHADESH YE8AIARHA
     private CommunityMemberService communityMemberService;
@@ -511,6 +515,7 @@ public class CommunityService {
                 .community(community)
                 .build();
 
+        notificationService.joinRequestCommunityAdminNotification(community.getCommunityName(),position.getPositionName(),community.getAdmin().getUser(),communityId);
         communityJoinRequestRepository.save(joinRequest);
     }
 
