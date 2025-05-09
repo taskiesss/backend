@@ -35,7 +35,8 @@ public class SecurityConfig {
                         "/public/**",
                         "/freelancers/search",
                         "/communities/search",
-                        "/jobs/search")
+                        "/jobs/search",
+                        "/ws-notifications/**")
                 .permitAll()
 
                 .requestMatchers("/freelancers/**").hasRole("FREELANCER")
