@@ -46,7 +46,7 @@ public class ProposalController {
         SubmitProposalRequestDTO dto = objectMapper.readValue(requestDTO, SubmitProposalRequestDTO.class);
 
         dto.setAttachment(attachment);
-        proposalService.createProposal(dto, UUID.fromString(jobid));
+        proposalService.createProposal(dto, UUID.fromString(jobid),true);
 
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }

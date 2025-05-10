@@ -9,10 +9,16 @@ import taskaya.backend.DTO.communities.requests.CommunityPostRequestDTO;
 import taskaya.backend.DTO.communities.responses.CommunityPostResponseDTO;
 import taskaya.backend.DTO.login.NameAndPictureResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityPostResponseMapper;
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.posts.Post;
 import taskaya.backend.entity.freelancer.Freelancer;
+import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.community.CommunityPostRepository;
+import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.repository.work.WorkerEntityRepository;
+import taskaya.backend.services.NotificationService;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.services.work.WorkerEntityService;
 
 import java.util.*;
 
@@ -26,6 +32,15 @@ public class CommunityPostService {
 
     @Autowired
     CommunityPostCommentService communityPostCommentService;
+
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    WorkerEntityService workerEntityService;
+
+    @Autowired
+    CommunityRepository communityRepository;
 
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
     public Page<CommunityPostResponseDTO> getCommunityPosts(String communityId, int page, int size) {
@@ -81,6 +96,17 @@ public class CommunityPostService {
                 .createdAt(new Date())
                 .build();
         communityPostRepository.save(post);
+
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()->new RuntimeException("Community not found!"));
+
+        List<Freelancer>freelancers = workerEntityService.getFreelancersByWorkerEntity(community.getWorkerEntity());
+        for(Freelancer freelancer:freelancers){
+            if(freelancer != null){
+                notificationService.sendNewPostNotification(post.getTitle(),community.getCommunityName(),freelancer.getUser(),communityId);
+            }
+        }
+
     }
 
     @Transactional

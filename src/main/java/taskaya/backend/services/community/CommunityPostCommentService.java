@@ -12,10 +12,14 @@ import taskaya.backend.DTO.communities.responses.CommunityPostCommentResponseDTO
 import taskaya.backend.DTO.communities.responses.CommunityPostResponseDTO;
 import taskaya.backend.DTO.mappers.CommunityPostCommentResponseMapper;
 import taskaya.backend.DTO.mappers.CommunityPostResponseMapper;
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.posts.Post;
 import taskaya.backend.entity.community.posts.PostComment;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.repository.community.CommunityPostCommentRepository;
+import taskaya.backend.repository.community.CommunityPostRepository;
+import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.services.NotificationService;
 import taskaya.backend.services.freelancer.FreelancerService;
 
 import java.util.ArrayList;
@@ -30,6 +34,15 @@ public class CommunityPostCommentService {
 
     @Autowired
     FreelancerService freelancerService;
+
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    CommunityPostRepository communityPostRepository;
+
+    @Autowired
+    CommunityRepository communityRepository;
 
     @PreAuthorize("@jwtService.isCommunityMember(#communityId)")
     public Page<CommunityPostCommentResponseDTO> getCommunityPostComments(String communityId, String postId, int page, int size) {
@@ -61,6 +74,12 @@ public class CommunityPostCommentService {
                 .ownerId(freelancerService.getFreelancerFromJWT().getId().toString())
                 .build();
         communityPostCommentRepository.save(comment);
+        Post post = communityPostRepository.findById(postId)
+                .orElseThrow(()->new RuntimeException("Post not found!"));
+        Community community = communityRepository.findById(UUID.fromString(communityId))
+                .orElseThrow(()->new RuntimeException("Community not found!"));
+        Freelancer freelancer = freelancerService.getById(UUID.fromString(post.getOwnerId()));
+        notificationService.sendNewCommentNotification(post.getTitle(),community.getCommunityName(),freelancer.getUser(),communityId);
         return comment.getId();
     }
 

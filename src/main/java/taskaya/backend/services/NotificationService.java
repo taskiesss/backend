@@ -56,11 +56,53 @@ public class NotificationService {
     //show the name of the community and the name of the role the freelancer is applying for in the community
     public static final String JOIN_REQUEST_COMMUNITY_ADMIN_NOTIFICATION = "A new request to join the community {0} as a {1}. Please review and approve or reject the request.";
 
+    public static final String NEW_PROPOSAL_NOTIFICATION = "You have received a new proposal for Job {0}. Review it to evaluate the freelancer's offer.";
+
+    private static final String PROPOSAL_REJECTION_NOTIFICATION = "Your proposal for Job {0} has been rejected. Don't be discouraged—there are more opportunities ahead.";
+
+    private static final String COMMUNITY_ACCEPTANCE_NOTIFICATION = "Congratulations! You have been accepted into the community {0}. Welcome aboard!";
+
+    private static final String NEW_POST_NOTIFICATION = "A new post titled \"{0}\" has been published in the community {1}. Check it out now!";
+
+    private static final String NEW_COMMENT_NOTIFICATION = "A new comment was added to your post \"{0}\" in the community {1}. Join the conversation!";
+
+    private static final String NEW_SETTING_NOTIFICATION = "The settings of the community {0} have been updated. Please review the latest changes.";
 
     //notification functions
+
+    public void sendNewSettingNotification(String communityName, User user, String communityId) {
+        String content = MessageFormat.format(NEW_SETTING_NOTIFICATION, communityName);
+        createAndSendNotification(content, user, NotificationDest.COMMUNITY_SETTINGS, String.valueOf(communityId));
+    }
+
+    public void sendNewCommentNotification(String postTitle, String communityName, User user, String communityId) {
+        String content = MessageFormat.format(NEW_COMMENT_NOTIFICATION, postTitle, communityName);
+        createAndSendNotification(content, user, NotificationDest.COMMUNITY_POSTS, String.valueOf(communityId));
+    }
+
+    public void sendNewPostNotification(String postTitle,String communityName, User user, String communityId) {
+        String content = MessageFormat.format(NEW_POST_NOTIFICATION, postTitle, communityName);
+        createAndSendNotification(content, user, NotificationDest.COMMUNITY_POSTS, String.valueOf(communityId));
+    }
+
+    public void sendAcceptanceToFreelancer(String communityName, User user, String communityId) {
+        String content = MessageFormat.format(COMMUNITY_ACCEPTANCE_NOTIFICATION, communityName);
+        createAndSendNotification(content, user, NotificationDest.COMMUNITY_PROFILE, String.valueOf(communityId));
+    }
+
+    public void sendProposalRejection(String title, User user, UUID id) {
+        String content = MessageFormat.format(PROPOSAL_REJECTION_NOTIFICATION, title);
+        createAndSendNotification(content, user, NotificationDest.PROPOSAL, String.valueOf(id));
+    }
+
+    public void sendProposalToClient(String jobTitle, User user, UUID id) {
+        String content = MessageFormat.format(NEW_PROPOSAL_NOTIFICATION, jobTitle);
+        createAndSendNotification(content, user, NotificationDest.PROPOSAL, String.valueOf(id));
+    }
+
     public void newContractNotification(String jobTitle , User user,NotificationDest notificationDest , String contractId){
         String content = MessageFormat.format(NEW_CONTRACT_NOTIFICATION, jobTitle);
-        createAndSendNotification(content, user, notificationDest, contractId);
+        createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
     }
 
     public void contractStartedClientNotification(String jobTitle , User user, String contractId){
@@ -80,15 +122,17 @@ public class NotificationService {
         String content = MessageFormat.format(MILESTONE_REVIEW_REQUEST_CLIENT_NOTIFICATION, milestoneName, jobTitle);
         createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
     }
-    public void milestoneApprovalFreelancerNotification(String milestoneName, String jobTitle , User user,NotificationDest notificationDest, String contractId){
+    public void milestoneApprovalFreelancerNotification(String milestoneName, String jobTitle , User user, String contractId){
         String content = MessageFormat.format(MILESTONE_APPROVAL_FREELANCER_NOTIFICATION, milestoneName, jobTitle);
-        createAndSendNotification(content, user, notificationDest, contractId);
+        createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
     }
 
     public void joinRequestCommunityAdminNotification(String communityName, String roleName , User user, String communityId){
         String content = MessageFormat.format(JOIN_REQUEST_COMMUNITY_ADMIN_NOTIFICATION, communityName, roleName);
         createAndSendNotification(content, user, NotificationDest.COMMUNITY_JOBS_AND_TALENTS, communityId);
     }
+
+
 
     @Transactional
     public void createAndSendNotification(String content, User user, NotificationDest type, String routeId) {

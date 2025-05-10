@@ -13,9 +13,12 @@ import taskaya.backend.DTO.mappers.CommunityPositionAndRoleResponseMapper;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.community.CommunityMember;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityMemberRepository;
 import taskaya.backend.repository.community.CommunityRepository;
+import taskaya.backend.services.NotificationService;
+import taskaya.backend.services.work.WorkerEntityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +32,10 @@ public class CommunityMemberService {
     private CommunityRepository communityRepository;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private WorkerEntityService workerEntityService;
 
     private CommunityService communityService;
 
@@ -123,6 +130,13 @@ public class CommunityMemberService {
 
         if (!isTotalPercentagesValid(existingMembers)) {
             throw new RuntimeException("Total financial percentage of all positions must equal 100%");
+        }
+
+        List<Freelancer> freelancers = workerEntityService.getFreelancersByWorkerEntity(community.getWorkerEntity());
+        for(Freelancer freelancer:freelancers){
+            if(freelancer != null){
+                notificationService.sendNewSettingNotification(community.getCommunityName(),freelancer.getUser(),communityId);
+            }
         }
     }
 

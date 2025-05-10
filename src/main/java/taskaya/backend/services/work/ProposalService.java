@@ -30,6 +30,7 @@ import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.CloudinaryService;
 import taskaya.backend.services.MailService;
+import taskaya.backend.services.NotificationService;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.freelancer.FreelancerService;
@@ -80,10 +81,10 @@ public class ProposalService {
     FreelancerService freelancerService;
 
     @Autowired
-    ClientService clientService;
+    NotificationService notificationService;
 
     @Transactional
-    public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId) throws MessagingException, IOException {
+    public void createProposal(SubmitProposalRequestDTO requestDTO, UUID jobId, boolean sendEmail) throws MessagingException, IOException {
 
         //check that job id in path and DTO are identical
         if(!Objects.equals(jobId.toString(), requestDTO.getJobId()))
@@ -167,7 +168,11 @@ public class ProposalService {
 
         String jobTitle = jobService.findById(jobId).getTitle();
 
-        mailService.sendProposalToClientAsync(clientEmail, workerName, jobTitle);
+        if(sendEmail){
+            notificationService.sendProposalToClient(jobTitle,proposal.getClient().getUser(),proposal.getId());
+            mailService.sendProposalToClientAsync(clientEmail, workerName, jobTitle);
+        }
+
 
     }
 
@@ -193,6 +198,12 @@ public class ProposalService {
                         && proposal1.getStatus()== Proposal.ProposalStatus.PENDING)
                 .forEach(proposal1 -> {
                     proposal1.setStatus(Proposal.ProposalStatus.DECLINED);
+                    List<Freelancer> freelancers = workerEntityService.getFreelancersByWorkerEntity(proposal1.getWorkerEntity());
+                    for(Freelancer freelancer:freelancers){
+                        if(freelancer != null){
+                            notificationService.sendProposalRejection(job.getTitle(),freelancer.getUser(),proposal1.getId());
+                        }
+                    }
                 });
         proposalRepository.saveAll(proposals);
 

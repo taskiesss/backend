@@ -383,6 +383,7 @@ public class CommunityService {
             communityJoinRequestRepository.deleteByPosition(communityMember);
 
             //send acceptance mail to freelancer
+            notificationService.sendAcceptanceToFreelancer(community.getCommunityName(),freelancer.getUser(),communityId);
             mailService.sendAcceptanceToFreelanceAsync(freelancer.getUser().getEmail(), freelancer.getName(), community.getCommunityName());
 
         } else if (request.getChoice().equals("reject")) {

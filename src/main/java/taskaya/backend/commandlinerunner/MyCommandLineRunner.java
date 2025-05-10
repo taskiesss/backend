@@ -206,7 +206,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .milestones(milestoneList)
                 .build();
 
-        proposalService.createProposal(submitProposalRequestDTO,myJob.getUuid());
+        proposalService.createProposal(submitProposalRequestDTO,myJob.getUuid(),false);
 
         WorkerEntity commWorkerEntity = communityService.getCommunityByName("mina Community").getWorkerEntity();
 
@@ -219,7 +219,7 @@ class MyCommandLineRunner implements CommandLineRunner {
                 .milestones(milestoneList)
                 .build();
 
-        proposalService.createProposal(commRequestDTO,myJob.getUuid());
+        proposalService.createProposal(commRequestDTO,myJob.getUuid(),false);
     }
 
     public void seedCommunityAndCommunityMember(){
