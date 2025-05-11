@@ -11,9 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
+import taskaya.backend.DTO.communities.responses.CommunityPostCommentResponseDTO;
 import taskaya.backend.DTO.contracts.requests.AcceptOrRejectContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.CreateContractRequestDTO;
 import taskaya.backend.DTO.contracts.requests.MyContractsPageRequestDTO;
+import taskaya.backend.DTO.contracts.responses.ContractConversationResponseDTO;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 import taskaya.backend.DTO.contracts.responses.MyContractsPageResponseDTO;
 import taskaya.backend.DTO.deliverables.requests.DeliverableLinkSubmitRequestDTO;
@@ -27,10 +29,12 @@ import taskaya.backend.entity.enums.SortDirection;
 import taskaya.backend.entity.enums.SortedByForContracts;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
+import taskaya.backend.entity.work.ContractConversation;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.community.CommunityRepository;
 import taskaya.backend.services.client.ClientService;
 import taskaya.backend.services.freelancer.FreelancerService;
+import taskaya.backend.services.work.ContractConversationService;
 import taskaya.backend.services.work.ContractService;
 
 
@@ -53,6 +57,9 @@ public class ContractController {
     CommunityRepository communityRepository;
     @Autowired
     ClientService clientService;
+
+    @Autowired
+    ContractConversationService contractConversationService;
 
     @PostMapping("/freelancers/my-contracts")
     public ResponseEntity<?> getMyContracts (@RequestBody MyContractsPageRequestDTO requestDTO){
@@ -187,6 +194,18 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());
     }
 
+    @GetMapping("/api/contracts/{contractId}/contract-conversations")
+    public ResponseEntity<Page<ContractConversationResponseDTO>> getContractConversation(@PathVariable String contractId,
+                                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                                         @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(contractConversationService.getConversationsByContract(contractId , page, size));
+    }
 
+    @PostMapping("/api/contracts/{contractId}/contract-conversations")
+    public ResponseEntity<?> createContractConversation(@PathVariable String contractId,
+                                                        @RequestParam String content) {
+        contractConversationService.createConversation(contractId, content);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Contract Convo Created!").build());
+    }
 
 }

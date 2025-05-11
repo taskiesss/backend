@@ -174,6 +174,12 @@ public class JwtService {
             }
         }
     }
+
+    public boolean contractAuthAndActive(String contractId){
+        return contractDetailsAuth(contractId) && contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(()-> new RuntimeException("Contract NOT Found!")).getStatus() == Contract.ContractStatus.ACTIVE;
+    }
+
     public boolean proposalDetailsAuth(String proposalId){
 
         if(isClient()){
