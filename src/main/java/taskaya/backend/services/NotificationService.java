@@ -122,9 +122,9 @@ public class NotificationService {
         String content = MessageFormat.format(MILESTONE_REVIEW_REQUEST_CLIENT_NOTIFICATION, milestoneName, jobTitle);
         createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
     }
-    public void milestoneApprovalFreelancerNotification(String milestoneName, String jobTitle , User user, String contractId){
+    public void milestoneApprovalFreelancerNotification(String milestoneName, String jobTitle , User user, NotificationDest notificationDest, String contractId){
         String content = MessageFormat.format(MILESTONE_APPROVAL_FREELANCER_NOTIFICATION, milestoneName, jobTitle);
-        createAndSendNotification(content, user, NotificationDest.CONTRACT, contractId);
+        createAndSendNotification(content, user, notificationDest, contractId);
     }
 
     public void joinRequestCommunityAdminNotification(String communityName, String roleName , User user, String communityId){
