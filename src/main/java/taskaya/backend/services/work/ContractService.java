@@ -546,7 +546,7 @@ public class ContractService {
                     milestone.getName(),
                     contract.getJob().getTitle(),
                     freelancer.getUser(),
-                    NotificationDest.CONTRACT,
+                    destination,
                     contract.getId().toString());
           }
 
