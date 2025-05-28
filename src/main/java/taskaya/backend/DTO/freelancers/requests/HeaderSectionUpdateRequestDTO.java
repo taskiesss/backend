@@ -10,4 +10,5 @@ public class HeaderSectionUpdateRequestDTO {
     private String jobTitle;
     private Integer avgHoursPerWeek;
     private Float pricePerHour;
+    private String country;
 }

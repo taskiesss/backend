@@ -278,8 +278,10 @@ public class FreelancerService {
                 || requestDTO.getPricePerHour() < 0
                 || requestDTO.getAvgHoursPerWeek() == null
                 || requestDTO.getAvgHoursPerWeek() < 0
-                || requestDTO.getJobTitle() == null
-                || requestDTO.getFirstName() == null)
+                || requestDTO.getJobTitle() == null || requestDTO.getJobTitle().isEmpty()
+                || requestDTO.getFirstName() == null || requestDTO.getFirstName().isEmpty()
+                || requestDTO.getCountry() == null || requestDTO.getCountry().isEmpty()
+        )
             throw new RuntimeException("All fields are required");
 
         Freelancer freelancer = getFreelancerFromJWT();
