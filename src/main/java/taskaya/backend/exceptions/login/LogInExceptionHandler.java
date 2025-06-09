@@ -15,17 +15,17 @@ import java.util.Map;
 public class LogInExceptionHandler {
 
 
-    @ExceptionHandler(WrongUsernameOrEmail.class)
-    public ResponseEntity<?> emailNotFoundHandler(RuntimeException e){
-        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"email");
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
+//    @ExceptionHandler(WrongUsernameOrEmail.class)
+//    public ResponseEntity<?> emailNotFoundHandler(RuntimeException e){
+//        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"email");
+//        return ResponseEntity.badRequest().body(errorResponse);
+//    }
 
-    @ExceptionHandler(WrongPasswordException.class)
-    public ResponseEntity<?> wrongPasswordHandler(RuntimeException e){
-        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"password");
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
+//    @ExceptionHandler(WrongPasswordException.class)
+//    public ResponseEntity<?> wrongPasswordHandler(RuntimeException e){
+//        GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"password");
+//        return ResponseEntity.badRequest().body(errorResponse);
+//    }
 
     @ExceptionHandler(FirstTimeFreelancerFormException.class)
     public ResponseEntity<?> firstTimeFreelancerhandler(RuntimeException e){
@@ -49,7 +49,7 @@ public class LogInExceptionHandler {
 //        return ResponseEntity.status(401).body(errorResponse);
 //    }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler({AccessDeniedException.class,WrongUsernameOrEmail.class,WrongPasswordException.class})
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         Map<String, Object> response = Map.of(
                 "timestamp",  System.currentTimeMillis(),
