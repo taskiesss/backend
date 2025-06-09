@@ -273,11 +273,9 @@ public class FreelancerService {
 
     @Transactional
     public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO) {
-
         if (requestDTO.getPricePerHour() == null
                 || requestDTO.getPricePerHour() < 0
-                || requestDTO.getAvgHoursPerWeek() == null
-                || requestDTO.getAvgHoursPerWeek() < 0
+
                 || requestDTO.getJobTitle() == null || requestDTO.getJobTitle().isEmpty()
                 || requestDTO.getFirstName() == null || requestDTO.getFirstName().isEmpty()
                 || requestDTO.getCountry() == null || requestDTO.getCountry().isEmpty()
@@ -287,7 +285,6 @@ public class FreelancerService {
         Freelancer freelancer = getFreelancerFromJWT();
         freelancer.setName(requestDTO.getFirstName() );
         freelancer.setPricePerHour(Double.valueOf(requestDTO.getPricePerHour()));
-        freelancer.getFreelancerBusiness().setAvgHoursPerWeek(requestDTO.getAvgHoursPerWeek());
         freelancer.setTitle(requestDTO.getJobTitle());
 
         freelancerRepository.save(freelancer);

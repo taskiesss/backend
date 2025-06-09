@@ -358,6 +358,11 @@ public class ContractService {
                         , freelancer.getName()
                         , contract.getJob().getTitle()
                         ,getMilestoneByIndex(contract,milestoneIndex).getName());
+                notificationService.milestoneReviewRequestClientNotification(
+                        milestone.getName(),
+                        contract.getJob().getTitle(),
+                        client.getUser(),
+                        contract.getId().toString());
             }
             else{
                 Community community = communityRepository.findByWorkerEntity(workerEntity)
