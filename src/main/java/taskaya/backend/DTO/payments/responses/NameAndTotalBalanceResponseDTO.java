@@ -9,4 +9,5 @@ public class NameAndTotalBalanceResponseDTO {
     private String profilePicture;
     private String name;
     private Double totalBalance;
+    private Double restrictedOrWorkInProgressBalance;
 }

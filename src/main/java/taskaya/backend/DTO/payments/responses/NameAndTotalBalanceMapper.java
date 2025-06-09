@@ -10,6 +10,7 @@ public class NameAndTotalBalanceMapper {
                 .name(name)
                 .profilePicture(freelancer.getProfilePicture())
                 .totalBalance(freelancer.getBalance().getAvailable())
+                .restrictedOrWorkInProgressBalance(freelancer.getBalance().getWorkInProgress())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class NameAndTotalBalanceMapper {
                 .name(name)
                 .profilePicture(client.getProfilePicture())
                 .totalBalance(client.getBalance().getAvailable())
+                .restrictedOrWorkInProgressBalance(client.getBalance().getRestricted())
                 .build();
     }
 }
