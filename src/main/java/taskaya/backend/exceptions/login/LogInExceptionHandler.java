@@ -33,7 +33,7 @@ public class LogInExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler({RuntimeException.class,WrongUsernameOrEmail.class,WrongPasswordException.class})
     public ResponseEntity<?> anyRuntimeExceptionHandler(RuntimeException e){
         GeneralErrorResponse errorResponse = new GeneralErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST,"runtime");
         System.out.println(errorResponse);
@@ -49,7 +49,7 @@ public class LogInExceptionHandler {
 //        return ResponseEntity.status(401).body(errorResponse);
 //    }
 
-    @ExceptionHandler({AccessDeniedException.class,WrongUsernameOrEmail.class,WrongPasswordException.class})
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         Map<String, Object> response = Map.of(
                 "timestamp",  System.currentTimeMillis(),
