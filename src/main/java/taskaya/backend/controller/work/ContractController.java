@@ -203,7 +203,7 @@ public class ContractController {
 
     @PostMapping("/api/contracts/{contractId}/contract-conversations")
     public ResponseEntity<?> createContractConversation(@PathVariable String contractId,
-                                                        @RequestParam String content) {
+                                                        @RequestBody String content) {
         contractConversationService.createConversation(contractId, content);
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Contract Convo Created!").build());
     }
