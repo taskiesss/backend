@@ -26,4 +26,5 @@ public class MyContractsPageResponseDTO {
     private Date dueDate;
     private Date endDate;
     private Boolean isCommunity;
+    private String profilePicture;
 }

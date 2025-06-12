@@ -133,6 +133,7 @@ public class ContractService {
                 clientId
         );
 
+        boolean isClient = true;
         Pageable pageable;
 
         if (requestDTO.getSortedBy() != null) {
@@ -149,7 +150,11 @@ public class ContractService {
         }
         Page<Contract> contractPage = contractRepository.findAll(specification, pageable);
 
-        Page<MyContractsPageResponseDTO>dtoPage =  MyContractsPageResponseMapper.toDTOPage(contractPage);
+        if(clientId == null ){
+            isClient = false;
+        }
+
+        Page<MyContractsPageResponseDTO>dtoPage =  MyContractsPageResponseMapper.toDTOPage(contractPage,isClient);
 
         if (jwtService.getUserFromToken().getRole() == User.Role.CLIENT){
            setFreelancerNameAndFreelancerIdForContractsSearchDTO(dtoPage, contractPage);
