@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class HeaderSectionUpdateRequestDTO {
     private String firstName;
+    private String lastName;
     private String jobTitle;
     private Integer avgHoursPerWeek;
     private Float pricePerHour;

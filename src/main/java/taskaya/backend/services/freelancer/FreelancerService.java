@@ -275,16 +275,17 @@ public class FreelancerService {
     public void updateHeaderSection(HeaderSectionUpdateRequestDTO requestDTO) {
         if (requestDTO.getPricePerHour() == null
                 || requestDTO.getPricePerHour() < 0
-
                 || requestDTO.getJobTitle() == null || requestDTO.getJobTitle().isEmpty()
                 || requestDTO.getFirstName() == null || requestDTO.getFirstName().isEmpty()
+                || requestDTO.getLastName() == null || requestDTO.getLastName().isEmpty()
                 || requestDTO.getCountry() == null || requestDTO.getCountry().isEmpty()
         )
             throw new RuntimeException("All fields are required");
 
         Freelancer freelancer = getFreelancerFromJWT();
-        freelancer.setName(requestDTO.getFirstName() );
+        freelancer.setName(requestDTO.getFirstName()+" "+requestDTO.getLastName());
         freelancer.setPricePerHour(Double.valueOf(requestDTO.getPricePerHour()));
+        freelancer.setCountry(requestDTO.getCountry());
         freelancer.setTitle(requestDTO.getJobTitle());
 
         freelancerRepository.save(freelancer);
