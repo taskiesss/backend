@@ -20,23 +20,23 @@ import taskaya.backend.services.work.ContractService;
 import java.util.LinkedList;
 import java.util.List;
 
-
+@Component
 public class MyContractsPageResponseMapper {
 
     @Autowired
-    static FreelancerRepository freelancerRepository;
+    private FreelancerRepository freelancerRepository;
     @Autowired
-    static CommunityRepository communityRepository;
+    private CommunityRepository communityRepository;
 
 
-    public static MyContractsPageResponseDTO toDTO(Contract contract,boolean isClient){
+    public MyContractsPageResponseDTO toDTO(Contract contract,boolean isClient){
         String clientNameOrUsername = (contract.getClient().getName()==null || contract.getClient().getName().isEmpty() )?
                 contract.getClient().getUser().getUsername() : contract.getClient().getName();
 
         Milestone activeMiletone = ContractService.getActiveMilestone(contract);
         String profilePicture;
 
-        if (isClient) {
+        if (!isClient) {
             profilePicture = contract.getClient().getProfilePicture();
         } else {
             WorkerEntity worker = contract.getWorkerEntity();
@@ -69,7 +69,7 @@ public class MyContractsPageResponseMapper {
                 .build();
     }
 
-    public static List<MyContractsPageResponseDTO> toDTOList(List<Contract> contracts, boolean isClient){
+    public List<MyContractsPageResponseDTO> toDTOList(List<Contract> contracts, boolean isClient){
 
         List<MyContractsPageResponseDTO> result = new LinkedList<>();
         for (Contract contract :contracts){
@@ -78,7 +78,7 @@ public class MyContractsPageResponseMapper {
         return result;
     }
 
-    public static Page<MyContractsPageResponseDTO> toDTOPage(Page<Contract> contracts,boolean isClient){
+    public Page<MyContractsPageResponseDTO> toDTOPage(Page<Contract> contracts,boolean isClient){
         return new PageImpl<>(toDTOList(contracts.getContent(), isClient), contracts.getPageable(), contracts.getTotalElements());
     }
 

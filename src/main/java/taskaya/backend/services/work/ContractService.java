@@ -121,6 +121,9 @@ public class ContractService {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    private MyContractsPageResponseMapper mapper;
+
 
     public Page<MyContractsPageResponseDTO> searchContracts(MyContractsPageRequestDTO requestDTO ,
                                                               UUID workerEntityId ,UUID clientId) {
@@ -154,7 +157,7 @@ public class ContractService {
             isClient = false;
         }
 
-        Page<MyContractsPageResponseDTO>dtoPage =  MyContractsPageResponseMapper.toDTOPage(contractPage,isClient);
+        Page<MyContractsPageResponseDTO>dtoPage =  mapper.toDTOPage(contractPage,isClient);
 
         if (jwtService.getUserFromToken().getRole() == User.Role.CLIENT){
            setFreelancerNameAndFreelancerIdForContractsSearchDTO(dtoPage, contractPage);
