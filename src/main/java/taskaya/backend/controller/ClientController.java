@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
@@ -12,6 +13,8 @@ import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
 import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.services.client.ClientService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping
@@ -65,5 +68,12 @@ public class ClientController {
                 .message("true")
                 .build());
 
+    }
+
+    @PatchMapping(value = "/clients/profile-picture", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateProfilePicture(
+            @RequestPart(value = "profilePicture") MultipartFile profilePicture) throws IOException {
+        clientService.updateProfilePicture(profilePicture);
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("Profile Picture Updated!").build());
     }
 }

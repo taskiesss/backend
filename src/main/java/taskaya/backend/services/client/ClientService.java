@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
@@ -23,7 +24,9 @@ import taskaya.backend.entity.work.Job;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.work.JobRepository;
+import taskaya.backend.services.CloudinaryService;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -36,6 +39,9 @@ public class ClientService {
     private JobRepository jobRepository;
     @Autowired
     private ClientPostedJobsResponseMapper clientPostedJobsResponseMapper;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
 
     @Transactional
@@ -132,6 +138,29 @@ public class ClientService {
     public void updateDesc(DescriptionPatchRequestDTO request) {
         Client client = getClientFromJWT();
         client.setDescription(request.getDescription());
+        clientRepository.save(client);
+    }
+
+    @Transactional
+    public void updateProfilePicture(MultipartFile updatedPicture) throws IOException {
+        //get client from token
+        Client client = getClientFromJWT();
+
+        List<String> allowedMimeTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
+        // Validate file type
+        if (updatedPicture.isEmpty() || !allowedMimeTypes.contains(updatedPicture.getContentType())) {
+            throw new IllegalArgumentException("Invalid file type. Only JPEG, PNG, GIF, and WEBP images are allowed.");
+        }
+
+        //delete old picture
+        String currentPicture = client.getProfilePicture();
+        if (!(currentPicture.equals(Constants.FIRST_PROFILE_PICTURE)))
+            cloudinaryService.deleteFile(currentPicture);
+
+        //store new picture
+        String pictureURL = cloudinaryService.uploadFile(updatedPicture, "clients_profile_pictures");
+        client.setProfilePicture(pictureURL);
+        clientRepository.save(client);
     }
 
 }
