@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.mappers.ClientPostedJobsResponseMapper;
 import taskaya.backend.DTO.mappers.ClientProfileResponseMapper;
 import taskaya.backend.DTO.mappers.ClientWorkDoneResponseMapper;
@@ -16,6 +18,7 @@ import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.client.ClientBalance;
 import taskaya.backend.entity.client.ClientBusiness;
+import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Job;
 import taskaya.backend.exceptions.notFound.NotFoundException;
 import taskaya.backend.repository.client.ClientRepository;
@@ -119,4 +122,16 @@ public class ClientService {
 
         return new PageImpl<>(paginatedList, pageable, DTOs.size());
     }
+
+    public void updateSkills(SkillsUpdateRequestDTO skills) {
+        Client client = getClientFromJWT();
+        client.setSkills(new HashSet<>(skills.getSkills()));
+        clientRepository.save(client);
+    }
+    @Transactional
+    public void updateDesc(DescriptionPatchRequestDTO request) {
+        Client client = getClientFromJWT();
+        client.setDescription(request.getDescription());
+    }
+
 }

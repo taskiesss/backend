@@ -1,11 +1,15 @@
 package taskaya.backend.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taskaya.backend.DTO.SimpleResponseDTO;
 import taskaya.backend.DTO.clients.ClientPostedJobsResponseDTO;
 import taskaya.backend.DTO.clients.ClientProfileResponseDTO;
 import taskaya.backend.DTO.clients.ClientWorkDoneResponseDTO;
+import taskaya.backend.DTO.freelancers.requests.DescriptionPatchRequestDTO;
+import taskaya.backend.DTO.freelancers.requests.SkillsUpdateRequestDTO;
 import taskaya.backend.DTO.workerEntity.responses.WorkerEntityWorkdoneResponseDTO;
 import taskaya.backend.services.client.ClientService;
 
@@ -43,5 +47,23 @@ public class ClientController {
             @RequestParam String search
     ){
         return ResponseEntity.ok(clientService.getPostedJobs(page,size,search));
+    }
+
+
+    @PatchMapping("/clients/skills")
+    public ResponseEntity<?> updateSkills(@RequestBody SkillsUpdateRequestDTO skills){
+        clientService.updateSkills(skills);
+        return new ResponseEntity<>(SimpleResponseDTO.builder()
+                .message("Skills updated successfully.")
+                .build(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/clients/description")
+    public ResponseEntity<?> updateDesc(@RequestBody DescriptionPatchRequestDTO request) {
+        clientService.updateDesc(request);
+        return ResponseEntity.ok(SimpleResponseDTO.builder()
+                .message("true")
+                .build());
+
     }
 }
