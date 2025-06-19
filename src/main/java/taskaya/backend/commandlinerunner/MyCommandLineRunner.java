@@ -153,12 +153,16 @@ class MyCommandLineRunner implements CommandLineRunner {
         User user1 = userRepository.findByUsername("client02").get();
         Client client1 = clientRepository.findByUser(user1).get();
 
+        List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
         Job myJob = Job.builder()
                 .title("MY TEST JOBBBB FOR PROPOSAL")
                 .client(client1)
                 .experienceLevel(ExperienceLevel.expert)
                 .projectLength(ProjectLength._more_than_6_months)
                 .status(Job.JobStatus.NOT_ASSIGNED)
+                .skills(new HashSet<>(skills1))
                 .description("Seeking a microservices expert for API development using Spring Boot and Kafka.")
                 .pricePerHour(60)
                 .build();
@@ -394,9 +398,13 @@ class MyCommandLineRunner implements CommandLineRunner {
         Freelancer freelancer = freelancerRepository.findByUser(userF).get();
         WorkerEntity workerEntity = freelancer.getWorkerEntity();
 
+        List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
         Job job = Job.builder()
                 .title("job with a pending mileStone.")
                 .client(client)
+                .skills(new HashSet<>(skills1))
                 .assignedTo(workerEntity)
                 .status(Job.JobStatus.IN_PROGRESS)
                 .description("This is a job with a pending mileStone to test the requestReview feature.")
@@ -484,9 +492,4 @@ class MyCommandLineRunner implements CommandLineRunner {
         System.out.println("Milestone request review contract id: "+contract.getId().toString());
 
     }
-
-
-
-
-
 }

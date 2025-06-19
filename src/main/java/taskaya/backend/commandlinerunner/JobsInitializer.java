@@ -245,6 +245,7 @@ public class JobsInitializer {
                         "Collaborate with cross-functional teams to develop IoT, AI, and 5G applications.\n" +
                         "Perform network testing and validation using simulation tools and real-world environments.\n")
                 .pricePerHour(40)
+                .skills(new HashSet<>(skills2))
                 .build();
         jobRepository.save(networkengineer);
 

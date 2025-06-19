@@ -154,11 +154,15 @@ public class CommunitiesInitializer {
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
         System.out.println("pablo Community UUID: "+community.getUuid());
 
+        List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
         Job job = Job.builder()
                 .title("researchers team")
                 .client(client)
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
+                .skills(new HashSet<>(skills1))
                 .status(Job.JobStatus.DONE)
                 .description("We are looking for a dedicated team of researchers specializing in microwave signal technologies to work on cutting-edge advancements in this field. The team will focus on designing, analyzing, and optimizing microwave signal systems for various applications, including wireless communication, radar systems, and signal processing.\n" +
                         "\n" +
@@ -246,6 +250,7 @@ public class CommunitiesInitializer {
         Job job2 = Job.builder()
                 .title("Full-Stack Development Team")
                 .client(client)
+                .skills(new HashSet<>(skills1))
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
                 .status(Job.JobStatus.DONE)
@@ -553,7 +558,7 @@ public class CommunitiesInitializer {
                 .name("Mohib")
                 .user(user88)
                 .pricePerHour(45.5)
-                .rate(55)
+                .rate(3.5F)
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)
                 .freelancerBusiness(new FreelancerBusiness())
@@ -564,7 +569,7 @@ public class CommunitiesInitializer {
                 .pricePerHour(45.5)
                 .freelancerBusiness(new FreelancerBusiness())
                 .balance(new FreelancerBalance())
-                .rate(55)
+                .rate(5.0F)
                 .profilePicture(Constants.FIRST_PROFILE_PICTURE)
                 .experienceLevel(ExperienceLevel.entry_level)
                 .build();

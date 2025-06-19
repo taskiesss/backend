@@ -62,6 +62,7 @@ public class FreelancersInitializer {
     @Autowired
     ContractService contractService;
 
+
     public void freelancerSeed(){
 
         User freelancerUser1 = User.builder()
@@ -114,14 +115,32 @@ public class FreelancersInitializer {
 
         List<FreelancerPortfolio> portfolios= new ArrayList<>();
         portfolios.add(FreelancerPortfolio.builder()
-                .portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1741044338/freelancer_portfolios/22bd3c8b-a0d6-4a2b-9d1c-8814832c312cmartinCV.pdf")
+                .portfolioPdf("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1749478990/freelancer_portfolios/7c764467-4683-418d-b095-cbb2a9822c82Martin_cv.pdf")
                 .name("mycv")
                 .build());
 
         freelancer1.setSkills(new HashSet<>(skills1));
         freelancer1.setPricePerHour(50D);
         freelancer1.setRate(5);
-        freelancer1.setDescription("best freelancer you will deal with ;)");
+        freelancer1.setDescription("\uD83D\uDC68\u200D\uD83D\uDCBB Full-Stack | Backend Software Developer \uD83D\uDE80\n" +
+                "\uD83E\uDDE0 Clean Code | \uD83D\uDD10 Secure APIs | ⚡ Fast Delivery\n" +
+                "\n" +
+                "Hello! I’m a passionate and detail-oriented software developer with strong experience in building robust backend systems and full-stack web applications. I love turning ideas into high-performing, scalable, and secure software.\n" +
+                "\n" +
+                "\uD83D\uDEE0\uFE0F Tech Stack:\n" +
+                "\t•\t\uD83D\uDCBB Java | Spring Boot | REST APIs\n" +
+                "\t•\t\uD83C\uDF10 React | HTML | CSS | JavaScript\n" +
+                "\t•\t\uD83D\uDDC4\uFE0F MySQL | PostgreSQL | MongoDB\n" +
+                "\t•\t\uD83D\uDCEC RabbitMQ | WebSockets | JWT\n" +
+                "\t•\t\uD83E\uDDEA Unit Testing | Postman | CommandLineRunner\n" +
+                "\n" +
+                "\uD83D\uDCA1 What I Can Do for You:\n" +
+                "\t•\t\uD83D\uDD27 Build and maintain RESTful APIs\n" +
+                "\t•\t\uD83E\uDDF1 Design clean backend architectures\n" +
+                "\t•\t\uD83D\uDDA5\uFE0F Develop full-stack solutions with modern UI\n" +
+                "\t•\t\uD83D\uDD12 Implement authentication (JWT, OAuth2)\n" +
+                "\t•\t\uD83D\uDCCA Optimize database performance\n" +
+                "\t•\t✅ Deliver bug-free, tested, and documented code\n");
         freelancer1.setTitle("fullstack developer");
         freelancer1.setCountry("cairo,Egypt");
         freelancer1.setName("martin ashraf");
@@ -142,7 +161,25 @@ public class FreelancersInitializer {
         freelancer2.setSkills(new HashSet<>(skills2));
         freelancer2.setPricePerHour(60D);
         freelancer2.setRate(4);
-        freelancer2.setDescription("best freelancer you will deal with ;)");
+        freelancer2.setDescription("\uD83D\uDC68\u200D\uD83D\uDCBB Full-Stack | Backend Software Developer \uD83D\uDE80\n" +
+                "\uD83E\uDDE0 Clean Code | \uD83D\uDD10 Secure APIs | ⚡ Fast Delivery\n" +
+                "\n" +
+                "Hello! I’m a passionate and detail-oriented software developer with strong experience in building robust backend systems and full-stack web applications. I love turning ideas into high-performing, scalable, and secure software.\n" +
+                "\n" +
+                "\uD83D\uDEE0\uFE0F Tech Stack:\n" +
+                "\t•\t\uD83D\uDCBB Java | Spring Boot | REST APIs\n" +
+                "\t•\t\uD83C\uDF10 React | HTML | CSS | JavaScript\n" +
+                "\t•\t\uD83D\uDDC4\uFE0F MySQL | PostgreSQL | MongoDB\n" +
+                "\t•\t\uD83D\uDCEC RabbitMQ | WebSockets | JWT\n" +
+                "\t•\t\uD83E\uDDEA Unit Testing | Postman | CommandLineRunner\n" +
+                "\n" +
+                "\uD83D\uDCA1 What I Can Do for You:\n" +
+                "\t•\t\uD83D\uDD27 Build and maintain RESTful APIs\n" +
+                "\t•\t\uD83E\uDDF1 Design clean backend architectures\n" +
+                "\t•\t\uD83D\uDDA5\uFE0F Develop full-stack solutions with modern UI\n" +
+                "\t•\t\uD83D\uDD12 Implement authentication (JWT, OAuth2)\n" +
+                "\t•\t\uD83D\uDCCA Optimize database performance\n" +
+                "\t•\t✅ Deliver bug-free, tested, and documented code\n");
         freelancer2.setTitle("fullstack developer");
         freelancer2.setCountry("cairo,Egypt");
         freelancer2.setName("mina hany");
@@ -161,7 +198,25 @@ public class FreelancersInitializer {
         freelancer3.setPricePerHour(70D);
         freelancer3.setRate(2);
         freelancer3.setExperienceLevel(ExperienceLevel.intermediate);
-        freelancer3.setDescription("best freelancer you will deal with ;)");
+        freelancer3.setDescription("\uD83D\uDC68\u200D\uD83D\uDCBB Full-Stack | Backend Software Developer \uD83D\uDE80\n" +
+                "\uD83E\uDDE0 Clean Code | \uD83D\uDD10 Secure APIs | ⚡ Fast Delivery\n" +
+                "\n" +
+                "Hello! I’m a passionate and detail-oriented software developer with strong experience in building robust backend systems and full-stack web applications. I love turning ideas into high-performing, scalable, and secure software.\n" +
+                "\n" +
+                "\uD83D\uDEE0\uFE0F Tech Stack:\n" +
+                "\t•\t\uD83D\uDCBB Java | Spring Boot | REST APIs\n" +
+                "\t•\t\uD83C\uDF10 React | HTML | CSS | JavaScript\n" +
+                "\t•\t\uD83D\uDDC4\uFE0F MySQL | PostgreSQL | MongoDB\n" +
+                "\t•\t\uD83D\uDCEC RabbitMQ | WebSockets | JWT\n" +
+                "\t•\t\uD83E\uDDEA Unit Testing | Postman | CommandLineRunner\n" +
+                "\n" +
+                "\uD83D\uDCA1 What I Can Do for You:\n" +
+                "\t•\t\uD83D\uDD27 Build and maintain RESTful APIs\n" +
+                "\t•\t\uD83E\uDDF1 Design clean backend architectures\n" +
+                "\t•\t\uD83D\uDDA5\uFE0F Develop full-stack solutions with modern UI\n" +
+                "\t•\t\uD83D\uDD12 Implement authentication (JWT, OAuth2)\n" +
+                "\t•\t\uD83D\uDCCA Optimize database performance\n" +
+                "\t•\t✅ Deliver bug-free, tested, and documented code\n");
         freelancer3.setTitle("fullstack developer");
         freelancer3.setCountry("cairo,Egypt");
         freelancer3.setName("lara jreige");
@@ -180,7 +235,25 @@ public class FreelancersInitializer {
         freelancer4.setSkills(new HashSet<>(skills3));
         freelancer4.setPricePerHour(70D);
         freelancer4.setRate(2);
-        freelancer4.setDescription("best freelancer you will deal with ;)");
+        freelancer4.setDescription("\uD83D\uDC68\u200D\uD83D\uDCBB Full-Stack | Backend Software Developer \uD83D\uDE80\n" +
+                "\uD83E\uDDE0 Clean Code | \uD83D\uDD10 Secure APIs | ⚡ Fast Delivery\n" +
+                "\n" +
+                "Hello! I’m a passionate and detail-oriented software developer with strong experience in building robust backend systems and full-stack web applications. I love turning ideas into high-performing, scalable, and secure software.\n" +
+                "\n" +
+                "\uD83D\uDEE0\uFE0F Tech Stack:\n" +
+                "\t•\t\uD83D\uDCBB Java | Spring Boot | REST APIs\n" +
+                "\t•\t\uD83C\uDF10 React | HTML | CSS | JavaScript\n" +
+                "\t•\t\uD83D\uDDC4\uFE0F MySQL | PostgreSQL | MongoDB\n" +
+                "\t•\t\uD83D\uDCEC RabbitMQ | WebSockets | JWT\n" +
+                "\t•\t\uD83E\uDDEA Unit Testing | Postman | CommandLineRunner\n" +
+                "\n" +
+                "\uD83D\uDCA1 What I Can Do for You:\n" +
+                "\t•\t\uD83D\uDD27 Build and maintain RESTful APIs\n" +
+                "\t•\t\uD83E\uDDF1 Design clean backend architectures\n" +
+                "\t•\t\uD83D\uDDA5\uFE0F Develop full-stack solutions with modern UI\n" +
+                "\t•\t\uD83D\uDD12 Implement authentication (JWT, OAuth2)\n" +
+                "\t•\t\uD83D\uDCCA Optimize database performance\n" +
+                "\t•\t✅ Deliver bug-free, tested, and documented code\n");
         freelancer4.setTitle("fullstack developer");
         freelancer4.setCountry("cairo,Egypt");
         freelancer4.setName("Abdelrahman Rashwan");
@@ -212,6 +285,9 @@ public class FreelancersInitializer {
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
         System.out.println("freelancer01 UUID: "+freelancer.getId());
 
+        List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
         Job job = Job.builder()
                 .title("healthcare website development")
                 .client(client)
@@ -224,6 +300,7 @@ public class FreelancersInitializer {
                 .assignedTo(freelancer.getWorkerEntity())
                 .build();
 
+        job.setSkills(new HashSet<>(skills1));
 //		List<DeliverableFile> filesList = List.of(
 //				DeliverableFile.builder()
 //						.fileName("My Calendar")
@@ -356,7 +433,7 @@ public class FreelancersInitializer {
                 .assignedTo(freelancer.getWorkerEntity())
                 .build();
 
-
+        job2.setSkills(new HashSet<>(skills1));
         ArrayList<Milestone> milestones2 = new ArrayList<>(List.of(
                 Milestone.builder()
                         .name("Contract2 - mile1")
@@ -450,32 +527,6 @@ public class FreelancersInitializer {
 
         ArrayList<Milestone> milestones = new ArrayList<>(List.of(milestone, milestone2));
 
-        Contract activeContract = Contract.builder()
-                .job(activeJob)
-                .client(client)
-                .status(Contract.ContractStatus.ACTIVE)
-                .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
-                .milestones(milestones)
-                .workerEntity(freelancer.getWorkerEntity())
-                .endDate(new Date())
-                .payment(PaymentMethod.PerProject)
-                .costPerHour(55.559)
-                .build();
-        Proposal proposal = Proposal.builder()
-                .costPerHour(30D)
-                .date(new Date())
-                .milestones(milestones)
-                .contract(activeContract)
-                .client(client)
-                .status(Proposal.ProposalStatus.HIRED)
-                .job(activeJob)
-                .payment(PaymentMethod.PerProject)
-                .workerEntity(freelancer.getWorkerEntity())
-                .coverLetter("please accept me")
-                .build();
-        proposalRepository.save(proposal);
-        activeJob.setContract(activeContract);
-
 
         //create the milestones for the active job
         Milestone milestone11 = Milestone.builder()
@@ -510,9 +561,36 @@ public class FreelancersInitializer {
                 .payment(PaymentMethod.PerProject)
                 .costPerHour(30.0)
                 .build();
-
-        contractRepository.save(activeContract) ;
         contractRepository.save(deletedContract);
+
+
+        Contract activeContract = Contract.builder()
+                .job(activeJob)
+                .client(client)
+                .status(Contract.ContractStatus.ACTIVE)
+                .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .milestones(milestones)
+                .workerEntity(freelancer.getWorkerEntity())
+                .endDate(new Date())
+                .payment(PaymentMethod.PerProject)
+                .costPerHour(55.559)
+                .build();
+        Proposal proposal = Proposal.builder()
+                .costPerHour(30D)
+                .date(new Date())
+                .milestones(milestones)
+                .contract(activeContract)
+                .client(client)
+                .status(Proposal.ProposalStatus.HIRED)
+                .job(activeJob)
+                .payment(PaymentMethod.PerProject)
+                .workerEntity(freelancer.getWorkerEntity())
+                .coverLetter("please accept me")
+                .build();
+        proposalRepository.save(proposal);
+        activeJob.setContract(activeContract);
+        contractRepository.save(activeContract) ;
+
 
     }
 
@@ -520,12 +598,16 @@ public class FreelancersInitializer {
         Freelancer freelancer = freelancerRepository.findFreelancerById(userRepository.findByUsername("freelancer01").orElseThrow().getId()).orElseThrow();
         Client client = clientRepository.findByUser(userRepository.findByUsername("client01").orElseThrow()).orElseThrow();
 
+        List<String> skillNames1 = List.of("Java", "Spring Boot", "Spring Security", "Spring Data JPA", "Hibernate");
+        List<Skill> skills1 = skillRepository.findByNameIn(skillNames1);
+
         Job job = Job.builder()
                 .title("Freelancer Platform Developer ")
                 .client(client)
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
                 .status(Job.JobStatus.NOT_ASSIGNED)
+                .skills(new HashSet<>(skills1))
                 .description("Job Description:\n" +
                         "\n" +
                         "We are looking for an experienced Full-Stack Developer to join our team and help build a cutting-edge healthcare platform. This platform will serve as an integrated solution for managing patient information, appointments, prescriptions, and healthcare services.\n" +
