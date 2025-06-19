@@ -160,7 +160,7 @@ public class ContractController {
     @PostMapping("/api/contracts/{contractId}/rate-contract/{rate}")
     public ResponseEntity<?> rateContract(
             @PathVariable String contractId,
-            @PathVariable int rate
+            @PathVariable float rate
     ){
         contractService.rateContract(contractId,rate);
         return ResponseEntity.status(HttpStatus.OK).body(SimpleResponseDTO.builder().message("true").build());

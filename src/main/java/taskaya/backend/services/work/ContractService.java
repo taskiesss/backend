@@ -568,8 +568,8 @@ public class ContractService {
 
     }
 
-
-    public void rateContract(String contractId, int rate) {
+    @PreAuthorize("@jwtService.canRateContract(#contractId)")
+    public void rateContract(String contractId, float rate) {
         if (rate<1 || rate>5){
             throw new RuntimeException("Invalid Request, rate must be between 1 and 5!");
         }
@@ -737,8 +737,7 @@ public class ContractService {
         contractRepository.save(contract);
     }
 
-    @PreAuthorize("@jwtService.isClientContractOwner(#contractId) ")
-    private void clientRateFreelancer(Contract contract, int rate) {
+    private void clientRateFreelancer(Contract contract, float rate) {
         contract.setClientRatingForFreelancer((float) rate);
 
         if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.FREELANCER) {
@@ -757,8 +756,7 @@ public class ContractService {
 
     }
 
-    @PreAuthorize(" @jwtService.isCommunityAdminOrFreelancerForContract(#contractId)")
-    private void freelancerRateClient(Contract contract, int rate) {
+    private void freelancerRateClient(Contract contract, float rate) {
         if (contract.getFreelancerRatingForClient()!=null) {
             throw new RuntimeException("Client already rated!");
         }
@@ -769,8 +767,8 @@ public class ContractService {
         clientRepository.save(client);
     }
 
-    private Float calculateRate(float oldRate ,int completedJobs , int newRate){
-        return (oldRate * completedJobs + newRate) / (completedJobs + 1);
+    private Float calculateRate(float oldRate ,int completedJobs , float newRate){
+        return (oldRate * (completedJobs-1) + newRate) / (completedJobs);
     }
 
     private void updateFreelancerWorkInProgressFromContract(Contract contract ,List<Freelancer> contractFreelancers ){

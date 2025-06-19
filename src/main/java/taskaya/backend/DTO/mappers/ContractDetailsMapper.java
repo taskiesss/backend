@@ -5,10 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import taskaya.backend.DTO.contracts.responses.ContractDetailsResponseDTO;
 
+import taskaya.backend.entity.community.Community;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.Milestone;
 import taskaya.backend.entity.work.WorkerEntity;
+import taskaya.backend.services.community.CommunityService;
 import taskaya.backend.services.community.VoteService;
 
 import java.util.List;
@@ -20,6 +22,12 @@ public class ContractDetailsMapper {
     private static VoteService voteService;
 
 
+    private static CommunityService communityService;
+
+    @Autowired
+    public void setCommunityService(CommunityService communityService) {
+        ContractDetailsMapper.communityService = communityService;
+    }
     @Autowired
     public void setVoteService(VoteService voteService) {
         ContractDetailsMapper.voteService = voteService;
@@ -52,15 +60,20 @@ public class ContractDetailsMapper {
                 .totalCurrentEarnings(totalEarnings)
                 .isCommunity(contract.getWorkerEntity().getType()==WorkerEntity.WorkerType.COMMUNITY)
                 .build();
-        if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY
-                &&contract.getStatus()== Contract.ContractStatus.PENDING){
-            responseDTO.setVoteIsDone(voteService.isVoteDone(contract));
+
+        boolean isCommunityAdmin = true; //true if the freelancer is the owner of the community or the owner of the contract
+        if (contract.getWorkerEntity().getType() == WorkerEntity.WorkerType.COMMUNITY) {
+            if (contract.getStatus() == Contract.ContractStatus.PENDING) {
+                responseDTO.setVoteIsDone(voteService.isVoteDone(contract));
+            } else if (contract.getStatus()== Contract.ContractStatus.ENDED) {
+                isCommunityAdmin = communityService.isUserCommunityAddmin(communityService.getCommunityByWorkerEntity(contract.getWorkerEntity()));
+            }
         }
         if (contract.getStatus()== Contract.ContractStatus.ENDED){
             responseDTO.setPendingClientToRate(contract.getClientRatingForFreelancer() == null
                     || contract.getClientRatingForFreelancer()==0);
-            responseDTO.setPendingFreelancerToRate(contract.getFreelancerRatingForClient() == null
-                    || contract.getFreelancerRatingForClient()==0);
+            responseDTO.setPendingFreelancerToRate((contract.getFreelancerRatingForClient() == null
+                    || contract.getFreelancerRatingForClient()==0)&& isCommunityAdmin);
         }
         return responseDTO;
     }

@@ -258,4 +258,16 @@ public class JwtService {
                 .orElseThrow(()->new AccessDeniedException("Notification not found!")).getUser().getId());
     }
 
+    public boolean canRateContract(String contractId) {
+        Contract contract = contractRepository.findById(UUID.fromString(contractId))
+                .orElseThrow(() -> new AccessDeniedException("Contract not found!"));
+        User user = getUserFromToken();
+        if (user.getRole() == User.Role.CLIENT) {
+            return (contract.getClientRatingForFreelancer() == null || contract.getClientRatingForFreelancer() == 0)
+                    && contract.getStatus() == Contract.ContractStatus.ENDED && isClientContractOwner(contractId);
+        } else {
+            return (contract.getFreelancerRatingForClient() == null || contract.getFreelancerRatingForClient() == 0)
+                    && contract.getStatus()== Contract.ContractStatus.ENDED&& isCommunityAdminOrFreelancerForContract(contractId);
+        }
+    }
 }
