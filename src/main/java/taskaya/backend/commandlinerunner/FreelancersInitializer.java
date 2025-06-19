@@ -568,7 +568,7 @@ public class FreelancersInitializer {
                 .job(activeJob)
                 .client(client)
                 .status(Contract.ContractStatus.ACTIVE)
-                .startDate(new Date(2024-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
+                .startDate(new Date(2025-1900, Calendar.FEBRUARY, 20, 15, 30, 0))
                 .milestones(milestones)
                 .workerEntity(freelancer.getWorkerEntity())
                 .endDate(new Date())

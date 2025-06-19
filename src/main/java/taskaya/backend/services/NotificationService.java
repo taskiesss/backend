@@ -68,6 +68,7 @@ public class NotificationService {
 
     private static final String NEW_SETTING_NOTIFICATION = "The settings of the community {0} have been updated. Please review the latest changes.";
 
+    private  static  final String NEW_CONTRACT_POST_NOTIFICATION = "A new post has been posted for the job ({0}) contract. Check it out now!";
     //notification functions
 
     public void sendNewSettingNotification(String communityName, User user, String communityId) {
@@ -132,6 +133,10 @@ public class NotificationService {
         createAndSendNotification(content, user, NotificationDest.COMMUNITY_JOBS_AND_TALENTS, communityId);
     }
 
+    public void newContractPostNotification(String jobTitle, User user, NotificationDest notificationDest,String contracttId) {
+        String content = MessageFormat.format(NEW_CONTRACT_POST_NOTIFICATION, jobTitle);
+        createAndSendNotification(content, user, notificationDest, contracttId);
+    }
 
 
     @Transactional

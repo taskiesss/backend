@@ -11,16 +11,21 @@ import taskaya.backend.DTO.mappers.ContractConvoResponseMapper;
 import taskaya.backend.config.security.JwtService;
 import taskaya.backend.entity.User;
 import taskaya.backend.entity.client.Client;
+import taskaya.backend.entity.enums.NotificationDest;
 import taskaya.backend.entity.freelancer.Freelancer;
 import taskaya.backend.entity.work.Contract;
 import taskaya.backend.entity.work.ContractConversation;
+import taskaya.backend.entity.work.WorkerEntity;
 import taskaya.backend.repository.client.ClientRepository;
 import taskaya.backend.repository.freelancer.FreelancerRepository;
 import taskaya.backend.repository.work.ContractConversationRepository;
 import taskaya.backend.repository.work.ContractRepository;
+import taskaya.backend.services.NotificationService;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ContractConversationService {
@@ -33,6 +38,12 @@ public class ContractConversationService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    ContractService contractService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Autowired
     private FreelancerRepository freelancerRepository;
@@ -78,6 +89,22 @@ public class ContractConversationService {
                 .createdAt(new Date())
                 .build();
         contractConversationRepository.save(conversation);
+
+        LinkedList<User> contractUsers = contractService.
+                getFreelancersFromContract(contract).stream().map(Freelancer::getUser)
+                .collect(Collectors.toCollection(LinkedList::new)
+                );
+        NotificationDest dest = contract.getWorkerEntity().getType()== WorkerEntity.WorkerType.COMMUNITY? NotificationDest.CONTRACT_COMMUNITY: NotificationDest.CONTRACT;
+        for (User contractUser : contractUsers) {
+            if (!contractUser.getId().equals(user.getId())) {
+                notificationService.newContractPostNotification(contract.getJob().getTitle(),contractUser,dest,contractId);
+            }
+        }
+
+        if (!contract.getClient().getUser().getId().equals(user.getId())){
+            notificationService.newContractPostNotification(contract.getJob().getTitle(),contract.getClient().getUser(),NotificationDest.CONTRACT,contractId);
+
+        }
     }
 
 
