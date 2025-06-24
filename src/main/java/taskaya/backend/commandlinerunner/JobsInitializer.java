@@ -216,7 +216,7 @@ public class JobsInitializer {
 
         Job activeJobForCommunity = Job.builder()
                 .title("club website")
-                .client(client2)
+                .client(client1)
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)
                 .status(Job.JobStatus.NOT_ASSIGNED)

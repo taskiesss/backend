@@ -264,7 +264,7 @@ public class FreelancersInitializer {
         freelancer4.setTitle("fullstack developer");
         freelancer4.setCountry("cairo,Egypt");
         freelancer4.setName("Abdelrahman Rashwan");
-        freelancer4.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750773672/IMG_7672_tt8ndn.png");
+        freelancer4.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750775282/freelancers_profile_pictures/0a26847c-d2fd-4853-a8e2-5d78bc408dc6IMG_7676.jpg");
         freelancer4.setLanguages(new HashSet<>(List.of("english")));
 //		freelancer3.setPortfolios(portfolios);
 

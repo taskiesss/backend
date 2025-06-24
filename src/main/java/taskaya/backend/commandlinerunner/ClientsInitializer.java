@@ -67,6 +67,20 @@ public class ClientsInitializer {
         client1.setSkills(new HashSet<>(skills1));
         client1.setRate(3);
 
+        client1.setProfilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750775363/clients_profile_pictures/62348223-1515-4bfa-b55f-a5eb7ecb3122IMG_7672.png");
+        client1.setDescription("Hello! I’m a passionate and organized client who truly values the power of skilled freelancers. I regularly post projects in areas like web and mobile development, UI/UX design, content writing, marketing, and business support — and I’m always on the lookout for creative professionals who are committed to delivering high-quality work.\n" +
+                "\n" +
+                "As someone who has worked with both individuals and teams, I understand how important it is to create a positive, respectful, and productive working environment. You can expect timely communication, clear project scopes, and constructive feedback throughout the process. I believe in treating freelancers as true partners, not just service providers.\n" +
+                "\n" +
+                "Here’s what you can expect when working with me:\n" +
+                "\n" +
+                "✅ Well-defined project goals\n" +
+                "✅ Fair budgets and on-time payments\n" +
+                "✅ Open, friendly, and professional communication\n" +
+                "✅ Flexibility and understanding when needed\n" +
+                "✅ Long-term collaboration opportunities for outstanding freelancers\n" +
+                "\n" +
+                "I’m especially drawn to freelancers who are proactive, detail-oriented, and passionate about what they do. If you love solving problems and taking pride in your work, I’d be happy to connect and build something amazing together.\n");
         ClientBalance clientBalance1 = client1.getBalance();
         clientBalance1.setAvailable(100000.0);
         clientBalance1.setRestricted(7000000.0);

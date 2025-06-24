@@ -169,18 +169,15 @@ public class CommunitiesInitializer {
                 .rate(4F)
                 .profilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750773764/9814_fjmh42.jpg")
                 .skills(new HashSet<>(skills))
-                .description("Welcome to the JavaScript Community — where innovation meets craftsmanship.\\n\" +\n" +
-                        "  \"\\n\" +\n" +
-                        "  \"We're a dedicated group of developers passionate about building modern, scalable, and high-performance solutions using JavaScript and its rich ecosystem. Whether it's web, mobile, or cloud — we turn your vision into reality with clean code and smart architecture.\\n\" +\n" +
-                        "  \"\\n\" +\n" +
-                        "  \"Our expertise includes:\\n\" +\n" +
-                        "  \"✅ Full-Stack Web Development (React, Node.js, etc.)\\n\" +\n" +
-                        "  \"✅ Cross-Platform Mobile Apps (React Native, Ionic)\\n\" +\n" +
-                        "  \"✅ Scalable Cloud Deployments (AWS, Firebase, Vercel)\\n\" +\n" +
-                        "  \"✅ Database Architecture & Performance Tuning (SQL & NoSQL)\\n\" +\n" +
-                        "  \"✅ RESTful & GraphQL API Development\\n\" +\n" +
-                        "  \"✅ E-commerce Solutions & Secure Payment Integration\\n\" +\n" +
-                        "  \"✅ Custom-Built Applications Tailored to Your Needs")
+                .description("Our JavaScript team is the creative engine behind the user-facing side of the project. With deep expertise in modern JavaScript, including frameworks like React, Vue, and Angular, the team focuses on building dynamic, responsive, and intuitive user interfaces.\n" +
+                        "\n" +
+                        "\uD83D\uDCA1 Key Strengths:\n" +
+                        "\t•\tStrong command of ES6+, DOM manipulation, and asynchronous programming\n" +
+                        "\t•\tClean, maintainable code that ensures performance and scalability\n" +
+                        "\t•\tCollaborative development with a mobile-first, user-centered mindset\n" +
+                        "\t•\tSeamless integration with backend APIs and real-time data updates\n" +
+                        "\n" +
+                        "\uD83D\uDE80 Whether it’s a dashboard, single-page app, or complex web UI, the JavaScript team brings ideas to life with speed, precision, and a great eye for detail.\n")
                 .experienceLevel(ExperienceLevel.expert)
                 .build();
         community.getFreelancerBusiness().setAvgHoursPerWeek(300);
@@ -191,7 +188,7 @@ public class CommunitiesInitializer {
                 .community(community)
                 .freelancer(freelancer)
                 .positionName("backend01")
-                .positionPercent(40)
+                .positionPercent(60)
                 .description("Backend design and Implementation")
                 .build();
 
@@ -621,7 +618,7 @@ public class CommunitiesInitializer {
                 .build();
 
         ArrayList<Milestone> listmilestone2 = new ArrayList<>(List.of(milestone1, milestone2));
-        Client client02 =clientRepository.findByUser(userRepository.findByUsername("client02").get()).get();
+        Client client02 =clientRepository.findByUser(userRepository.findByUsername("client01").get()).get();
 
         Contract activeContract = Contract.builder()
                 .client(client02)
