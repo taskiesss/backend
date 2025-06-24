@@ -98,7 +98,7 @@ public class CommunitiesInitializer {
                 .country("cairo,Egypt")
                 .title("software development")
                 .status(Community.CommunityStatus.AVAILABLE)
-                .rate(3)
+                .rate(4.5F)
                 .profilePicture(Constants.PABLO_COMMUNITY_PROFILE_PICTURE)
                 .skills(new HashSet<>(skills))
                 .description("Welcome to PABLO community , where innovation meets excellence.\n" +
@@ -208,6 +208,7 @@ public class CommunitiesInitializer {
                 .milestones(milestones)
                 .payment(PaymentMethod.PerProject)
                 .workerEntity(community.getWorkerEntity())
+                .clientRatingForFreelancer(4F)
                 .costPerHour(20D)
                 .endDate(new Date())
                 .build();
@@ -337,6 +338,7 @@ public class CommunitiesInitializer {
                 .milestones(milestones2)
                 .workerEntity(community.getWorkerEntity())
                 .payment(PaymentMethod.PerProject)
+                .clientRatingForFreelancer(5F)
                 .costPerHour(10D)
                 .build();
         Proposal proposal2= Proposal.builder()
@@ -371,23 +373,75 @@ public class CommunitiesInitializer {
 
     public void communityWithContractPendingAndVotes() {
         Community pabloCommunity = communityRepository.findByCommunityName("Pablo Community").get();
-        Milestone milestone = Milestone.builder()
-                .name("milestone11")
+        Milestone milestone1 = Milestone.builder()
+                .name("\uD83C\uDFC1 Milestone 1:")
                 .number(1)
-                .description("description1")
+                .description("-Understand the business goals and user needs \uD83D\uDCA1\n" +
+                        "\n" +
+                        "-Define core features (sign-up, workout plans, bookings, etc.) \uD83D\uDCDD\n" +
+                        "\n" +
+                        "-Create wireframes and interactive UI/UX prototypes \uD83C\uDFA8\n" +
+                        "\n" +
+                        "-Finalize app flow and get design approval ✅")
                 .status(Milestone.MilestoneStatus.NOT_STARTED)
                 .dueDate(new Date())
-                .estimatedHours(7545)
+                .estimatedHours(45)
+                .build();
+
+        Milestone milestone2 = Milestone.builder()
+                .name("\uD83D\uDEE0\uFE0F Milestone 2")
+                .number(2)
+                .description("-Set up server, database, and API structure ⚙\uFE0F\n" +
+                        "\n" +
+                        "-Develop user authentication & role management \uD83D\uDD10\n" +
+                        "\n" +
+                        "-Design database schema (users, classes, trainers, bookings) \uD83D\uDDC3\uFE0F\n" +
+                        "\n" +
+                        "-Implement basic admin dashboard \uD83D\uDCCA")
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .dueDate(new Date())
+                .estimatedHours(45)
+                .build();
+
+        Milestone milestone3 = Milestone.builder()
+                .name("\uD83D\uDCF1 Milestone 3")
+                .number(3)
+                .description("-Build responsive mobile or web UI (React Native / Flutter / React) \uD83D\uDCF2\n" +
+                        "\n" +
+                        "-Integrate workouts, schedule, and trainer profiles \uD83C\uDFCB\uFE0F\u200D♀\uFE0F\n" +
+                        "\n" +
+                        "-Enable real-time bookings and notifications \uD83D\uDCC6\uD83D\uDD14\n" +
+                        "\n" +
+                        "-Connect frontend to backend with secure APIs \uD83D\uDD04\n" +
+                        "\n")
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .dueDate(new Date())
+                .estimatedHours(45)
+                .build();
+
+        Milestone milestone4 = Milestone.builder()
+                .name("\uD83D\uDE80 Milestone 4:")
+                .number(4)
+                .description("Perform QA testing & bug fixing \uD83D\uDC1E\uD83D\uDEE0\uFE0F\n" +
+                        "\n" +
+                        "Optimize performance and responsiveness \uD83D\uDEA6\n" +
+                        "\n" +
+                        "Deploy to app stores or web hosting platforms \uD83C\uDF10\uD83D\uDCE4\n" +
+                        "\n" +
+                        "Provide documentation and post-launch support \uD83D\uDCDA\uD83E\uDD1D")
+                .status(Milestone.MilestoneStatus.NOT_STARTED)
+                .dueDate(new Date())
+                .estimatedHours(45)
                 .build();
 
         ArrayList<Milestone> listmilestone = new ArrayList<>();
 
-        listmilestone.add(milestone);
+        listmilestone.addAll(List.of(milestone1,milestone2,milestone3));
 
 
         Contract pendingContract = Contract.builder()
                 .client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
-                .job(jobRepository.findByTitle("job1").get())
+                .job(jobRepository.findByTitle("GYM mobile application").get())
                 .workerEntity(pabloCommunity.getWorkerEntity())
                 .costPerHour(45.77)
                 .status(Contract.ContractStatus.PENDING)
@@ -402,7 +456,7 @@ public class CommunitiesInitializer {
                 .contract(pendingContract)
                 .client(clientRepository.findByUser(userRepository.findByUsername("client01").get()).get())
                 .status(Proposal.ProposalStatus.HIRED)
-                .job(jobRepository.findByTitle("job1").get())
+                .job(jobRepository.findByTitle("GYM mobile application").get())
                 .payment(PaymentMethod.PerProject)
                 .workerEntity(pabloCommunity.getWorkerEntity())
                 .coverLetter("please accept me")
@@ -609,8 +663,14 @@ public class CommunitiesInitializer {
                 .position(communityMember1)
                 .build();
 
+        JoinRequest joinRequest3 = JoinRequest.builder()
+                .community(pabloCommunity)
+                .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer04").get()).get())
+                .position(communityMember2)
+                .build();
         communityJoinRequestRepository.save(joinRequest1);
         communityJoinRequestRepository.save(joinRequest2);
+        communityJoinRequestRepository.save(joinRequest3);
         System.out.println("Jolie id:" + freelancer99.getId());
     }
 

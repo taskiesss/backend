@@ -38,7 +38,7 @@ public class JobsInitializer {
         Client client3 = clientRepository.findByUser(user3).get();
 
         Job job1 = Job.builder()
-                .title("job1")
+                .title("GYM mobile application")
                 .client(client1)
                 .experienceLevel(ExperienceLevel.intermediate)
                 .projectLength(ProjectLength._3_to_6_months)

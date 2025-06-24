@@ -13,9 +13,7 @@ import taskaya.backend.entity.client.Client;
 import taskaya.backend.entity.enums.ExperienceLevel;
 import taskaya.backend.entity.enums.PaymentMethod;
 import taskaya.backend.entity.enums.ProjectLength;
-import taskaya.backend.entity.freelancer.Freelancer;
-import taskaya.backend.entity.freelancer.FreelancerBalance;
-import taskaya.backend.entity.freelancer.FreelancerPortfolio;
+import taskaya.backend.entity.freelancer.*;
 import taskaya.backend.entity.work.*;
 import taskaya.backend.repository.PaymentRepository;
 import taskaya.backend.repository.SkillRepository;
@@ -28,6 +26,7 @@ import taskaya.backend.repository.work.ProposalRepository;
 import taskaya.backend.services.freelancer.FreelancerService;
 import taskaya.backend.services.work.ContractService;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -119,6 +118,12 @@ public class FreelancersInitializer {
                 .name("mycv")
                 .build());
 
+        Education edu1 =Education.builder()
+                .degree("national system").graduationYear(2020).institution("college de la salle").build();
+        Education edu2 =Education.builder()
+                .degree("bachelor,faculty of engineering ").graduationYear(2025).institution("Ain shams university").build();
+
+
         freelancer1.setSkills(new HashSet<>(skills1));
         freelancer1.setPricePerHour(50D);
         freelancer1.setRate(5);
@@ -149,6 +154,8 @@ public class FreelancersInitializer {
         freelancer1.setPortfolios(portfolios);
         freelancer1.setLinkedIn("https://www.linkedin.com/public-profile/settings?trk=d_flagship3_profile_self_view_public_profile");
         freelancer1.setExperienceLevel(ExperienceLevel.intermediate);
+        freelancer1.getEducations().addAll(List.of(edu1 , edu2));
+        freelancer1.getEmployeeHistories().add(EmployeeHistory.builder().company("orange cloud business").endYear(LocalDate.ofEpochDay(2022)).startYear(LocalDate.ofEpochDay(2022)).position("cloud engineer trainee").build());
         freelancer1.getFreelancerBusiness().setAvgHoursPerWeek(45);
 
         FreelancerBalance freelancerBalance1 = freelancer1.getBalance();
