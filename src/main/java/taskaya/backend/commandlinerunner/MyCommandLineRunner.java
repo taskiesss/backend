@@ -134,6 +134,7 @@ class MyCommandLineRunner implements CommandLineRunner {
         communitiesInitializer.communityWithActiveJob();
         communitiesInitializer.communityJoinRequests();
         communitiesInitializer.communityWorkdoneSeed();
+        communitiesInitializer.communityWithMinaAdmin();
         freelancersInitializer.freelancerWorkInProgressSeed();
         mileStoneRequestReview();
         communitiesInitializer.communityPost();

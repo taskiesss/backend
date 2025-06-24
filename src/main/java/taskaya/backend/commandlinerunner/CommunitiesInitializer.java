@@ -148,6 +148,74 @@ public class CommunitiesInitializer {
 
     }
 
+    public void communityWithMinaAdmin(){
+        User user = userRepository.findByUsername("freelancer02").get();
+        Freelancer freelancer =freelancerRepository.findByUser(user).get();
+        //userRepository.save(user);
+        List<String> mySkills = List.of("Javascript", "NextJs", "Typescript", "MySQL", "MongoDB");
+        List<Skill> skills = skillRepository.findByNameIn(mySkills);
+
+        WorkerEntity workerEntity = WorkerEntity.builder()
+                .type(WorkerEntity.WorkerType.COMMUNITY)
+                .build();
+        Community community = Community.builder()
+                .communityName("Javascript Team")
+                .admin(freelancer)
+                .workerEntity(workerEntity)
+                .pricePerHour(50)
+                .country("Alex, Egypt")
+                .title("Software Development")
+                .status(Community.CommunityStatus.AVAILABLE)
+                .rate(4F)
+                .profilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750773764/9814_fjmh42.jpg")
+                .skills(new HashSet<>(skills))
+                .description("Welcome to the JavaScript Community — where innovation meets craftsmanship.\\n\" +\n" +
+                        "  \"\\n\" +\n" +
+                        "  \"We're a dedicated group of developers passionate about building modern, scalable, and high-performance solutions using JavaScript and its rich ecosystem. Whether it's web, mobile, or cloud — we turn your vision into reality with clean code and smart architecture.\\n\" +\n" +
+                        "  \"\\n\" +\n" +
+                        "  \"Our expertise includes:\\n\" +\n" +
+                        "  \"✅ Full-Stack Web Development (React, Node.js, etc.)\\n\" +\n" +
+                        "  \"✅ Cross-Platform Mobile Apps (React Native, Ionic)\\n\" +\n" +
+                        "  \"✅ Scalable Cloud Deployments (AWS, Firebase, Vercel)\\n\" +\n" +
+                        "  \"✅ Database Architecture & Performance Tuning (SQL & NoSQL)\\n\" +\n" +
+                        "  \"✅ RESTful & GraphQL API Development\\n\" +\n" +
+                        "  \"✅ E-commerce Solutions & Secure Payment Integration\\n\" +\n" +
+                        "  \"✅ Custom-Built Applications Tailored to Your Needs")
+                .experienceLevel(ExperienceLevel.expert)
+                .build();
+        community.getFreelancerBusiness().setAvgHoursPerWeek(300);
+
+//		communityService.save(community);
+//		community.getCommunityMembers().add(CommunityMember.builder().community(community).freelancer(freelancerRepository.findByUser(user).get()).positionName("fullstack").build());
+        CommunityMember communityMember = CommunityMember.builder()
+                .community(community)
+                .freelancer(freelancer)
+                .positionName("backend01")
+                .positionPercent(40)
+                .description("Backend design and Implementation")
+                .build();
+
+
+        CommunityMember communityMember2 = CommunityMember.builder()
+                .community(community)
+                .positionPercent(20)
+                .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer01").get()).get())
+                .positionName("backend02")
+                .description("Backend Design and Implementation")
+                .build();
+
+        CommunityMember communityMember3 = CommunityMember.builder()
+                .community(community)
+                .positionPercent(20)
+                .freelancer(freelancerRepository.findByUser(userRepository.findByUsername("freelancer03").get()).get())
+                .positionName("backend03")
+                .description("Backend design and implementation")
+                .build();
+        community.getCommunityMembers().addAll(List.of(communityMember,communityMember2,communityMember3));
+        communityService.save(community);
+
+    }
+
 
     public void communityWorkdoneSeed() throws MessagingException {
         Community community = communityRepository.findByCommunityName("Pablo Community").orElseThrow();
@@ -624,7 +692,7 @@ public class CommunitiesInitializer {
                 .freelancerBusiness(new FreelancerBusiness())
                 .balance(new FreelancerBalance())
                 .rate(5.0F)
-                .profilePicture(Constants.FIRST_PROFILE_PICTURE)
+                .profilePicture("https://res.cloudinary.com/dhfb7i5h1/image/upload/v1750774064/IMG_7673_gvgvzj.jpg")
                 .experienceLevel(ExperienceLevel.entry_level)
                 .build();
 
