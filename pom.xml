@@ -111,7 +111,6 @@
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -122,13 +121,14 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<!-- Keep the version here for the annotation processor path -->
 							<version>1.18.34</version>
 						</path>
 					</annotationProcessorPaths>
-                    <source>22</source>
-                    <target>22</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
-                </configuration>
+					<source>22</source>
+					<target>22</target>
+					<compilerArgs>--enable-preview</compilerArgs>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -138,7 +138,7 @@
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.34</version>
+							<!-- REMOVE THIS LINE: <version>1.18.34</version> -->
 						</exclude>
 					</excludes>
 				</configuration>

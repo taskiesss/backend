@@ -1,4 +1,5 @@
 package taskaya.backend.config;
+import org.springframework.beans.factory.annotation.Value; // Import Value
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,13 +10,19 @@ import java.util.Properties;
 @Configuration
 public class MailConfig {
 
+    @Value("${MAIL_USERNAME}") // Inject from environment variable
+    private String mailUsername;
+
+    @Value("${MAIL_PASSWORD}") // Inject from environment variable
+    private String mailPassword;
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-        mailSender.setUsername("taskaya20123@gmail.com");
-        mailSender.setPassword("gfwn hijt inmb huvq");
+        mailSender.setUsername(mailUsername); // Use injected value
+        mailSender.setPassword(mailPassword); // Use injected value
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
